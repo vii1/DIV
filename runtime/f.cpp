@@ -2341,6 +2341,7 @@ void roll_palette(void) {
     color+=c;
     memcpy(&pal[color*3],&paleta[x*3],3);
   } memcpy(&paleta[c*3],&pal[c*3],n*3);
+  if (!activar_paleta) activar_paleta=1;
 }
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -2684,7 +2685,7 @@ void _strset(void) {
 byte strupper[256]=
   "                                                                "
   " ABCDEFGHIJKLMNOPQRSTUVWXYZ      ABCDEFGHIJKLMNOPQRSTUVWXYZ     "
-  "€AAA€EEEIIIA’’OOUUY     AIOUฅฅ                          "
+  "€?AAA€EEEIIIA?’’OOUUY     AIOUฅฅ                          "
   "                                                                ";
 
 void __strupr(void) {
@@ -2703,7 +2704,7 @@ void __strupr(void) {
 byte strlower[256]=
   "                                                                "
   " abcdefghijklmnopqrstuvwxyz      abcdefghijklmnopqrstuvwxyz     "
-  "…‘‘“”•–—”      กขฃคค                          "
+  "?…?‘‘“”•–—”?      กขฃคค                          "
   "                                                                ";
 
 void __strlwr(void) {
