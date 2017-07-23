@@ -1,0 +1,9 @@
+system div4g
+name divc.exe
+
+option stack=64k
+option map
+debug all
+file divc.obj,cdll1.obj,cdll2.obj
+#lib  tflc_w32.lib,judas.lib,svga.lib,pmode.lib,net.lib,zlib.lib
+lib judas\judas.lib,source\zlib.lib

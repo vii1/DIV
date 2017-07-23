@@ -1,0 +1,3 @@
+        system dos
+        name div_stub.exe
+        file div_stub.obj,asm\cstrt086.obj

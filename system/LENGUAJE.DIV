@@ -1,0 +1,840 @@
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        DIV 2.01 Versi¢n en Castellano
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+# Fichero ASCII con todos los textos de DIV listos para ser traducidos, todos
+# ellos pueden ser modificados, respetando el formato y los c¢digos de control
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        TEXTOS INFORMATIVOS EN LA CARGA
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+# Copyright
+
+001     " DIV Sistema Operativo - versi¢n 2.01 - (c) 1998,99 Hammer Technologies       \n"
+
+# Informaci¢n
+
+006     "Reserva_de_recursos() ...\n"
+010     "Carga_datos_sesi¢n() ...\n"
+011     "Inicializaci¢n_filtros() "
+012     "Asignaci¢n_datos_globales() ...\n"
+013     "Inicializaci¢n_de_v¡deo() ...\n"
+
+# Errores globales
+
+014     "Error interno n£mero #%u"
+016     "Error: No se encontr¢ el fichero( SETUP.CFG )"
+017     "Error: Memoria insuficiente( SETUP.CFG )"
+
+# Info. compilaci¢n de setup.cfg
+
+018     "Compilando fichero de configuraci¢n ..."
+019     "modo de v¡deo"
+020     "n£mero entero"
+021     "SLOW, MEDIUM o FAST"
+022     "YES o NO"
+023     "un \"literal\""
+024     "RED, GREEN, BLUE"
+025     "una variable"
+026     "\nsetup.cfg %u l¡neas, %u errores\n"
+027     "\n  Error, se esperaba %s (l¡nea %u)"
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        MISCELANEA
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+# Temporal
+
+015     "Men£"
+028     "Paletas"
+029     "Mapas"
+030     "Ficheros"
+031     "Fuentes"
+032     "Sistema"
+
+# Copyright sobreimpreso en el tapiz de fondo
+
+033     "DIV 2.01 (Modo a prueba de fallos)"
+034     "DIV 2.01"
+
+#034     "DIV 2.01 Beta"
+
+# Copyright ventana de cabecera
+
+035     "Informaci¢n"
+
+#035     "DIV 2.01 Beta (No distribuible)"
+
+036     "Versi¢n completa registrada."
+037     "Versi¢n de demostraci¢n."
+
+# Salir al DOS
+
+040     "¨Salir de DIV?"
+
+# Ventanas de error
+
+041     "Error"
+042     "La unidad no esta preparada."
+043     "Fichero no encontrado."
+044     "No se pudo leer el fichero."
+045     "Memoria insuficiente, cierre algunas ventanas."
+046     "No se reconoce el tipo de fichero."
+047     "No se pudo guardar el fichero indicado."
+048     "Espacio insuficiente en disco."
+049     "Valor fuera de rango."
+
+050     "¨Cerrar el mapa?"
+051     "Paleta"
+052     "¨Actualizar el mapa?"
+053     "La paleta es diferente"
+054     "¨Activar la nueva paleta?"
+055     "¨Adaptar el mapa a la paleta actual?"
+056     "¨Adaptar la paleta?"
+057     "¨Crear una copia del mapa?"
+059     "¨Cerrar la Papelera?"
+
+060     "¨Eliminar el elemento?"
+061     "No es un fichero de paleta"
+062     "¨Crear mapa de durezas?"
+063     "Reescalar el mapa"
+064     "¨Cerrar la ventana?"
+065     "¨Desea adaptar el fichero?"
+066     "¨Desea adaptar el sistema?"
+067     "La paleta ha cambiado"
+068     "Descripci¢n"
+069     "Nuevo fichero FPG"
+070     "Abrir fichero FPG"
+071     "CODIGO:"
+072     "DESCRIPCION: "
+
+# Texto por defecto de la prueba de fonts
+073     "123ABCabc!?&¥¤‡"
+#
+
+074     "Abrir FNT"
+075     "La fuente ya existe"
+076     "¨Desea reescribirla?"
+077     "Abrir IFS"
+078     "Selecciona el color"
+079     "Valor"
+080     "Prueba"
+081     "¨Cerrar el fichero FPG?"
+082     "¨Actualizar el fichero FPG?"
+083     "Generador de fuentes"
+084     "Nuevo fuente:"
+085     "Aspecto:"
+086     "Reborde"
+087     "Sombra"
+088     "Si"
+089     "No"
+090     "NUEVOFNT.FNT"
+
+#Texto por defecto para la ventana de crear ventana de texto
+
+091     "Fuente"
+092     "Reescalando..."
+093     "Calculando..."
+094     "Aplicando efecto..."
+095     "Porcentajes"
+096     "Escala de Grises"
+097     "Introduzca texto"
+098     "Ver fuente"
+099     "No existe el fichero de aspecto."
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        BOTONES
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+100     "\# Aceptar "
+101     "\# Cancelar "
+102     "\# Si "
+103     "\# No "
+104     "\# Deshacer "
+105     "Gama"
+106     "Copiar"
+107     "Cambiar"
+108     "Info"
+109     "Marcar/Arrastrar"
+
+110     "\#+"
+111     "\#-"
+112     "Mosaico"
+
+113     "\# Prueba "
+114     "N£meros"
+115     "May£sculas"
+116     "Min£sculas"
+117     "S¡mbolos"
+118     "Extendido"
+119     "\# Cerrar "
+120     "\# Generar "
+121     "\#..."
+122     "\# Texto "
+123     "\# Convertir "
+124     "\# Todo "
+125     "\# Ayuda "
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    DIVERSAS VENTANAS
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+# Abrir
+
+126 "Nombre de Archivo:"
+127 "Archivo:"
+128 "Directorio:"
+129 "Unidad:"
+130 "Tipo:"
+
+# Nuevo mapa
+
+132 "Nuevo mapa..."
+133 "Ancho"
+134 "Alto"
+135 "Tama¤o:"
+136 "Mapa "
+137 "Sonido "
+
+152 "Centro X"
+153 "Centro Y"
+
+# Paletas
+
+138 "Editar paleta..."
+139 "¨Actualizar la paleta?"
+140 "Ordenar paleta..."
+141 "Dec"
+142 "Hex"
+143 "Red "
+144 "Gre."
+145 "Blue"
+
+# CDiv y Reloj
+
+150 "CDiv Player"
+151 "Reloj"
+
+# Editor&Co.
+
+160 "Buscar texto..."
+161 "Texto:"
+162 "Sustituir por:"
+163 "Palabra completa"
+164 "May£sculas/min£sculas"
+165 "Sustituir texto..."
+#Mas textos
+166 "N£m "
+167 "May "
+168 "M¡n "
+169 "S¡m "
+170 "Ext "
+#texto correspondiente al dialogo de adaptar un fichero FPG
+171 "El fichero ser  convertido."
+172 "Esta operaci¢n afectara a todos los"
+173 "gr ficos incuidos en el fichero %s."
+174 "¨ Est  seguro que desea convertirlo ?"
+175 "Fuente peque¤o"
+176 "Fuente grande"
+177 "Modo:"
+
+178 "Apariencia:"
+179 "Mosaico"
+
+181 "Gama"
+182 "Seleccione tapiz"
+183 "Editar gama"
+
+186 "Nuevo programa..."
+187 "¨Sobreescribir el programa?"
+188 "¨Cerrar el programa?"
+189 "No se encontraron (m s) ocurrencias."
+190 "¨Sustituir el texto?"
+191 "Sustituci¢n finalizada"
+192 " cambio(s) realizado(s)"
+
+193 "Error en la Heap."
+194 "Memoria libre : %d.%03d Kbyte(s)."
+195 "Memoria libre : %d Kbyte(s)."
+196 "Mapas : %d.%03d Kbyte(s)."
+197 "Mapas : %d Kbyte(s)."
+198 "Recursos en uso : %d %c."
+199 "Informaci¢n del sistema"
+
+200 "Compilando..."
+201 "Preparando compilaci¢n..."
+202 "Compilaci¢n finalizada..."
+203 "Precargando objetos..."
+204 "Generando listados..."
+205 "Guardando ejecutable..."
+206 "Programa:"
+207 "Error "
+208 " en la l¡nea "
+
+# Proyectos
+
+209 "Abrir fichero de proyecto"
+210 "Guardar proyecto"
+211 "¨Actualizar proyecto?"
+212 "A¤adir fichero al proyecto"
+213 "No es un fichero de proyecto"
+214 "Nuevo proyecto"
+215 "¨Actualizar fichero?"
+216 "¨Actualizar proyecto?"
+217 "Creando fuente"
+218 "Actualizando fuente"
+219 "Comprimiendo ficheros"
+
+220 "EJEMPLO.PRG"
+
+221 "¨Cerrar el proyecto?"
+222 "No se puede a¤adir ese fichero."
+223 "Se debe compilar el proyecto primero."
+
+224 "Nombre del programa."
+225 "Mensaje de ayuda."
+226 "Copyright."
+227 "Disco destino."
+228 "Directorio por defecto."
+229 "Instalaci¢n con ‚xito."
+230 "Fichero no encontrado (%s)."
+231 "Error al crear la instalaci¢n."
+232 "Por favor, inserte un nuevo disco."
+233 "Disco lleno."
+234 "Copiando ficheros..."
+
+235 "Ejecutando..."
+236 "Creando instalaci¢n..."
+237 "Copiando INSTALL.EXE ..."
+
+238 "No se puede instalar un setup de sonido."
+239 "Incluir setup de sonido"
+240 "Crear subdirectorios"
+
+241 "Trazando programa..."
+
+242 "No se puede escribir el fuente."
+243 "No es un mapa de fuente v lido."
+
+244 "Prueba del fuente:"
+246 "123ABCabc!?¥¤"
+
+250 "Pulse una tecla para salir"
+251 "Introduzca unidad destino :  "
+252 "Inserte disco n§ %d."
+253 "Instalaci¢n completa."
+254 "Introduzca directorio : %s"
+255 "Espacio libre en disco : %d Kbytes."
+256 "Unidades disponibles : "
+257 "Error de instalaci¢n."
+258 "Fichero empaquetado corrompido."
+259 "Fichero empaquetado no encontrado."
+260 "No hay suficiente espacio libre en la unidad."
+261 "Unidad o directorio incorrecto."
+
+263 "Por favor, seleccione primero el fichero de aspecto (IFS)."
+264 "Introduzca nuevo nombre de fichero"
+
+#Generador de Explosiones
+
+300 "Generador de Explosiones";
+301 "Tipo A."
+302 "Tipo B."
+303 "Tipo C."
+304 "Im genes"
+305 "Granulado"
+
+306 "Invertir"
+307 "Borrar"
+308 "Color"
+
+310 "8 Colores"
+311 "16 Colores"
+312 "32 Colores"
+
+313 "Editable"
+314 "Fija"
+
+315 "Directa de paleta"
+316 "Editable cada color"
+317 "Editable cada 2 col."
+318 "Editable cada 4 col."
+319 "Editable cada 8 col."
+
+320 "No hay suficiente memoria de DESHACER para realizar la operaci¢n."
+321 "¨Quiere adaptar los mapas cargados?"
+
+322 "Colores de ventanas:"
+323 "Fondo"
+324 "Tinta"
+325 "Barra"
+326 "Editor de programas:"
+327 "Cursor"
+328 "Fuente:"
+329 "Programa de dibujo:"
+330 "Memoria de deshacer"
+331 "Activar ventanas emergentes"
+332 "Guardar y recuperar la sesi¢n"
+333 "Opciones globales:"
+
+334 "¨Cerrar todos los mapas?"
+335 " Todas las ventanas de mapas ser n cerradas, ¨est  seguro? "
+336 "Mover las ventanas completas"
+337 "Ordenar lista"
+338 "¨Cerrar el sonido?"
+339 "Guardar sonido como..."
+340 "¨Actualizar el sonido?"
+341 "Abrir sonido..."
+342 "Advertencia: El fichero se motrar  con una paleta diferente"
+343 "Si quiere ver el fichero correctamente, cierre y reabra el fichero."
+344 "Advertencia: El fichero ser  adaptado a la nueva paleta"
+345 "El fichero puede ser da¤ado, ¨est  seguro?"
+346 "Abrir programa..."
+347 "Buscar..."
+
+348 "La paleta ha cambiado"
+349 "Editar sonido"
+
+# Miscel nea (£ltimos textos metidos en lenguaje.div)
+
+350 "Papelera"
+
+351 "Seleccione el disco duro donde se instalar  el programa y pulse"
+355 "el bot¢n INSTALAR, introduzca entonces la ruta y pulse ENTER."
+352 "Copyright (c) "
+353 "JUEGOS\\"
+354 "Instalaci¢n completada, pulse una tecla para terminar."
+#355 Este texto esta definido tras el n£mero 351
+
+356 "Unidad destino inv lida."
+357 "Error creando la instalaci¢n. Memoria insuficiente."
+358 "Error creando la instalaci¢n."
+359 "Disco(s) de instalaci¢n preparado(s)."
+360 "Teclee INSTALL.EXE desde "
+361 " para instalar."
+362 "Disco lleno o unidad sin disco dentro."
+363 "Disco protegido contra escritura."
+364 "Desproteja el disco y reintente."
+365 "Error: No se inicializ¢ el sonido\n"
+366 "Mensaje: \""
+367 "DIV - Error de ejecuci¢n"
+368 "Memoria insuficiente."
+369 "Demasiados procesos a la vez."
+370 "Desbordamiento de pila."
+371 "No se encontr¢ fichero con DLL."
+372 "No se encontr¢ el fichero con el fuente del sistema."
+373 "No se encontr¢ el fichero con los gr ficos del sistema."
+374 "C¢digo de retorno: %d"
+375 "Retorno con exit()"
+376 "Error: Driver de rat¢n no encontrado, cargue su driver de rat¢n o mouse.com."
+377 "No hay suficiente espacio libre en la unidad %c:"
+378 "Algunas opciones pueden no funcionar, se necesitan %u Kb libres m s."
+379 "Lista de procesos:"
+380 "Ir a ..."
+381 "Error: "
+383 "Pulse Aceptar si ve la pantalla correctamente."
+384 "Prueba del modo de v¡deo..."
+385 "Se proceder  a cambiar el modo de v¡deo..."
+386 "Si no ve correctamente la pantalla, espere unos segundos."
+
+387 "Opci¢n no disponible en la versi¢n DEMO."
+388 "Esta DEMO no puede importar archivos PCX o BMP."
+389 "Esta DEMO no puede importar archivos WAV."
+
+390 "No se pudo localizar COMMAND.COM"
+
+391 "Esta opci¢n requiere un ordenador Pentium(tm) o superior."
+
+392 "Versi¢n de demostraci¢n"
+393 "Esta es una copia de evaluaci¢n"
+394 "de DIV Games Studio 2 limitada"
+395 "a 31 ejecuciones del programa"
+
+396 "Ejecuci¢n n£mero"
+
+398 "4ureyesonly"
+399 "Beta 2.01 para evaluaci¢n de ..."
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        DIV PROFESIONAL - NUEVOS TEXTOS
+        (Tambi‚n hay textos modificados de los anteriores)
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+400 "Mapa de b£squeda"
+401 "Tama¤o casillas"
+402 "Color de las durezas"
+403 "Eliminar m¡nimos"
+404 "Creando mapa..."
+
+405 "Comentarios"
+406 "S¡mbolos"
+407 "Reservados"
+408 "Predefinidos"
+409 "N£meros"
+410 "Literales"
+411 "Tabulador"
+412 "Colorear los listados (*.PRG)"
+
+413 "Calculadora"
+414 ""
+415 "Int"
+416 "Hex"
+417 "Error [? F1]"
+
+418 "El fichero ya est  actualizado en el disco."
+
+419 "Im genes"
+
+420 "Editor de gamas"
+
+421 "Volumen"
+
+422 "Generador de sprites"
+423 "Hombre"
+424 "Mujer"
+425 "Ni¤o"
+426 "Tama¤o (%)"
+427 "\#>>"
+428 "Animaci¢n: "
+429 "Im genes"
+430 "Rotac. (0..360)"
+431 "Persp. (0..90)"
+432 "Iluminaci¢n: "
+433 "Elegir textura..."
+434 "Calculando..."
+435 "\#<<"
+
+436 "Actualizando..."
+437 "Imprimiendo..."
+438 "Imprimir lista"
+439 "ARCHIVO:"
+
+440 "Nuevo mapa 3D..."
+441 "Guardando..."
+442 "Editar mapa 3D"
+443 "Edici¢n"
+444 "V‚rtice"
+445 "L¡nea"
+446 "Sector"
+447 "Bandera"
+
+448 "En impresora"
+449 "En archivo:"
+
+450 "¨Desea sobreescribir el archivo?"
+451 "LISTAFPG.TXT"
+
+452 "No hay ning£n bloque seleccionado."
+453 "Imprimir listado"
+454 "Listado completo"
+455 "Bloque seleccionado"
+
+456 "\# Continuar "
+457 "\# Nueva sesi¢n "
+
+458 "Grid"
+459 "Snap"
+
+460 "Nombre:"
+461 "Compa¤ia:"
+462 "Informaci¢n de usuario ..."
+
+463 "Programa registrado a"
+
+464 "Idea original y programa por: Daniel Navarro"
+465 "Programaci¢n auxiliar: Juanjo Garrido"
+466 "Programaci¢n modo 8 y red: Luis Fernando Fern ndez"
+467 "Apoyo en programaci¢n: Fernando P‚rez"
+468 "Ejemplos y pruebas: Antonio Marchal, Luis Sureda,"
+469 "Manuel Caba¤as, Daniel Mu¤oz"
+470 "Gr ficos: Santiago Garc¡a, Miguel Angel Carrillo,"
+471 "Carlos Caba¤as, Rafael Barraso, Julio C‚sar L¢pez,"
+472 "Jos‚ Fern ndez, Eva Astorga, J.Ricardo Abell ,
+473 "Pablo de la Sierra"
+474 "Efectos de sonido: Carlos Illana"
+475 "Apoyo moral: C‚sar Valencia"
+476 "Producci¢n: Mario de Luis, Carlos Doral"
+477 "Gracias a: Bel‚n P‚rez, Wonder, Pete, Rubo, DDI,"
+478 "Tizo, Sobakus, Juangake, Christian, Tom s Cuadra,"
+479 "Javier Carri¢n, David Pic¢n, Pedro P. Aull¢, JB,"
+480 "Zeen, Jens Grobecker, J.C. Ar‚valo, Carlos Doral,"
+481 "Rafa S. Gago, Antonio Ruiz y Gonzalo Mart¡n"
+482 "DOS/4GW (c) Rational Systems, Inc. 1990,94"
+483 "DIV Games Studio (c) 1998,99 Hammer Technologies."
+
+484 "(c) 98,99 Hammer Technologies."
+485 "DIV Games Studio - v2.01"
+486 "Daniel Navarro Medrano."
+
+487 "MAP\\TAPICES\\DIV2.MAP"
+
+488 "\# << "
+489 "\# >> "
+490 "\#Indice"
+491 "\#Glosario"
+492 "\#Funciones"
+493 "\# ? "
+494 "\#Imprimir"
+
+495 "AYUDA.TXT"
+496 "Imprimir ayuda"
+
+497 "Convirtiendo..."
+
+498 "Creando "
+
+499 "Grafico "
+500 " de "
+
+501 "\#Vol -"
+502 "\#Vol +"
+503 "\#Fade <"
+504 "\#Fade >"
+505 "\#Silencio"
+506 "\#Copiar"
+507 "\#Cortar"
+508 "\#Pegar"
+509 "\# Prueba "
+
+510 "\# Reemplazar "
+511 "\# A¤adir "
+
+512 "\# Copiar en ventana "
+513 "¨Cerrar la canci¢n?"
+
+514 "Generando sprites"
+
+515 "Introduzca el disco n£mero"
+516 "y pulse una tecla para continuar."
+517 "Empaquetar archivos"
+518 "C¢digo para Pentium"
+519 "\# Errores "
+520 "Cambio de disco."
+521 "Fichero (FPG)."
+522 "Fuente peque¤o."
+523 "Fuente grande."
+
+524 "Seleccione un fichero"
+525 "Seleccione un fuente"
+
+526 "Mensajes de informaci¢n del instalador"
+527 "\# Mensajes "
+
+528 "La unidad o ruta especificada no es v lida."
+529 "La instalaci¢n ha sido interrumpida por el usuario."
+530 "Se produjo un error en la lectura de los archivos."
+531 "Se produjo un error en la escritura de los archivos."
+532 "No hay suficiente espacio en la unidad seleccionada."
+533 "No hay suficiente memoria para realizar la instalaci¢n."
+534 "El FPG interno no es v lido (faltan gr ficos o puntos de control)."
+535 "No se encontr¢ un driver VESA (controlador de pantalla)."
+536 "No se encontr¢ ning£n disco duro en el que instalar."
+
+537 "Mensajes de error del instalador"
+
+538 "\# Mensajes por defecto "
+
+539 "Segundo fuente"
+540 "Fichero inv lido, falta el gr fico %d."
+541 "Fichero inv lido, el gr fico %d debe ser de 640x480."
+542 "Fichero inv lido, falta el punto de control %d del gr fico %d."
+
+543 "Adaptando instalaci¢n..."
+
+544 "Rat¢n"
+
+545 "Error al leer el fichero de animaci¢n"
+
+#Reservado para el mapa de b£squeda
+546 ""
+
+548 "El sistema de sonido est  desactivado."
+
+549 "No se pudo inicializar el sistema de sonido."
+
+550 "Armado"
+551 "Fichero de mapa no v lido"
+552 "Convertir"
+553 "\# 08 bit "
+554 "\# 16 bit "
+555 "\# 11025 "
+556 "\# 22050 "
+557 "\# 44100 "
+
+558 "Abrir canci¢n"
+559 "Abriendo sonido"
+
+560 "Grabar sonido"
+561 "MIC"
+562 "CD"
+563 "Pulse ACEPTAR para comenzar la grabaci¢n."
+564 "Pulse la teca ESC para finalizar la grabaci¢n."
+565 "Fuente:"
+566 "Fichero:"
+567 "Prueba"
+
+568 "Se ley¢ una paleta nueva ..."
+569 "Adaptar a la paleta actual"
+570 "Fusionar con la paleta actual"
+571 "Cargar la nueva paleta"
+
+572 "Pincel ... (System\\Brush.FPG)"
+573 "Texturas en el escritorio ..."
+
+574 "Demasiados sonidos copiados al escritorio"
+
+575 "SB Pro o superior necesaria para grabar sonidos"
+
+576 "Actual"
+577 "Nueva"
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        TEXTOS PARA LOS DIFERENTES MENUS DE OPCIONES
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+# Los men£s pueden tener hasta 25 opciones, el primero comienza en el texto
+# 750 y los dem s consecutivamente cada 25, los textos que se definen para
+# cada men£, son: nombre_icono.mnu, barra de t¡tulo, opci¢n 1, opcion 2, ...
+
+750     # Men£ principal
+
+        "men£"
+        "MENU"
+        "Programas"
+        "Paletas"
+        "Mapas"
+        "Mapas 3D"
+        "Ficheros"
+        "Fuentes"
+        "Sonidos"
+        "Sistema"
+        "Ayuda [F1]"
+
+775     # Men£ de paletas
+
+        "paletas"
+        "Men£ PALETAS"
+        "Abrir paleta..."
+        "Guardar paleta..."
+        "-Editar paleta..."
+        "Ordenar paleta..."
+        "Fusionar paletas..."
+        "Mostrar paleta"
+
+800     # Men£ de mapas
+
+        "mapas"
+        "Men£ MAPAS"
+        "Nuevo..."
+        "Abrir mapa..."
+        "Cerrar"
+        "Cerrar todos..."
+        "Guardar"
+        "Guardar como..."
+        "-Reescalar..."
+        "Mapa de b£squeda..."
+        "Editar mapa"
+        "Generador explosiones"
+        "Generador de sprites"
+
+825     # Men£ de ficheros
+
+        "ficheros"
+        "Men£ FICHEROS"
+        "Nuevo..."
+        "Abrir fichero..."
+        "Cerrar"
+        "Guardar como..."
+        "-Cargar marcados"
+        "Borrar marcados"
+        "-Imprimir lista..."
+        "-Exportar mapa"
+        "Importar mapa"
+
+850     # Men£ de fuentes
+
+        "fuentes"
+        "Men£ FUENTES"
+        "Generar fuente..."
+        "Abrir fuente..."
+        "Cerrar"
+        "-Escribir texto..."
+        "Exportar mapa"
+        "Importar mapa"
+
+875     # Men£ de sistema
+
+        "sistema"
+        "Men£ SISTEMA"
+        "CDiv Player"
+        "Reloj"
+        "Papelera"
+        "Calculadora"
+        "-Modo de v¡deo..."
+        "Tapiz de fondo..."
+        "Configuraci¢n..."
+        "-Informaci¢n sistema"
+        "Acerca de..."
+        "Shell MS-DOS [ALT-S]"
+        "Salir de DIV [ALT-X]"
+
+900     # Men£ de programas
+
+        "programas"
+        "Men£ PROGRAMAS"
+        "Nuevo..."
+        "Abrir programa... [F4]"
+        "Cerrar"
+        "Guardar [F2]"
+        "Guardar como..."
+        "Men£ de edici¢n"
+        "-Ejecutar [F10]"
+        "Compilar [F11]"
+        "Trazar programa [F12]"
+        "-Crear instalaci¢n..."
+        "Imprimir listado..."
+
+925     # Men£ de sonidos
+
+        "sonidos"
+        "Men£ SONIDOS"
+        "Nuevo..."
+        "Abrir sonido..."
+        "Cerrar"
+        "Guardar"
+        "Guardar como..."
+        "-Editar sonido"
+        "-Ajustar volumen"
+        "-Abrir canci¢n..."
+        "Cerrar canci¢n"
+
+950     # Men£ de edici¢n
+
+        "editor"
+        "Men£ EDITOR"
+        "Borrar l¡nea [CTRL-Y]"
+        "-Marcar bloque [ALT-A]"
+        "Desmarcar [ALT-U]"
+        "Copiar [ALT-C]"
+        "Mover [ALT-M]"
+        "Borrar [ALT-D]"
+        "-Ir a... [F5]"
+        "Buscar... [ALT-F]"
+        "Repetir [ALT-N]"
+        "Reemplazar... [ALT-R]"
+
+1000    # Men£ de mapas 3D
+
+        "mapas 3D"
+        "Men£ MAPAS 3D"
+        "Nuevo..."
+        "Abrir mapa 3D..."
+        "Cerrar"
+        "Cerrar todos..."
+        "Guardar"
+        "Guardar como..."
+        "Editar mapa"
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ

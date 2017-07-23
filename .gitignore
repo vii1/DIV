@@ -1,0 +1,17 @@
+# binarios generados
+*.obj
+*.exe
+*.lib
+*.386
+*.586
+
+# ficheros intermedios de Watcom
+*.err
+*.mk1
+*.tgt
+*.map
+*.lst
+
+# carpetas
+/bin
+/_trash

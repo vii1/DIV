@@ -1,0 +1,26 @@
+system int4g
+name session.div
+
+#system pmodew
+#name div32run.ins
+
+option stack=64k
+option map
+debug all
+file i.obj,f.obj,c.obj,s.obj,v.obj,a.obj,divkeybo.obj,divfli.obj
+file cdrom.obj,mouse.obj,divdll1.obj,divdll2.obj,ia.obj
+file divsound.obj,divmixer.obj,divtimer.obj,timer.obj
+
+file d.obj
+
+file divlengu.obj,vesa.obj,det_vesa.obj
+lib  tflc_w32.lib,judas.lib,svga.lib,pmode.lib,net.lib,zlib.lib
+
+file draw_cw.obj,draw_f.obj,draw_o.obj
+file draw_sw.obj
+file fixed.obj,gfx.obj,globals.obj,hard.obj
+file load.obj,mem.obj,object.obj,scan.obj
+file update.obj,view.obj,vpe.obj,zone.obj
+file draw_fa.obj,draw_oa.obj,draw_wa.obj,vpedll.obj
+
+file red.obj,net.obj,comlib.obj,comm.obj,ipxlib.obj,dpmi_net.obj

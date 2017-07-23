@@ -1,0 +1,27 @@
+#컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
+#       Compilador DIV
+#컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
+
+EXE=divc.exe
+
+#OPTIONS=/oneatx /wx /mf /zp4 /bt=dos /5r /fp5
+#OPTIONS2=/oneatx /wx /mf /zp4 /bt=dos /5r /fp5
+
+#Release
+#OPTIONS=/oneatx /wx /mf /zp4 /bt=dos /5r /fp5 /i=div_stub /i=netlib /i=vpe /i=source /i=inc /i=judas
+
+#Debug
+OPTIONS=/d2 /wx /mf /zp4 /bt=dos /5r /fp5 /i=div_stub /i=netlib /i=vpe /i=source /i=inc /i=judas
+
+$(EXE): divc.obj cdll1.obj cdll2.obj
+
+  wlink @c.lnk
+
+divc.obj: divc.cpp
+  wcc386 $(OPTIONS) divc.cpp
+
+cdll1.obj: cdll1.c
+  wcc386 $(OPTIONS) cdll1.c
+
+cdll2.obj: cdll2.c
+  wcc386 $(OPTIONS) cdll2.c

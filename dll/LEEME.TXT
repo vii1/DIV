@@ -1,0 +1,197 @@
+
+DIV Games Studio 2.0 - Dinamic Link Libraries
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+Este documento presenta la informaci¢n necesaria para construir DLL para DIV.
+
+- ¨Qu‚ es una DLL?
+
+  Una DLL (librer¡a de enlace din mico), es una parte de un programa que puede
+fusionarse con otro programa en tiempo de ejecuci¢n, y que contiene funciones
+o procedimientos que ser n utilizados por el programa.
+
+- ¨Para que sirven?
+
+  Las DLL sirven para extender el lenguaje de programaci¢n DIV o para modificar
+parcialmente su funcionamiento. Estas permiten implementar partes de un
+programa en lenguaje C, para despu‚s llamarlas desde el propio DIV.
+
+- ¨Que tipos hay?
+
+  Hay b sicamente tres tipos de DLL que pueden construirse para DIV, las
+primeras son los salvapantallas, las segundas las de autocarga y las terceras
+las que a¤aden nuevas funciones al lenguaje.
+
+Instrucciones generales.
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+Este es un procedimiento asequible £nicamente para programadores EXPERTOS en C,
+que dispongan del "WATCOM C++ Compiler", es probable que se puedan utilizar
+para esto otros compiladores de C, pero nosotros no hemos hecho pruebas con
+ellos y, por lo tanto, no podemos asegurar que vayan a funcionar.
+
+Lo primero debe ser a¤adir el siguiente texto al fichero WLSYSTEM.LNK de Watcom
+(que est  en el directorio BINB\ de este compilador).
+
+system begin div_dll
+    option osname='DIV DLL'
+    libpath %WATCOM%\lib386
+    libpath %WATCOM%\lib386\dos
+    format windows nt dll ^
+end
+
+El formato de c¢digo empleado es el de las DLL de Windows NT, y esta es la
+forma de indicarle a Watcom que genere este tipo de c¢digo.
+
+Despu‚s se debe incluir el fichero de cabecera DIV.H, que tambi‚n viene en este
+directorio, en ‚l se describen las variables y funciones b sicas sobre las que
+se puede interactuar. Adem s este fichero contiene una serie de "#define" para
+facilitar el acceso a las variables internas de DIV32RUN, que es el m¢dulo que
+contiene todas las funciones y rutinas internas de DIV Games Studio.
+
+Se incluyen varios ejemplos, los mas b sicos son estos tres:
+
+  DEMO0.CPP - Ejemplo b sico de un salvapantallas para los juegos DIV.
+  DEMO1.CPP - Ejemplo b sico de una DLL de autocarga.
+  DEMO2.CPP - Ejemplo b sico de una DLL de funciones.
+
+Se puede utilizar el archivo de proceso por lotes denominado MAKE.BAT para
+compilar estas DLL (si se dispone del Watcom C++ para DOS) que, si no se
+produce ning£n error, generar  la DLL correspondiente (con el mismo nombre).
+
+Normas b sicas.
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+Las DLL se deben crear en lenguaje C est ndar y cuentan con algunas normas
+que deben ser respetadas, por ejemplo:
+
+- Se debe incluir la cabecera "div.h", y en el m¢dulo principal, se debe
+realizar la siguiente definici¢n:
+
+  #define GLOBALS
+
+  antes de incluir esta cabecera (antes del #include "div.h"), para que se
+definan las variables, tipos y estructuras b sicas el dicho m¢dulo (esto es
+para cuando se construyan DLL formadas por varios fuentes CPP).
+
+- No es posible utilizar en las mismas las funciones malloc(), free(), fopen()
+o fclose(), debi‚ndose utilizar en su lugar div_malloc(), div_free(),
+div_fopen() y div_fclose(). Estas funciones se comportan exactamente igual que
+sus hom¢nimas de C.
+
+- Deben definirse siempre dos funciones, de inicializaci¢n y finalizaci¢n de
+la DLL, estas son:
+
+  void __export divmain(COMMON_PARAMS) {
+    GLOBAL_IMPORT();
+    // Inicializaci¢n
+  }
+
+  void __export divend(COMMON_PARAMS) {
+    // Finalizaci¢n
+  }
+
+- Al margen de las funciones exportadas por DIV, pueden utilizarse la mayor¡a
+de funciones est ndar de C, incluyendo sus cabeceras correspondientes (sus .h).
+
+¨Como se utilizan las DLL en el lenguaje?
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+Las DLL se dividen en dos tipos: las normales y las de autocarga.
+
+Para utilizar las normales, se debe indicar en los juegos una sentencia:
+
+  IMPORT "directorio\nombre.dll";
+
+Justo tras las declaraciones LOCAL del programa principal. No se pueden
+utilizar DLL de otros lenguajes.
+
+Las de autocarga pueden utilizarse de la misma forma, o bien simplemente
+copi ndolas al directorio del juego. Se activar n autom ticamente.
+
+Por ejemplo, si se copia DEMO0.DLL (el salvapantallas ejemplo) en el directorio
+de un juego hecho en DIV, este se activar  autom ticamente cada vez que se
+ejecute el juego. Para que se activen estas DLL cuando se ejecuta un juego
+desde el entorno de DIV, se deben copiar al directorio donde se encuentra
+el fichero D.EXE (el ejecutable principal de DIV).
+
+Salva-pantallas (ver demo0.cpp)
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+Se pueden definir las siguientes funciones en la DLL.
+
+  ss_init() - para inicializar el salvapantallas (cada vez que salte).
+
+  ss_frame() - para realizar operaciones sobre el buffer de v¡deo, antes de
+  cada volcado.
+
+  ss_end() - para finalizar el salvapantallas.
+
+Se dispone adem s de las siguientes variables:
+
+  ss_time - para indicar cada cuanto tiempo debe saltar el salvapantallas,
+  en cent‚simas de segundo (por defecto vale 3000, es decir, cada 30 segundos).
+
+  ss_status - para activar y desactivar el salvapantallas (0-Desactivo/1-Activo).
+
+  ss_exit - se debe poner a 1 en ss_frame() para finalizar forzosamente el
+  salvapantallas (el sistema la pondr  a 1 cuando se active el teclado, el
+  rat¢n o el joystick).
+
+Se incluye en SS1.CPP un salvapantallas algo m s elaborado que el de DEMO0.CPP,
+este simula que la pantalla se funde como si se tratara de un cuadro de granos
+de arena.
+
+DLL de autocarga (ver demo1.cpp)
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+  Estas son DLL que suelen sustituir algunas de las funciones internas de DIV
+por otras, las funciones que se pueden definir est n explicadas en DIV.H
+(bajo la cabecera "DIV standard Entry-Points").
+
+  Para que una DLL se auto-cargue, se debe incluir la siguiente sentencia
+dentro de la funci¢n div_main():
+
+  Autoload();
+
+  Se incluyen dos DLL de autocarga a modo de ejemplo:
+
+  AGUA.CPP - Simula el efecto de agua en la parte inferior de la pantalla.
+
+  HBOY.CPP - ­Pru‚bala con cualquier juego DIV! ... ya ver s.
+
+DLL de funciones (ver demo2.cpp)
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+  Es f cil a¤adir nuevas funciones al lenguaje:
+
+  Primero, se debe crear la nueva funci¢n en la DLL, esta debe leer sus
+par metros de llamada con getparm() (que devuelve siempre un int), y al
+finalizar se debe SIEMPRE retornar un valor con retval() (ver demo2.cpp).
+
+  Despu‚s se debe definir en la DLL la funci¢n:
+
+  void __export divlibrary(LIBRARY_PARAMS) {
+  }
+
+  y dentro de la misma se debe hacer una llamada a COM_export() por cada
+funci¢n que se a¤ada al lenguaje.
+
+  COM_export() recibe tres par metros, el primero es el nombre que tendr 
+la funci¢n en el lenguaje, el segundo el puntero a la misma, y el tercero el
+n£mero de par metros de llamada.
+
+  En los programas creados en DIV, tras hacer el IMPORT de la DLL, se podr n
+utilizar directamente estas funciones.
+
+¨Que se puede hacer?
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+Explorando DIV.H encontrar s muchas cosas a las que se puede acceder en las
+DLL, se pueden hacer programas que modifiquen las variables de los procesos,
+que sustituyan las rutinas de v¡deo, que apliquen efectos en ventanas, etc.
+
+Si consigues crear una DLL funcional, no se pone ning£n pero a que la
+distribuyas como Shareware o como quieras, y si la creas como Freeware ...
+­pues mejor! ;)
+

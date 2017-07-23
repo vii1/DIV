@@ -1,0 +1,7 @@
+system div4g
+name div_stub.exe
+
+option stack=64k
+option map
+debug all
+file div_stub.obj

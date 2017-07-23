@@ -1,0 +1,293 @@
+------------------------------------------------------------------------------
+--------------------------- Utilities for PMODE/W ----------------------------
+------------------------------------------------------------------------------
+
+  This is the documentation for the PMODE/W v1.33 utilities PMWSETUP, PMWBIND,
+PMWLITE, and PMWVER. These utilities are Copyright (c) 1995-1997, Charles
+Scheffold and Thomas Pytel. All rights reserved.
+
+Contents:
+---------
+
+1 - PMWSETUP
+    1.0 - Description
+    1.1 - Interactive Mode
+    1.2 - Command Line Mode
+    1.3 - PMODE/W Parameters
+
+2 - PMWBIND
+    2.0 - Description
+    2.1 - Commands
+    2.2 - Switches
+
+3 - PMWLITE
+    3.0 - Description
+    3.1 - Switches
+
+4 - PMWVER
+    4.0 - Description
+
+------------------------------------------------------------------------------
+---------------------------------- PMWSETUP ----------------------------------
+------------------------------------------------------------------------------
+
+1.0 - Description:
+------------------
+
+  PMWSETUP is a program which will allow you to modify the various PMODE/W
+parameters which affect the way it executes. You may modify these parameters
+within any program which uses PMODE/W. Or you may edit them within the PMODE/W
+extender itself, where they will be passed on to any program compiled with
+that modified version of PMODE/W. PMWSETUP can run in one of two different
+modes: interactive or command line. In interactive mode, configuration is
+performed via an on-screen menu. If command line options are specified, the
+menu will not be shown and configuration data will be taken from the command
+line. The syntax for PMWSETUP is as follows:
+
+  PMWSETUP [commands] [options] <filename>
+
+where [commands] are the configuration directives, [options] are various
+options that affect PMWSETUP, and <filename> is the path name of the
+executable you wish to modify or "PMODEW.EXE" itself.
+
+1.1 - Interactive Mode:
+-----------------------
+
+  While in PMWSETUP, the arrow keys move the selection bar, SPACE toggles
+hex/decimal display, and ENTER allows you to enter a new value for the
+currently selected parameter. PMWSETUP will not allow you to exceed the
+minimum or maximum values for the parameters, but common sense must also be
+used when assigning very low or high settings. When you are done modifying the
+parameters, you may save your changes. If you decide not to make any changes,
+you may abort, and any parameters you have modified will not be written to the
+file you are editing.
+
+1.2 - Command Line Mode:
+------------------------
+  When command line options are specified, PMWSETUP will not display the
+usual configuration screen. These options can be specified in any order. If
+a configuration variable exceeds its maximum or falls below its minimum, it
+will be automatically adjusted accordingly. The parameters are explained in
+detail in the next section. All values passed are expected to be in decimal,
+unless preceded by a "0x" to denote a hexadecimal number.
+
+The following is a list of switches available:
+
+) /V<page tables> Number of VCPI page tables to allocate
+) /S<selectors>   VCPI/XMS/Raw maximum selectors
+) /R<stacklen>    Real mode stack length (in paragraphs)
+) /P<stacklen>    Protected mode stack length (in paragraphs)
+) /N<nesting>     Real mode stack nesting
+) /E<nesting>     Protected mode stack nesting
+) /C<callbacks>   Number of real mode callbacks
+) /M<0|1>         VCPI/DPMI detection mode (0=DPMI first, 1=VCPI first)
+) /X<memory>      Maximum extended memory to allocate (in bytes)
+) /L<low memory>  Low memory to reserve (in paragraphs)
+) /A<page tables> Number of physical address mapping page tables
+) /B<0|1>         Display copyright message at startup (0=No, 1=Yes)
+
+) /Q              Quiet mode (no status messages during processing)
+
+* NOTE - PMWSETUP will only modify the parameters specified on the command
+         line. Any options not specified will remain unchanged.
+
+1.3 - PMODE/W Parameters:
+-------------------------
+
+  For a more detailed explanation of these parameters, see the PMODE/W
+documentation. Minimums and maximums will be enforced by the PMWSETUP program
+for the settings, but you must still make sure that the values you set are
+appropriate for your program. The parameters are as follows:
+
+) Number of VCPI Page Tables:
+
+    This parameter specifies the maximum number of page tables allowed under a
+  VCPI server. For each page table used at run time, 4k of low memory is used
+  by PMODE/W.
+
+) VCPI/XMS/raw Max Selectors:
+
+    This parameter specifies the number of selectors that PMODE/W will make
+  available when a DPMI host is not in place. PMODE/W needs only 8 bytes of
+  low memory for each selector, so you may set high values for this parameter.
+
+) Real Mode Stack Length:
+
+    This parameter specifies the length of the real mode stack provided by
+  PMODE/W to real mode interrupt or IRQ calls. The size is in paragraphs.
+  PMODE/W allocates low memory for real mode stacks when it initializes, and
+  that memory can not be used for anything else.
+
+) Protected Mode Stack Length:
+
+    This parameter specifies the length of the protected mode stack provided
+  by PMODE/W to real mode callbacks to protected mode or protected mode IRQ
+  handlers issued during real mode processing. The size is in paragraphs.
+  PMODE/W allocates low memory for protected mode stacks when it initializes,
+  and that memory can not be used for anything else.
+
+) Real Mode Stack Nesting:
+
+    This parameter specifies the maximum number of nested real mode stacks
+  that PMODE/W will provide. PMODE/W will allocate this number of real mode
+  stacks when it initializes. So for example, 8 stacks at 40h paragraphs each
+  will allocate a total of 8k for real mode stacks.
+
+) Protected Mode Stack Nesting:
+
+    This parameter specifies the maximum number of nested protected mode
+  stacks that PMODE/W will provide. PMODE/W will allocate this number of
+  protected mode stacks when it initializes. So for example, 8 stacks at 80h
+  paragraphs each will allocate a total of 16k for protected mode stacks.
+
+) Number of Real Mode Callbacks:
+
+    This parameter specifies the maximum number of DPMI real mode callbacks
+  that PMODE/W will provide when a DPMI host is not in place. PMODE/W needs
+  25 bytes of low memory per callback, which is allocated during
+  initialization.
+
+) VCPI/DPMI Detection Mode:
+
+    This parameter specifies the order of detection for VCPI and DPMI. This
+  allows for detection and use of VCPI for speed under a system that supports
+  both DPMI and VCPI.
+
+) Maximum Extended Memory to Allocate:
+
+    This parameter specifies the maximum amount of extended memory for PMODE/W
+  to allocate from the system. The size is in bytes. Specifying a lower value
+  for this parameter than there is extended memory in the system will force
+  PMODE/W to leave some extended memory free for use by other extenders and
+  programs that use XMS and EMS. Your program will not necessarily have this
+  much extended memory available to it due to other PMODE/W and Watcom C/C++
+  system requirements for extended memory.
+
+) Low Memory to Reserve:
+
+    This parameter specifies the minimum amount of low memory for PMODE/W to
+  reserve for the program. PMODE/W will try to preserve this low memory by
+  loading 32 bit code and data into extended memory if it can, but the memory
+  is not guaranteed to be available. Setting this parameter to a very high
+  value ensures PMODE/W will leave as much low memory free as possible.
+
+) Maximum Physical Address Mapping Page Tables:
+
+    This parameter specifies the maximum number of page tables to be made
+  available by PMODE/W under VCPI for physical address mapping. PMODE/W needs
+  4k of extended memory for each page table for address mapping.
+
+) Display Copyright Message At Startup:
+
+    This parameter is checked by PMODE/W at startup in order to decide whether
+  or not the copyright message is displayed during initialization.
+
+------------------------------------------------------------------------------
+---------------------------------- PMWBIND -----------------------------------
+------------------------------------------------------------------------------
+
+2.0 - Description:
+------------------
+
+  PMWBIND is a program which binds and unbinds stub programs to and from
+protected mode LE executable files (the file format used by DOS/4GW, and
+PMODE/W). This allows you to replace older versions of PMODE/W within an
+executable file with newer ones. It also allows you to turn a DOS/4GW,
+DOS/4GW PRO, or DOS/4G PRO program into a PMODE/W program very easily just by
+replacing the stub. This practice in not really suggested though since you do
+not know if the program in question uses any DOS/4G specific functions which
+will not work with PMODE/W. But in general, many programs are completely
+portable from DOS/4GW to PMODE/W with little or no tweaking of the PMODE/W
+parameters. PMWBIND will not allow you to bind or unbind a compressed
+protected mode PMODE/W executable due to the fact that it is not an ordinary
+LE executable and it would really serve no point. The syntax for PMWBIND is
+as follows:
+
+  PMWBIND <command> [options] <filename>
+
+where <command> is the operation you want to perform (bind, unbind, or
+replace), [options] are various options, and <filename> is the path name of
+the program you wish to modify.
+
+2.1 - Commands:
+---------------
+
+) /B - Bind PMODE/W (or specified stub) to an unbound LE executable file.
+) /U - Unbind the stub from a DOS/4GW, DOS/4GW PRO, DOS/4G PRO or PMODE/W
+       executable file.
+) /R - Replace the stub of a DOS/4GW, DOS/4GW PRO, DOS/4G PRO or PMODE/W
+       executable file.
+
+2.2 - Switches:
+---------------
+
+) /D<filename> - Use <filename> for destination of bound or unbound executable
+                 instead of default.
+) /N           - Suppress output of executable file (used only with /U
+                 command).
+) /O           - Overwrite destination files if they exist.
+) /S<filename> - Specify a stub to use instead of searching for "PMODEW.EXE".
+                 If you do not specify this switch, the current directory will
+                 be checked for "PMODEW.EXE", then the Watcom "\BINB"
+                 directory, then the "\BIN" directory, the "\BINW" directory,
+                 and finally the Watcom main directory itself.
+) /W<filename> - Write the unbound stub to <filename> instead of discarding.
+
+------------------------------------------------------------------------------
+---------------------------------- PMWLITE -----------------------------------
+------------------------------------------------------------------------------
+
+3.0 - Description:
+------------------
+
+  PMWLITE is a program which compresses protected mode LE executables for use
+with PMODE/W. It does basically what real mode EXE compression programs do
+for real mode programs. PMWLITE will accept DOS/4GW, DOS/4GW PRO, DOS/4G PRO,
+and uncompressed PMODE/W programs and compress them for use with the current
+version of PMODE/W. If you are compressing a program with a different version
+of PMODE/W in it, the current version will be put in. When the compressed
+protected mode program is run, PMODE/W will decompress it as it is loading in
+into memory. The syntax for PMWLITE is as follows:
+
+  PMWLITE [options] <filename>
+
+where [options] are various options, and <filename> is the path name of the
+program you wish to compress.
+
+NOTE: PMODE/W v1.20 or later is required for your compressed program to run.
+      Any older version of PMODE/W will simply exit with the message "Error
+      Loading LE!".
+
+3.1 - Switches:
+---------------
+
+) /Cx          - Compression level to use, where x is 4 for Max, 3 for Extra,
+                 2 for Normal, 1 for Faster, and 0 for Fastest compression.
+) /D<filename> - Use <filename> for destination of compressed executable
+                 instead of default (which is the input filename).
+) /S<filename> - Specify a stub to use instead of searching for "PMODEW.EXE".
+                 If you do not specify this switch, the current directory will
+                 be checked for "PMODEW.EXE", then the Watcom "\BINB"
+                 directory, then the "\BIN" directory, the "\BINW" directory,
+                 and finally the Watcom main directory itself.
+
+------------------------------------------------------------------------------
+---------------------------------- PMWVER ------------------------------------
+------------------------------------------------------------------------------
+
+4.0 - Description:
+------------------
+
+  PMWVER is a very simple utility to print out the version of PMODE/W which
+a program is using. It does not have any fancy options or switches. It just
+runs and prints the version on the screen. The syntax is as follows:
+
+  PMWVER <filename>
+
+where <filename> is the path name of the PMODE/W program you wish to check. It
+can also be run on PMODEW.EXE itself.
+
+------------------------------------------------------------------------------
+----------------------- End of Utilities Documentation -----------------------
+------------------------------------------------------------------------------
+

@@ -1,11 +1,11 @@
 #include <math.h>
 #include <stdio.h>
-//#include <mem.h>
+#include <mem.h>
 
 #define GLOBALS
 #include "div.h"
 
-// This is the picture of the screen, compressed with RLE (like on PCX's)
+// Este es el dibujo de la pantalla, comprimido con RLE (como en los PCX)
 
 char _hboy[]={
 0,197,2,197,31,30,29,207,28,30,31,195,0,31,30,206,28,194,25,24,28,194,25,24,28,194,25,24,255,28,255,28,
@@ -394,7 +394,7 @@ char _hboy[]={
 194,31,30,29,28,27,26,194,25,24,22,255,21,255,21,255,21,255,21,234,21,22,24,194,25,26,27,28,29,30,195,31,
 2};
 
-// And this is the palette of the picture of the screen (rgb)
+// Esta es la paleta del dibujo de la pantalla (rgb)
 
 char hboy_palette[]={
 0,0,0,16,16,20,32,32,40,48,48,60,64,64,84,80,80,
@@ -433,7 +433,7 @@ void process_palette()
 }
 
 void set_video_mode(){
-  // Leaves unchanged the 320x200 mode, which is the default mode.
+  // Deja el modo 320x200, que es el modo por defecto.
 }
 
 void buffer_to_video1() {

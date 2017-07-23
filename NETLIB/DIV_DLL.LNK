@@ -1,0 +1,10 @@
+
+# Add this to Watcom WLSYSTEM.LNK file
+
+system begin div_dll
+    option osname='DIV DLL'
+    libpath %WATCOM%\lib386
+    libpath %WATCOM%\lib386\dos
+    format windows nt dll ^
+end
+

@@ -4,13 +4,13 @@
 #define GLOBALS
 #include "div.h"
 
-void ss_init(void) { // Function to start the screen saver.
+void ss_init(void) { // Funci¢n de inicializaci¢n del salvapantallas.
 
-  ss_time=1500; // Calls the screen saver after 15 seconds of inactivity.
+  ss_time=1500; // Llamar al salvapantallas tras 15 segundos de inactividad.
 
 }
 
-void ss_frame(void) { // Puts "wide" points of black, randomly
+void ss_frame(void) { // Pone "wide" puntos en negro, aleatoriamente
   int x,y,n=0;
 
   for (n=0;n<wide;n++) {

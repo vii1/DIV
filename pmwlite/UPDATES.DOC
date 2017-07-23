@@ -1,0 +1,340 @@
+------------------------------------------------------------------------------
+---------------------------- Updates to PMODE/W ------------------------------
+------------------------------------------------------------------------------
+
+PMODE/W v1.33:
+--------------
+
+) Fixed a bug in PMWLITE which caused an error during compression of
+  executables containing zero byte BSS objects.
+
+) INT 31h/AX=204h no longer destroys AL.
+
+) The correct exception number is now displayed in the status dump.
+
+PMODE/W v1.32:
+--------------
+
+) Fixed a bug in the internal error handler which caused PMODE/W to crash
+  Windows in the event of a fatal DPMI error.
+
+) Windows NT Workstation fails to free DPMI callbacks on termination of a
+  client program. This would cause PMODE/W to fail during initialization
+  after 8 executions at the command prompt. PMODE/W will now manually free
+  all callbacks in order to compensate for this bug.
+
+) Corrected memory problems under raw on systems with 64MB of RAM or more.
+
+PMODE/W v1.31:
+--------------
+
+) Fixed registers which weren't being saved properly in the exception
+  handler stack frame.
+
+) Compensated for a bug in Windows which caused INT 21h/AH=51h to return
+  a protected mode selector rather than a real mode segment. It appears
+  that the Windows DPMI extends this function when it is called from
+  a protected mode program. I suppose that Windows uses this for its own
+  API and 32bit programs, however it should not be permitted to interfere
+  with the operation of DOS protected mode programs.
+
+) Extended INT 21h/AH=62h (see PMODEW.DOC)
+
+) Hooking an exception interrupt with INT 31h/AX=205h will no longer cause
+  an error. However, doing so is pointless since the handler will never be
+  called. (PMODE/W v1.30+ requires that exceptions be hooked via DPMI
+  function INT 31h/AX=203h)
+
+PMODE/W v1.30:
+--------------
+
+) Added exception handling and DPMI functions 0202h and 0203h.
+
+) Fixed a problem with BSS data on the last page of the executable that was
+  not being cleared properly (thanks to Niklas Beisert for this one).
+
+) Changed the behavior of IRQ passup to be more compatible with remapped PICs.
+
+) Compensated for a bug in the old Borland DPMI host which was causing PMODE/W
+  to lock up under raw/XMS. Apparently applications making use of the Borland
+  DPMI runtime system were leaving the FS and GS segment registers in an
+  unusable state.
+
+) Added some new example programs.
+
+PMODE/W v1.24:
+--------------
+
+) PMWSETUP now supports command line configuration options. See UTILS.DOC
+  for important usage information.
+
+) Apparently ECX was being cleared during calls to INT 33h/AX=000Ch when ES
+  and EDX were equal to zero. It is now up to the program to set ECX to its
+  proper value upon entry to this function.
+
+) Added DPMI function 0002h. (See PMODEW.DOC for more information)
+
+) Fixed problem with only a single page frame of memory being available under
+  a VCPI server. This was causing random crashes under EMM386 with the NOEMS
+  switch.
+
+) Byte offset fixups are now supported.
+
+) The BIOS data area can now be accessed via selector 40h under Raw/XMS/VCPI.
+  Under DPMI, it is up to the host to provide this selector. This should fix
+  problems with some buggy DOS/4GW programs.
+
+) DPMI function 0101h should no longer crash if an invalid selector is
+  passed in DX.
+
+PMODE/W v1.23:
+--------------
+
+) Fixed a bug in PMWLITE compressor which sometimes caused compression to fail
+  in a few very rare cases.
+
+) DPMI function 400h will no longer destroy the FS register.
+
+) The CPU detection routine now uses the CPUID instruction in order to properly
+  identify newer 486 and 586 class processors.
+
+) DOS extender info function added (See INT 31h/AX=EEFFh in PMODEW.DOC).
+
+) Added an optional startup banner (It can be disabled in PMWSETUP).
+
+) Mouse initialization now uses a software reset instead of the slower
+  hardware reset.
+
+PMODE/W v1.22:
+--------------
+
+) UPDATES.DOC is now in reverse order.
+
+) All memory blocks allocated during object loading are now 4096 byte aligned.
+
+) PMWBIND and PMWLITE now include WATCOM's "BINW" directory in their search
+  for PMODEW.EXE.
+
+) Fixed a minor inconsistancy in the DOS extender detection function.
+
+) Added DPMI compliant pass-up functionality for the BIOS timer tick interrupt
+  1Ch, and the DOS break interrupt 23h and critical error interrupt 24h.
+
+) INT 1Bh is now hooked by PMODE/W and passed up to protected mode for
+  compatibility with the WATCOM signal function.
+
+) Returned to simply setting the high bits of ESP to zero in case of a 16bit
+  stack in a DPMI real mode callback, seeing as how the previous more complex
+  solution had no effect on the problem.
+
+) PMWLITE will now allow compression of EXEs that have objects which are
+  2 bytes or smaller.
+
+) PMWSETUP now limits the maximum number of real mode callbacks to 80h in
+  order to provide for internal use of callbacks by PMODE/W.
+
+PMODE/W v1.21:
+--------------
+
+) Fixed a minor internal problem that might crash PMODE/W if the mouse
+  real mode callback failed to allocate properly.
+
+) INT 31h function 0Ch will now make sure that the user mouse handler is always
+  called using a 32bit stack, even under a DPMI which provides only a 16bit
+  stack like OS/2 Warp.
+
+) Fixed INT 31h functions 300h, 301h, 302h behavior of using the real mode
+  stack to store some system variables during mode switching in order to
+  account for user supplied stacks with parameters already on them.
+
+) Corrected for a problem which seems to be caused by the new HIMEM.SYS which
+  is included with Windows 95. When using the combination of HIMEM, EMM386,
+  and NDOS/4DOS, a lockup would occur while PMODE/W was attempting to get the
+  status of the XMS driver. We tracked this down and it appears to be
+  associated with A20 handler #2 of HIMEM.SYS v3.95. When this A20 handler is
+  used, the lockup appears. We found that while PMODE/W locked up, other
+  programs were working. It was soon discovered that the only difference
+  between these other programs and PMODE/W was that there were DOS calls
+  in between the calls to the XMS driver. For those technical people out
+  there, we see it like this: Unless ANY DOS call is executed after
+  INT 2Fh/AX=4300h and before INT 2Fh/AX=4310h, it locks up during the call
+  to the XMS API entry point. We have done a lot of testing and we do not
+  understand the reasoning behind this. So, we simply stuck a call to
+  INT 21h/AH=30h in there and it works just like all the rest of the programs
+  we tested. If Microsoft would like to comment (fat chance), we would be
+  glad to hear (ignore) their explanation (excuse).
+
+PMODE/W v1.20:
+--------------
+
+) Added compression of protected mode executables.
+
+) INT 33h function 0Ch will now compensate for OS/2 Warp's obscene habit of
+  passing the real mode mouse callback a 16bit stack selector. This behavior
+  was sometimes causing slowdowns and lockups with user mouse handlers in
+  OS/2 DOS boxes.
+
+) Fixed a problem where the exit code was being destroyed during cleanup.
+
+) Under VCPI/XMS/raw, INT 31h functions 0702h and 0703h will now always return
+  with the carry flag clear. Since PMODE/W will never page out memory, these
+  functions are unnecessary. Under DPMI however, the DPMI host will handle
+  this function. These two functions can now be checked for error while still
+  returning successfully even when a DPMI host is not present.
+
+) Fixed minor internal problem with an error not being returned correctly at
+  startup if the A20 gate could not be enabled.
+
+) Changed DPMI function 0400h to return DPMI host version number of 0.9
+  instead of 1.0.
+
+) Documentation for PMWSETUP, PMWBIND, and PMWLITE can now be found in
+  the file UTILS.DOC
+
+PMODE/W v1.16:
+--------------
+
+) Fixed system crash on exit under a DPMI host like Windows or OS/2.
+
+) INT 33h function 000Ch will work correctly when called with 0000:00000000
+  for the function address.
+
+) Fixed DPMI INT 31h functions 0900h, 0901h, and 0902h.
+
+PMODE/W v1.15:
+--------------
+
+) Fixed a bug with fixup buffer allocation at startup. In rare conditions,
+  when not enough low memory was left to relocate the protected mode program
+  after it was loaded into low memory, PMODE/W would exit with an out of
+  memory error message.
+
+) A 386 instruction had slipped into our code before our 386 detection. This
+  caused PMODE/W to lock up under 80286 processors and below instead of
+  exiting with the appropriate error message. Needless to say it has been
+  fixed.
+
+) Fixed IRQ handling to be compatible with possible hardware remapping of IRQ
+  vectors.
+
+) PMODE/W now backs up and restores the entire real mode interrupt vector
+  table and the PIC masks upon exit instead of just the IRQ vectors.
+
+) We have changed our licensing policy and added a student discount.
+
+) Addition of ASM example files.
+
+) New custom bind utility! PLEASE READ the "Utilities" section of PMODEW.DOC
+  before using it.
+
+PMODE/W v1.14:
+--------------
+
+) Fixed a bug where INT 21h function 4Fh did not copy the DTA buffer properly.
+
+) Changed initial system memory allocation behavior. Under VCPI memory
+  managers, both VCPI and XMS memory will be allocated. This compensates for
+  memory managers that do not allow VCPI access to their XMS memory pool.
+  Specifically, this fixes a problem with not getting any extended memory
+  under EMM386 with EMS turned off.
+
+) INT 31h function 0100h was incorrectly documented in stating the DX register
+  was the number of paragraphs to allocate from DOS, the correct register was
+  BX. Other minor document errors were also fixed.
+
+) Fixed DPMI function 0503h again, and this time it really works.
+
+) Fixed DPMI function 0500h sometimes returning the wrong size.
+
+) The temporary real mode DTA will now be set in the protected mode INT 21h
+  function 1Ah, not just at extender initialization.
+
+PMODE/W v1.13:
+--------------
+
+) Fixed problems with DOS INT 21h read/write functions for disk full and end
+  of file conditions.
+
+) Segments will now be aligned on 256 byte boundaries instead of dword or
+  paragraph boundaries.
+
+) Fixed INT 31h function 0503h always failing.
+
+PMODE/W v1.12:
+--------------
+
+) Fixed a very obscure bug associated with 32bit near call/jmp fixups.
+
+PMODE/W v1.11:
+--------------
+
+) Added support for DPMI functions 0800h and 0801h.
+
+PMODE/W v1.10:
+--------------
+
+) Changed the way 16bit objects are handled during loading/relocation.
+
+) Added support for 16/32 bit self-relative fixups.
+
+) INT 21h services 1Bh, 1Ch, 1Fh, 32h, and 34h are now extended.
+
+) MS Mouse INT 33h functions 0009h, 000Ch, 0016h, and 0017h are now extended.
+  Please see PMODEW.DOC for more information on mouse-related functions.
+
+) Under VCPI/XMS/raw, INT 31h functions 0600h and 0601h will now always return
+  with the carry flag clear. Since PMODE/W will never page out memory, locking
+  is unnecessary. Under DPMI however, the DPMI host will handle this function.
+  These two functions can now be checked for error while still returning
+  successfully even when a DPMI host is not present.
+
+) Changed method of resizing the program DOS memory block at startup to be
+  compatible with OS/2 Warp. This fixes a problem with not being able to
+  spawn other programs.
+
+) Fixed a very peculiar memory allocation bug. If you tried to allocate a
+  memory block of about 2 gigs, the system would be corrupted and lock up.
+
+) Fixed a minor inconsistency in the way memory was allocated for objects.
+
+PMODE/W v1.02:
+--------------
+
+) Maintenance release (documentation changes, added FAQ).
+
+) Changed the method of restoring real mode IRQ vectors upon program
+  termination.
+
+PMODE/W v1.01:
+--------------
+
+) Now even smaller in size (less than 8k).
+
+) The DOS critical error handler is now included in the clean up process.
+
+) 32bit far pointer fixups are now supported (though we doubt they are used).
+
+) PMWSETUP updated to reflect the fact that the number of real mode callbacks
+  allocated cannot exceed 0FFh.
+
+) PMODEW.EXE will no longer crash the system if run by itself (though you
+  should not be doing that anyway because its pointless).
+
+) After that, we found a small bug in our INT 31h DOS memory block functions.
+  Needless to say, it is fixed now.
+
+) INT 21h function 49h zeroes the ES selector when that block is successfully
+  freed.
+
+) INT 21h function 48h now returns error codes correctly.
+
+) After all this, we were bored, so we hunted down and compensated for a
+  DOS/4GW and EMM386 bug. EMM386 trashed the high bits of ESP which DOS/4GW
+  was assuming to be cleared. This only means that now you can run DOS/4GW
+  successfully after a PMODE/W program.
+
+PMODE/W v1.0:
+-------------
+
+) First release of PMODE/W.
+

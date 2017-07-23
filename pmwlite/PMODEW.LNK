@@ -1,0 +1,7 @@
+system begin pmodew
+    option osname='PMODE/W'
+    libpath %WATCOM%\lib386
+    libpath %WATCOM%\lib386\dos
+    op stub=pmodew.exe
+    format os2 le
+end

@@ -3,12 +3,12 @@
 #define GLOBALS
 #include "div.h"
 
-// The possible breaking points can be seen on DIV.H (search for Entry-Points)
+// Los posibles puntos de ruptura se ven en DIV.H (Buscar Entry-Points)
 
 void post_process_buffer(void) {
 
-  // Example of a breaking point. DIV calls this function to operate over the
-  // video buffer, before each dump.
+  // Ejemplo de un punto de ruptura, DIV llamar  a esta funci¢n para que
+  // pueda operar sobre el buffer de v¡deo antes de cada volcado.
 
 }
 

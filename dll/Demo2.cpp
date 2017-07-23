@@ -4,11 +4,11 @@
 #define GLOBALS
 #include "div.h"
 
-// Important: For each function you must indicate the retval(int), and always
-// make a getparm() for each parameter of the call (the retval(), is always
-// needed, even if the function doesn't need to return a value).
+// Importante: Para cada funci¢n se debe indicar el retval(int), y hacer
+// siempre un getparm() por cada par metro de llamada (el retval() es
+// imprescindible incluso si la funci¢n no necesita devolver un valor).
 
-void addsqrt() { // Silly function, that returns the squared root of an addition
+void addsqrt() { // Funci¢n tonta, que devuelve la raiz cuadrada de una suma
   int a=getparm();
   int b=getparm();
   int c=sqrt(a+b);
@@ -18,9 +18,9 @@ void addsqrt() { // Silly function, that returns the squared root of an addition
 
 void __export divlibrary(LIBRARY_PARAMS) {
 
-  COM_export("ADDSQRT",addsqrt,2); // The name of the function within the language
-                                   // is indicated, as well as it's pointer and the
-                                   // number of parameters it has.
+  COM_export("ADDSQRT",addsqrt,2); // Se indica el nombre que tendr  la funci¢n
+                                   // en el lenguaje, el puntero a la misma y
+                                   // el n£mero de par metros que tiene.
 }
 
 void __export divmain(COMMON_PARAMS) {

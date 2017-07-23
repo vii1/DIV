@@ -1,0 +1,3 @@
+system dos
+name wstub.exe
+file wstub.obj,cpuid.obj

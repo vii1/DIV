@@ -1,0 +1,23 @@
+-- Fichero con información del path ----------------------------
+c:\pathinfo.dat
+-- Ejecutable de instalación -----------------------------------
+data\system\install.pif
+-- Título de la ventana win ------------------------------------
+Instalación finalizada.
+-- Texto de la ventana win -------------------------------------
+DIV Games Studio 2 se instaló correctamente en su sistema. Puede ejecutar el programa desde el grupo de programas Hammer Technologies, a partir del menú de inicio.
+-- Grupo de programas ------------------------------------------
+\Hammer Technologies
+-- Enlaces -----------------------------------------------------
+Div Games Studio 2.pif
+system\div2.pif
+Modo a prueba de fallos.pif
+system\div2safe.pif
+Leeme.doc
+system\readme.doc
+Configuración del sonido.pif
+system\soundcfg.pif
+-- Enlaces en el escritorio ------------------------------------
+Div Games Studio 2.pif
+system\div2.pif
+----------------------------------------------------------------

@@ -1,10 +1,10 @@
 
 #include <math.h>
 #include <stdio.h>
-//#include mem.h>
+#include <mem.h>
 
 #define GLOBALS
-#include "c:\div\dll\source\div.h"
+#include "div.h"
 
 #define ALTURA 20
 
@@ -15,7 +15,7 @@ void post_process_buffer(void) {
   static int dec=-1;
   static int valor=0;
   int    x,inc;
-//  FILE   *f;
+  FILE   *f;
 
   if(valor==0) {
     valor=1;
@@ -27,20 +27,20 @@ void post_process_buffer(void) {
   inc=(height-ALTURA-1)*100;
 
   for(x=0;x<ALTURA;x++) {
-//    memcpy(agua+x*wide,buffer+(inc/100)*wide,wide);
+    memcpy(agua+x*wide,buffer+(inc/100)*wide,wide);
     inc-=desp/10;
     desp+=dec;
     if(desp<2500) dec=1;
     if(desp>3500) dec=-1;
   }
 
-//  memset(agua,0,wide);
-//  memcpy(buffer+(height-ALTURA)*wide,agua,wide*ALTURA);
+  memset(agua,0,wide);
+  memcpy(buffer+(height-ALTURA)*wide,agua,wide*ALTURA);
 }
 
-//void __declspec (divlibrary)
+void __export divlibrary(LIBRARY_PARAMS){}
 
-/*__declspec divmain(COMMON_PARAMS) {
+void __export divmain(COMMON_PARAMS) {
   AutoLoad();
   GLOBAL_IMPORT();
   DIV_export("post_process_buffer",post_process_buffer);
@@ -48,5 +48,5 @@ void post_process_buffer(void) {
 
 void __export divend(COMMON_PARAMS) {
   div_free(agua);
-}*/
+}
 
