@@ -1,5 +1,3 @@
-
-
 //#define SHARE // Para compilar la versi¢n demo (recortada)
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -12,21 +10,17 @@
 #define GLOBAL_DATA extern
 #endif
 
-//#include <i86.h>
+#include <i86.h>
 //#include <bios.h>
-//#include <dos.h>
-//#include <conio.h>
+#include <dos.h>
+#include <conio.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
 #include <ctype.h>
-
-#include "osdep.h"
-
-
-//#include <graph.h>
-//#include <direct.h>
+#include <graph.h>
+#include <direct.h>
 #include <math.h>
 #include <signal.h>
 
@@ -34,14 +28,15 @@
 #include "divmap3d.hpp"
 
   // OJO !!! JUDAS !!!
-//#include "judas\judas.h"
-//#include "judas\timer.h"
+#include "judas\judas.h"
+#include "judas\timer.h"
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 //      Constantes definidas a nivel de aplicaci¢n
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 #define uchar unsigned char
+//#define uchar char
 #define byte unsigned char
 #define ushort unsigned short
 #define word unsigned short

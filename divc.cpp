@@ -1755,10 +1755,10 @@ void lexico(void) {
         } else if (!strcmp(ext,".PCM")) {
           empaquetable=1;
         } else if (!strcmp(ext,".PCX")) {
-          if (fread(cwork,1,66,f)!=NULL) {
+          if (fread(cwork,1,66,f)!=0) {
             if(cwork[2]==1 && cwork[3]==8 && cwork[65]==1) empaquetable=1;
           }
-        } else if (fread(cwork,1,8,f)!=NULL) {
+        } else if (fread(cwork,1,8,f)!=0) {
           if (!strcmp(cwork,"pal\x1a\x0d\x0a")) empaquetable=1;
           if (!strcmp(cwork,"map\x1a\x0d\x0a")) empaquetable=1;
           if (!strcmp(cwork,"fpg\x1a\x0d\x0a")) empaquetable=1;
