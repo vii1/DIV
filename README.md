@@ -1,4 +1,4 @@
-# DIV
+# ![DIV GAMES STUDIO 2.0](https://github.com/vii1/DIV/blob/master/docs/img/divtitle.png)
 Reconstrucción y posible fork de DIV Games Studio 2.0
 
 Repositorio original: https://github.com/DIVGAMES/DIV-Games-Studio
