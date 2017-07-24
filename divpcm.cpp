@@ -30,7 +30,7 @@ void ModifySound            (int option);
 void ChangeSoundFreq        (int freq);
 void RecordSound            (void);
 void PollRecord             (void);
-int  JudasProgressRead      (int handle, void *buffer, int size);
+int  JudasProgressRead      (int handle, short *buffer, int size);
 void CopyNewSound           (pcminfo *mypcminfo, int ini, int fin);
 void PasteNewSounds         (void);
 byte *SaveSoundMem          (pcminfo *mypcminfo);

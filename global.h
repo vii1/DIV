@@ -11,7 +11,7 @@
 #endif
 
 #include <i86.h>
-//#include <bios.h>
+#include <bios.h>
 #include <dos.h>
 #include <conio.h>
 #include <stdlib.h>
