@@ -14,6 +14,8 @@ extern "C" {
 }
 #endif
 
+#include <setjmp.h>
+
 // ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 //      Constantes
 // ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -965,12 +967,20 @@ return(1);
 //      Formato JPG
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
+jmp_buf jmp_error_ptr;
+
+void my_jpeg_error_handler(j_common_ptr cinfo)
+{
+  longjmp( jmp_error_ptr, 1 );
+}
+
 int es_JPG(byte *buffer, int img_filesize)
 {
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr         my_err_mgr;
 
   cinfo.err = jpeg_std_error(&my_err_mgr);
+  my_err_mgr.error_exit = my_jpeg_error_handler;
 
   if (setjmp(jmp_error_ptr))
   {
@@ -999,7 +1009,8 @@ int descomprime_JPG(byte *buffer, byte *mapa, int vent, int img_filesize)
 
   vent=vent;
   cinfo.err = jpeg_std_error(&my_err_mgr);
-
+  my_err_mgr.error_exit = my_jpeg_error_handler;
+ 
   if (setjmp(jmp_error_ptr))
   {
     jpeg_destroy((j_common_ptr) &cinfo);
@@ -1425,7 +1436,7 @@ int cargadac_BMP(char *name)
 int cargadac_JPG(char *name)
 {
   struct jpeg_decompress_struct cinfo;
-  struct jpeg_error_mgr         my_err_mgr;
+  struct jpeg_error_mgr my_err_mgr;
   int x, y, img_filesize;
   FILE *file;
   byte *buffer=NULL;
