@@ -77,7 +77,7 @@
 #define _A              0x1e
 #define _S              0x1f
 #define _H              0x23
-#define _x              0x2d
+#define _X              0x2d
 #define _C              0x2e
 #define _M              0x32
 
