@@ -9,3 +9,15 @@ Repositorio original: https://github.com/DIVGAMES/DIV-Games-Studio
 * Inicia una consola con el Build Environment de Watcom.
 * Desde el directorio `build-dos` del proyecto, ejecuta `wmake`
 * Observa los errores que salen y ponte a arreglar cosas :)
+
+## Descripción de archivos y carpetas
+* En el directorio raíz está el código fuente del IDE (D.EXE).
+* **INC**: Cabeceras varias de terceras partes
+* **JUDAS**: Librería de sonido
+* **NETLIB**: Rutinas de red (originalmente era una DLL)
+* **VPE**: Librería de Modo-8 (una versión modificada de [Virtual Presence Engine](http://www.ii.uib.no/~alexey/vpe/index.html))
+* **div_stub**: El programa que hacía de "cabecera" para los EXE de DIV2. Lo único que hacía era ejecutar DIV32RUN.DLL, pasándose a sí mismo como parámetro.
+* **dll**: El SDK y los ejemplos
+* **jpeglib**: Librería de [JPEG](http://ijg.org/).
+* **pmwlite**: Extensor de 32 bits para DOS alternativo a DOS/4GW, que se usaba para algunos ejecutables, o todos, no sé
+* **visor**: Código del generador de sprites.
