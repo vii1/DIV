@@ -11,7 +11,21 @@ Repositorio original: https://github.com/DIVGAMES/DIV-Games-Studio
 * Observa los errores que salen y ponte a arreglar cosas :)
 
 ## Descripción de archivos y carpetas
-* En el directorio raíz está el código fuente del IDE (D.EXE).
+* En el directorio raíz está el código fuente del IDE (D.EXE). Archivos destacables:
+  * **div.cpp**: fichero principal del Sistema Operativo DIV™.
+  * **global.h**: cabecera principal
+  * **divc.cpp**: el compilador de lenguaje DIV. Con unas pocas modificaciones se puede convertir en un EXE independiente ;)
+  * **diveffec.cpp**: el generador de explosiones :D
+  * **divpaint.cpp**: ¡el programa de dibujo! :D :D
+  * **divwindo.cpp**: todas las funciones de la GUI
+* **SOURCE**: Código fuente del intérprete (DIV32RUN.DLL). Archivos destacables:
+  * **inter.h**: cabecera principal
+  * **i.cpp**: código principal del intérprete
+  * **kernel.cpp**: se incluye dentro de i.cpp y es el cuerpo de un gigantesco `switch`, con un `case` por cada bytecode, que conforma la máquina virtual de DIV.
+  * **f.cpp**: muchas de las funciones accesibles desde DIV.
+  * **s.cpp**: gráficos, sprites, scroll, modo-7...
+  * **v.cpp**: funciones de vídeo de bajo nivel
+  * **d.cpp**: el debugger de DIV2, incluyendo toda la GUI (!)
 * **INC**: Cabeceras varias de terceras partes
 * **JUDAS**: Librería de sonido
 * **NETLIB**: Rutinas de red (originalmente era una DLL)
