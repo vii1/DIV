@@ -4,15 +4,15 @@
 # -zu option, to tell that SS != DS. It'll crash otherwise.
 
 #CFLAGS1= -oneatx -w3 -zp4 -fpc -3r
-CFLAGS1= -oneatx -w3 -zp4 -fp5 -5r
+CFLAGS1= -oneatx -w3 -zp4 -fp5 -5r -q
 #CFLAGS1= /d2 /wx /zp4 /fp5 /mf /bt=dos /5r
 
 #CFLAGS2= -oneatx -zu -w3 -zp4 -fpc -3r
-CFLAGS2= -oneatx -zu -w3 -zp4 -fp5 -5r
+CFLAGS2= -oneatx -zu -w3 -zp4 -fp5 -5r -q
 #CFLAGS2= /d2 /zu /wx /zp4 /fp5 /mf /bt=dos /5r
 
 judas.lib: judas.obj judassmp.obj judasraw.obj judaswav.obj judastbl.obj judasxm.obj judasmod.obj judass3m.obj judasio.obj judasasm.obj judasdma.obj judasmem.obj
-        wlib @judas.cmd
+        wlib -n @judas.cmd
 
 judas.obj: judas.c
         wcc386 $(CFLAGS1) judas.c
@@ -37,4 +37,4 @@ judass3m.obj: judass3m.c
 judasdma.obj: judasdma.c
         wcc386 $(CFLAGS2) judasdma.c
 judasasm.obj: judasasm.asm
-        a /m /ml judasasm.asm
+        tasm32 /m /ml judasasm.asm
