@@ -1,4 +1,5 @@
 # ![DIV GAMES STUDIO 2.0](https://github.com/vii1/DIV/blob/master/docs/img/divtitle.png)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fvii1%2FDIV.svg?type=shield)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fvii1%2FDIV?ref=badge_shield)
 Reconstrucción y posible fork de DIV Games Studio 2.0
 
 Repositorio original: https://github.com/DIVGAMES/DIV-Games-Studio
@@ -37,3 +38,7 @@ Repositorio original: https://github.com/DIVGAMES/DIV-Games-Studio
 * **jpeglib**: Librería de [JPEG](http://ijg.org/).
 * **pmwlite**: Extensor de 32 bits para DOS alternativo a DOS/4GW, que se usaba para algunos ejecutables, o todos, no sé
 * **visor**: Código del generador de sprites.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fvii1%2FDIV.svg?type=large)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fvii1%2FDIV?ref=badge_large)
