@@ -7,6 +7,11 @@
 int reloj=0;
 extern int safe;
 
+int ChannelCon=0;
+int g_NewSound[32];   // 32 = n§ m ximo de canales (definido en judascfg.h)
+int* NewSound = g_NewSound;
+int ticks=0;
+
 int SoundActive=0;
 //int SoundActive=1;
 
