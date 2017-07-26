@@ -967,11 +967,70 @@ return(1);
 //      Formato JPG
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
+typedef struct {
+  struct jpeg_source_mgr pub; /* public fields */
+
+  byte* buffer;
+  size_t size;
+} my_source_mgr;
+
+typedef my_source_mgr * my_src_ptr;
+
 jmp_buf jmp_error_ptr;
 
 void my_jpeg_error_handler(j_common_ptr cinfo)
 {
   longjmp( jmp_error_ptr, 1 );
+}
+
+METHODDEF(void)
+jpeg_array_init_source (j_decompress_ptr cinfo)
+{
+  // No hace falta hacer nada
+}
+
+METHODDEF(boolean)
+jpeg_array_fill_input_buffer (j_decompress_ptr cinfo)
+{
+  my_src_ptr src = (my_src_ptr) cinfo->src;
+
+  src->pub.next_input_byte = src->buffer;
+  src->pub.bytes_in_buffer = src->size;
+
+  return TRUE;
+}
+
+METHODDEF(void)
+jpeg_array_skip_input_data (j_decompress_ptr cinfo, long num_bytes)
+{
+}
+
+METHODDEF(void)
+jpeg_array_term_source (j_decompress_ptr cinfo)
+{
+  /* no work necessary here */
+}
+
+void jpeg_array_src(j_decompress_ptr cinfo, byte* buffer, int img_filesize)
+{
+  my_src_ptr src;
+
+  if (cinfo->src == NULL) { /* first time for this JPEG object? */
+    cinfo->src = (struct jpeg_source_mgr *)
+      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
+          SIZEOF(my_source_mgr));
+  }
+
+  src = (my_src_ptr) cinfo->src;
+  src->pub.init_source = jpeg_array_init_source;
+  src->pub.fill_input_buffer = jpeg_array_fill_input_buffer;
+  src->pub.skip_input_data = jpeg_array_skip_input_data;
+  src->pub.resync_to_restart = jpeg_resync_to_restart; /* use default method */
+  src->pub.term_source = jpeg_array_term_source;
+  src->pub.bytes_in_buffer = 0; /* forces fill_input_buffer on first read */
+  src->pub.next_input_byte = NULL; /* until buffer loaded */
+  src->buffer = buffer;
+  src->size = (size_t)img_filesize;
 }
 
 int es_JPG(byte *buffer, int img_filesize)

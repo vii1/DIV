@@ -911,6 +911,9 @@ FILE * lins; // EXEC.INS
 FILE * def; // Para el analizador de "ltlex.def"
 byte *_buf;
 
+void comp() {}
+void comp_exit() {}
+
 void inicializa_compilador(void) {
   int n;
   for (n=0;n<256;n++) if (lower[n]==' ') lower[n]=0;
