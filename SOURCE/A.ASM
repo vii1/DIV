@@ -24,7 +24,8 @@ memcpyb_:       PUSH    ECX
                 MOV     ECX,EBX
                 MOV     ESI,EDX
                 MOV     EDI,EAX
-                REPNE   MOVSB
+                ;REPNE   MOVSB
+                REP MOVSB
 
 ; }
 ;
@@ -33,7 +34,7 @@ memcpyb_:       PUSH    ECX
                 POP     ECX
                 RET
 
-call_:          JMP NEAR EAX
+call_:          JMP NEAR PTR EAX
 
 get_t_:         pusha
                 push cs
