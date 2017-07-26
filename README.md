@@ -3,6 +3,12 @@ Reconstrucción y posible fork de DIV Games Studio 2.0
 
 Repositorio original: https://github.com/DIVGAMES/DIV-Games-Studio
 
+[¿Qué es esto?](#qué-es-esto)  
+[¿Qué es DIV Games Studio?](#qué-es-div-games-studio)  
+[Cómo compilar](#cómo-compilar)  
+[Problemas conocidos](#problemas-conocidos)  
+[Descripción de archivos y carpetas](#descripción-de-archivos-y-carpetas)
+
 ## ¿Qué es esto?
 Este proyecto pretende recuperar el código fuente del DIV Games Studio 2.0 original para MS-DOS, y quizá aplicarle algún parche y mejora, y limpiarlo y ordenarlo un poco para que sea más fácil su estudio y aprender de él. Y luego… ya veremos ¯\\_(ツ)_/¯
 
@@ -25,7 +31,7 @@ En 2015, MikeDX, antiguo miembro de FastTrak, anunció que había retomado el c�
 * Copia `dos4gw.exe` al mismo directorio si no lo tienes ya. Puedes encontrarlo en el directorio `binw` del Watcom.
 * Ejecuta `d.exe` desde un [emulador de DOS](http://www.dosbox.com/) y… voilà :)
 
-## Fallos conocidos
+## Problemas conocidos
 Unos cuantos. Mira en la sección de [issues](https://github.com/vii1/DIV/issues) para verlos.
 
 ## Descripción de archivos y carpetas
