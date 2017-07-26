@@ -10,6 +10,8 @@ Repositorio original: https://github.com/DIVGAMES/DIV-Games-Studio
 * Desde el directorio `build-dos` del proyecto, ejecuta `wmake`
 * Observa los errores que salen y ponte a arreglar cosas :)
 
+**¡Ojo!** Para compilar algunos archivos hace falta Turbo Assembler. Puedes obtenerlo gratis para Win32 si te descargas una [trial de C++Builder](https://www.embarcadero.com/es/products/cbuilder/starter/promotional-download). ¡Requiere registrarse! :(
+
 ## Descripción de archivos y carpetas
 * En el directorio raíz está el código fuente del IDE (D.EXE). Archivos destacables:
   * **div.cpp**: fichero principal del Sistema Operativo DIV™.
