@@ -1,8 +1,8 @@
 
-//#include <dos.h>
+#include <dos.h>
 #include <stdio.h>
 #include <stdlib.h>
-///#include <process.h>
+#include <process.h>
 #include <errno.h>
 #include <string.h>
 //#include <graph.h>
@@ -31,7 +31,7 @@ char full[_MAX_PATH+1];
 void main(int argc,char *argv[]) {
 
   char *av[5];
-  char *div[3];
+  char *div[4];
   char cmdline[128];
   int retval=1;
   unsigned n;
@@ -48,7 +48,7 @@ void main(int argc,char *argv[]) {
 
   p=getenv("PROMPT");
 
-  if (*p=='[' && *(p+1)=='D' && *(p+2)=='I' && *(p+3)=='V' && *(p+4)==']') {
+  if (p && *p=='[' && *(p+1)=='D' && *(p+2)=='I' && *(p+3)=='V' && *(p+4)==']') {
     printf("DIV Games Studio is already loaded, type EXIT to enter.\n");
     exit(0);
   }
@@ -96,12 +96,18 @@ void main(int argc,char *argv[]) {
       flushall();
       _heapmin();
       _heapshrink();
-      if(spawnvp(P_WAIT,div[0],div)==-1) av[2]="ERROR"; else av[2]="NEXT";
+      if(spawnvp(P_WAIT,div[0],div)==-1) {
+        av[2]="ERROR";
+      } else {
+        av[2]="NEXT";
+      }
       set_mode();
       _dos_setdrive(drive, &total);
     } else if(retval==2) {
       av[2]="TEST";
-    } else av[2]="NEXT";
+    } else {
+      av[2]="NEXT";
+    }
   }
 
   if (retval==243) printf("\n[DIV] Critical error: Not enough memory!");

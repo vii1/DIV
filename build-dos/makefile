@@ -65,18 +65,21 @@ JUDAS_LIB = ..\judas\judas.lib
 JPEG_LIB = ..\jpeglib\libjpeg.lib
 LIBS = $(JUDAS_LIB) $(JPEG_LIB) ..\source\zlib.lib ..\source\svga.lib ..\source\pmode.lib
 
+STUB = ..\wstub\$(CONFIG)\wstub.exe
+
 .BEFORE
 	@if not exist $(OUTDIR) mkdir $(OUTDIR)
 	@if not exist $(OUTDIR)\visor mkdir $(OUTDIR)\visor
 #	@if not exist $(OUTDIR)\vpe mkdir $(OUTDIR)\vpe
 	
-$(OUTDIR)\$(EXE): $(OBJS) $(LIBS)
+$(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(STUB)
 	*wlink &
 		system dos4g &
 		name $^@ &
 !ifeq CONFIG debug
 		debug all &
 !endif
+		option stub=$(STUB) &
 		option map=$^* &
 		path $(OUTDIR) &
 		file { $(OBJS) } &
@@ -130,6 +133,9 @@ $(JUDAS_LIB):
 
 $(JPEG_LIB):
 	! pushd $^: && wmake -f makefile.wat $^. && popd
+
+$(STUB):
+	! pushd ..\wstub && wmake CONFIG=$(CONFIG) && popd
 
 clean: .SYMBOLIC
 	-del $(OUTDIR)\*.err
