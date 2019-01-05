@@ -10,10 +10,10 @@ Repositorio original: https://github.com/DIVGAMES/DIV-Games-Studio
 [Descripción de archivos y carpetas](#descripción-de-archivos-y-carpetas)
 
 ## ¿Qué es esto?
-Este proyecto pretende recuperar el código fuente del DIV Games Studio 2.0 original para MS-DOS, y quizá aplicarle algún parche y mejora, y limpiarlo y ordenarlo un poco para que sea más fácil su estudio y aprender de él. Y luego… ya veremos ¯\\_(ツ)_/¯
+Este proyecto pretende recuperar el código fuente del DIV Games Studio 2.0 original para MS-DOS, y quizá aplicarle algún parche y mejora, y limpiarlo y ordenarlo un poco para que sea más fácil su estudio y aprender de él. Y luego… ya veremos ¯\\\_(ツ)\_/¯
 
 ## ¿Qué es DIV Games Studio?
-En 1998, el estudio español Hammer Technologies publicó DIV Games Studio, un programa muy completo para desarrollar videojuegos. Integraba casi todas las herramientas necesarias: editor gráfico, editor de código, compilador, depurador, etc. Disponía de un entorno gráfico muy amigable y su propio lenguaje de programación, el lenguaje DIV. En 1999 salió la versión 2, que incluía muchas mejoras, tanto en las herramientas como en el lenguaje. La empresa británica FastTrak licenció DIV para su distribución en varios países de Europa.
+En 1998, el estudio español Hammer Technologies publicó DIV Games Studio, un programa muy completo para desarrollar videojuegos. Integraba casi todas las herramientas necesarias: editor gráfico, editor de código, compilador, depurador, etc. Disponía de un entorno gráfico muy amigable y su propio lenguaje de programación, el lenguaje DIV. En 1999 salió la versión 2, que incluía muchas mejoras, tanto en las herramientas como en el lenguaje. La empresa británica FastTrak licenció DIV para su distribución en varios países de Europa y Latinoamérica.
 
 Poco después de lanzar DIV 2 al mercado, Hammer Technologies cerró, por lo que el desarrollo de DIV nunca continuó, aunque la comunidad llegó a desarrollar diversas alternativas. El interés por DIV fue decreciendo con la aparición de nuevos sistemas operativos, tecnologías y lenguajes.
 
@@ -24,7 +24,7 @@ En 2015, MikeDX, antiguo miembro de FastTrak, anunció que había retomado el c�
 ## Cómo compilar
 * Clona el repositorio con `git clone https://github.com/vii1/DIV.git`
 * Descarga e instala [OpenWatcom](http://www.openwatcom.org/) (de momento los makefiles son sólo para la versión DOS/Windows, aunque en teoría Watcom permite la compilación cruzada desde otros sistemas operativos. Si lo intentas, házmelo saber).
-* Instala Turbo Assembler. Puedes obtenerlo gratis para Win32 si te descargas una [trial de C++Builder](https://www.embarcadero.com/es/products/cbuilder/starter/promotional-download). Por desgracia, requiere registrarse :( En próximas versiones incluiré los OBJ ya compilados para mayor comodidad.
+* Instala Turbo Assembler. Puedes obtenerlo gratis para Win32 si te descargas una [trial de C++Builder](https://www.embarcadero.com/es/products/cbuilder/starter/promotional-download). Por desgracia, requiere registrarse :( En próximas versiones incluiré los OBJ ya compilados para mayor comodidad. TASM32.EXE debe estar en tu PATH cuando compiles.
 * Inicia una consola con el Build Environment de Watcom.
 * Desde el directorio `build-dos` del proyecto, ejecuta `wmake`
 * Copia el fichero `d.exe` generado al directorio raíz del proyecto (¡o a una instalación de DIV 2 ya existente!).
@@ -54,7 +54,7 @@ Unos cuantos. Mira en la sección de [issues](https://github.com/vii1/DIV/issues
 * **JUDAS**: Librería de sonido
 * **NETLIB**: Rutinas de red (originalmente era una DLL)
 * **VPE**: Librería de Modo-8 (una versión modificada de [Virtual Presence Engine](http://www.ii.uib.no/~alexey/vpe/index.html))
-* **div_stub**: El programa que hacía de "cabecera" para los EXE de DIV2. Lo único que hacía era ejecutar DIV32RUN.DLL, pasándose a sí mismo como parámetro.
+* **div_stub**: El programa que hacía de "cabecera" para los EXE de DIV2. A éste se le concatenaba el bytecode del programa compilado y algunos datos para el intérprete. Lo único que hacía el EXE en sí era ejecutar DIV32RUN.DLL, pasándose a sí mismo como parámetro.
 * **dll**: El SDK y los ejemplos
 * **jpeglib**: Librería de [JPEG](http://ijg.org/).
 * **pmwlite**: Extensor de 32 bits para DOS alternativo a DOS/4GW, que se usaba para algunos ejecutables, o todos, no sé
