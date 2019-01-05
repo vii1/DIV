@@ -2,11 +2,11 @@ CPU = 586
 CONFIG = release
 OUTDIR = $(CONFIG)$(CPU)
 
-USE_NASM = 0
+ASM = TASM
 TASM = tasm32
 NASM = "C:\Program Files (x86)\NASM\nasm.exe"
+WASM = wasm
 CC = wcc386
-AS = wasm
 
 OPTIONS = -wx -mf -zp4 -bt=dos -i=judas -i=netlib -i=vbe
 TASM_OPTIONS = /w2 /z /ml
@@ -25,9 +25,11 @@ NASM_OPTIONS += -Ox
 !ifeq CPU 586
 OPTIONS += -5r -fp5
 EXE = d.exe
+WASM_OPTIONS += -5r -fp5
 !else
 OPTIONS += -3r -fpc
 EXE = d.386
+WASM_OPTIONS += -3r -fpc
 !endif
 
 SOURCES = cdrom.cpp det_vesa.cpp div.cpp divasm.cpp divbasic.cpp divbin.cpp divbrow.cpp divc.cpp &
@@ -36,10 +38,10 @@ SOURCES = cdrom.cpp det_vesa.cpp div.cpp divasm.cpp divbasic.cpp divbin.cpp divb
 	divmap3d.cpp divmix.cpp divmixer.cpp divmouse.cpp divpaint.cpp divpalet.cpp divpcm.cpp divsb.cpp &
 	divsetup.cpp divsound.cpp divspr.cpp divsprit.cpp divtimer.cpp divvideo.cpp divwindo.cpp fpgfile.cpp &
 	grabador.cpp ifs.cpp divdll1.c divdll2.c a.asm
-!ifeq USE_NASM 0
-SOURCES += vesa.asm timer.asm
-!else
+!ifeq ASM NASM
 SOURCES += vesa_n.asm timer_n.asm
+!else
+SOURCES += vesa.asm timer.asm
 !endif
 
 #	divfrm.cpp mem.cpp
@@ -75,6 +77,7 @@ $(OUTDIR)\$(EXE): $(OBJS) $(LIBS)
 !ifeq CONFIG debug
 		debug all &
 !endif
+		option map=$^* &
 		path $(OUTDIR) &
 		file { $(OBJS) } &
 		libfile { $(LIBS) }
@@ -95,24 +98,32 @@ $(OUTDIR)\$(EXE): $(OBJS) $(LIBS)
 
 #.asm.obj:
 	#wasm -zcm=masm -fo=$(OUTDIR)\$^ -fr=$(OUTDIR)\$^* $<
-!ifeq USE_NASM 0
-vesa.obj: vesa.asm
-	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^@
-!else
+!ifeqi ASM NASM
 vesa_n.obj: vesa_n.asm
 	$(NASM) $(NASM_OPTIONS) -Z$(OUTDIR)\$^*.err -o $(OUTDIR)\$^@ $<
+!else
+vesa.obj: vesa.asm
+!ifeqi ASM WASM
+	*$(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^@ -fr=$(OUTDIR)\$^* $<
+!else
+	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^@
+!endif
 !endif
 
-!ifeq USE_NASM 0
-timer.obj: timer.asm
-	$(TASM) $(TASM_OPTIONS) /m $<,$(OUTDIR)\$^@
-!else
+!ifeqi ASM NASM
 timer_n.obj: timer_n.asm
 	$(NASM) $(NASM_OPTIONS) -Z$(OUTDIR)\$^*.err -o $(OUTDIR)\$^@ $<
+!else
+timer.obj: timer.asm
+!ifeqi ASM WASM
+	*$(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^@ -fr=$(OUTDIR)\$^* $<
+!else
+	$(TASM) $(TASM_OPTIONS) /m $<,$(OUTDIR)\$^@
+!endif
 !endif
 
 a.obj: a.asm
-	*$(AS) -fo=$(OUTDIR)\$^@ -fr=$(OUTDIR)\$^* $<
+	*$(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^@ -fr=$(OUTDIR)\$^* $<
 
 $(JUDAS_LIB):
 	! pushd $^: && wmake $^. && popd
@@ -121,8 +132,11 @@ $(JPEG_LIB):
 	! pushd $^: && wmake -f makefile.wat $^. && popd
 
 clean: .SYMBOLIC
-	-del $(OUTDIR)\*.err $(OUTDIR)\*.obj $(OUTDIR)\*.exe
+	-del $(OUTDIR)\*.err
+	-del $(OUTDIR)\*.obj
+	-del $(OUTDIR)\*.exe
 #	-del $(OUTDIR)\vpe\*.err $(OUTDIR)\vpe\*.obj	
 !ifeq CPU 586
-	-del $(OUTDIR)\visor\*.err $(OUTDIR)\visor\*.obj
+	-del $(OUTDIR)\visor\*.err
+	-del $(OUTDIR)\visor\*.obj
 !endif

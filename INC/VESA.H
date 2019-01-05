@@ -1,12 +1,12 @@
 /*
 мммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммм
 
-                          пў MaLiCe VeSa LiBrARy ўп
+                          пў  MaLiCe VeSa LiBrARy  ўп
                           
                                 њInclude fileњ
                             by MaLiCe / WitchCraft
 
-                                 August 1998 
+                                њ August 1998 њ
 
 мммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммммм
 */
@@ -16,7 +16,8 @@
 #ifndef __VESA_H
 #define __VESA_H
 
-
+#define _Packed
+#pragma pack(1)
 
 // њ ФФЭЭД ўDATAў УЭЭЭЭФФФФФФФ њ   њ
 

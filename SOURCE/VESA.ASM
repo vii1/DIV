@@ -1,16 +1,13 @@
-COMMENT~
-‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
-
-                          ﬂ˛ MaLiCe VeSa LiBrARy ˛ﬂ
-
-
-                            by MaLiCe / WitchCraft
-
-                                 August 1998 
-
-‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
-~
-
+;‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
+;
+;                          ﬂ˛  MaLiCe VeSa LiBrARy  ˛ﬂ
+;
+;
+;                            by MaLiCe / WitchCraft
+;
+;                                ˙ August 1998 ˙
+;
+;‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
 
 
 		.386
@@ -44,6 +41,8 @@ COMMENT~
         OemData         db 256 dup (?)  ; Data Area for OEM Strings
                             
         VBEINFOBLOCK    ENDS
+
+        VBEINFOBLOCK_SIZE = 200h
                             
         ALIGN 4                   
         _VbeInfoBlock VBEINFOBLOCK <>   ;VBEINFOBLOCK struct
@@ -101,7 +100,9 @@ COMMENT~
         __Reserved              db 206 dup (?)
          
         MODEINFOBLOCK   ENDS
-                                           
+              
+        MODEINFOBLOCK_SIZE = 100h
+                                     
         ALIGN 4 
         _ModeInfoBlock MODEINFOBLOCK <?> ;MODEINFOBLOCK struct
         ModeTmpBlock    dd ?            ;Pointer to temporary block
@@ -113,7 +114,7 @@ COMMENT~
         
         xres            dw ?            ; screen width in pixels
         yres            dw ?		; screen heigth in pixels
-        size		dd ?		; screen size in bytes
+        ssize		dd ?		; screen size in bytes
         adr             dd ?            ; address (of LFB, if not virtual)
         handle		dd ?		; mem handle (only for virtuals)
         
@@ -181,7 +182,7 @@ COMMENT~
                                          
                 xor eax,eax              
                 mov ax,100h		; request low mem for the VbeTmpBlock
-                mov bx,size _VbeInfoBlock
+                mov bx,VBEINFOBLOCK_SIZE
                 shr bx,4		; number of paragraphs
                 int 31h			; call DPMI functions
                 jnc @vbeInit1            
@@ -243,7 +244,7 @@ COMMENT~
 		                                                         
 	@vbeInit4:                                                       
 		mov edi,offset _VbeInfoBlock   	; copy data to our struct
-		mov ecx,size _VbeInfoBlock
+		mov ecx,VBEINFOBLOCK_SIZE
 		rep movsb               
 		
 		; now copy data such as video modes to a local buffer
@@ -355,7 +356,7 @@ COMMENT~
 		push eax		; save mode number
 		xor eax,eax                                         
 		mov ax,100h		; request low mem for ModeTmpBlock
-		mov bx,size _ModeInfoBlock                          
+		mov bx,MODEINFOBLOCK_SIZE                          
 		shr bx,4		; number of paragraphs      
 		int 31h			; call DPMI functions          
 		jnc @vbeGMI1                                        
@@ -409,7 +410,7 @@ COMMENT~
 	@vbeGMI3:
 		mov esi,ModeTmpBlock	; copy data to local struct
 		mov edi,offset _ModeInfoBlock
-		mov ecx,size _ModeInfoBlock
+		mov ecx,MODEINFOBLOCK_SIZE
 		rep movsb
 		
 		mov al,_ModeInfoBlock.BitsPerPixel	; check if 15bpp
@@ -516,7 +517,7 @@ COMMENT~
 		mul dx
 		shl edx,16
 		mov dx,ax
-		mov [ebp].size,edx
+		mov [ebp].ssize,edx
 
     call vbeGetScanWidth_
     or ax,ax
@@ -559,7 +560,7 @@ COMMENT~
 		mul dx
 		shl edx,16
 		mov dx,ax      		; (xres * bytespp) * yres
-		mov [ebx].size,edx
+		mov [ebx].ssize,edx
 
 		push ebx
 		shr edx,16
@@ -608,7 +609,7 @@ COMMENT~
 		
 		mov [ebx].xres,0
 		mov [ebx].yres,0
-		mov [ebx].size,0                                
+		mov [ebx].ssize,0                                
 		mov [ebx].adr,0
 		
 		popad
@@ -633,7 +634,7 @@ COMMENT~
 		mov ebx,edx                                     
 		mov edi,[ebx].adr                               
 		                                                
-		mov ecx,[ebx].size                              
+		mov ecx,[ebx].ssize                              
 		shr ecx,2                                       
 		                                                
 		rep movsd                                       
@@ -755,7 +756,7 @@ COMMENT~
 		mov ebx,eax                                     
 		mov edi,[ebx].adr                               
 		                                                
-		mov ecx,[ebx].size                              
+		mov ecx,[ebx].ssize                              
 		shr ecx,2                                       
 		xor eax,eax                                     
 		                                                
@@ -851,7 +852,8 @@ COMMENT~
 	vbeGetStart_	PROC
 		pushad
 		
-		push eax edx		; save x & y adresses
+		push eax
+        push edx		; save x & y adresses
 		xor ecx,ecx
 		xor edx,edx
 		mov ebx,1
@@ -912,19 +914,21 @@ COMMENT~
 
 ;√ÕÕÕÕƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
 	vbeWR_	PROC
-		push eax edx
+		push eax
+        push edx
 		
 		mov dx,03dah
 	start:             
 		in al,dx   
 		test al,8  
 		jnz start  
-	end:               
+	_end:               
 		in al,dx   
 		test al,8  
-		jz end
+		jz _end
 		
-		pop edx eax
+		pop edx
+        pop eax
 		ret
 	vbeWR_	ENDP
 ;ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒÕÕÕÕ¥
