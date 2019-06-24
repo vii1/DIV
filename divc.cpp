@@ -1,4 +1,6 @@
 
+// Lista de cambios para div2 ...
+
 // Strings, nuevo: p_string, cglo, cloc, p_*char, l*chr, ...
 // 00 - optimizacion de cขdigo intermedio
 // 00 - tablas y estructuras de hasta 3 dimensiones
@@ -214,6 +216,7 @@
 #include "global.h"
 #include "divdll.h"
 #include "zlib.h"
+#include <setjmp.h>
 
 //extern char ExeGen[_MAX_PATH];
 
@@ -633,6 +636,13 @@
 //      Prototipos
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
+void delete_code(void);
+void precarga_obj (void);
+void psintactico(void);
+void test_buffer(int * * ,int * ,int);
+void save_dbg(void);
+void save_exec_bin(void);
+
 void c_error(word,word);
 void analiza_comandos(word,byte**);
 void prepara_compilacion(void);
@@ -911,8 +921,20 @@ FILE * lins; // EXEC.INS
 FILE * def; // Para el analizador de "ltlex.def"
 byte *_buf;
 
-void comp() {}
-void comp_exit() {}
+static jmp_buf jmp_comp_exit;
+
+void comp(void)
+{
+    if (!setjmp(jmp_comp_exit)) {
+        compilar();
+    }
+}
+
+void comp_exit(void)
+{
+     longjmp(jmp_comp_exit, 1);        
+}
+
 
 void inicializa_compilador(void) {
   int n;
@@ -955,9 +977,9 @@ void compilar(void) {
 
   for (n=0;n<256;n++)
     if (lower[n])
-      if (n>='0' && n<='9') lex_case[n]=(void*)l_num;
-      else lex_case[n]=(void*)l_id;
-    else lex_case[n]=(void*)l_err;
+      if (n>='0' && n<='9') lex_case[n]=(struct lex_ele*)l_num;
+      else lex_case[n]=(struct lex_ele*)l_id;
+    else lex_case[n]=(struct lex_ele*)l_err;
 
   if ((vnom=(byte *) malloc(max_obj*long_med_id+1024))==NULL) c_error(0,0);
 
@@ -965,9 +987,9 @@ void compilar(void) {
 
   analiza_ltlex();
 
-  lex_case[' ']=(void*)l_spc;
-  lex_case[tab]=(void*)l_spc;
-  lex_case[cr]=(void*)l_cr;
+  lex_case[' ']=(struct lex_ele*)l_spc;
+  lex_case[tab]=(struct lex_ele*)l_spc;
+  lex_case[cr]=(struct lex_ele*)l_cr;
 
   inicio_objetos=ivnom.b;
 
@@ -1284,12 +1306,12 @@ void analiza_ltlex(void){
       else if (*buf>='a' && *buf<='f') t+=(*buf++-'a'+10); else c_error(0,2);
       if (*buf==cr || *buf==' ' || *buf==tab) break;
       else if (lower[*buf]) {           //Analiza una palabra reservada
-        _ivnom=ivnom.b; *ivnom.p++=0; *ivnom.p++=(void*)t; h=0;
+        _ivnom=ivnom.b; *ivnom.p++=0; *ivnom.p++=(unsigned char*)t; h=0;
         while (*ivnom.b=lower[*buf++]) h=((byte)(h<<1)+(h>>7))^(*ivnom.b++);
-        ptr=&vhash[h]; while (*ptr) ptr=(void *)*ptr; *ptr=_ivnom;
+        ptr=&vhash[h]; while (*ptr) ptr=(unsigned char * *)*ptr; *ptr=_ivnom;
         buf--; ivnom.b++;
       } else if (t>=0x78 && t<=0x7b) {  //Analiza un delimitador de literal
-        lex_case[*buf]=(void*)l_lit;
+        lex_case[*buf]=(struct lex_ele*)l_lit;
       } else {                          //Analiza un nuevo sกmbolo
         if ((e=lex_case[*buf])==0) {
           if (num_nodos++==max_nodos) c_error(0,3);
@@ -1576,8 +1598,8 @@ byte * next_lexico(byte * _source, int coment, int linea) { // No genera nunca e
       while (*ivnom.b=lower[*_source++]) h=((byte)(h<<1)+(h>>7))^(*ivnom.b++);
       ivnom.b++; _source--;
       ptr=&vhash[h];
-      while (*ptr && strcmp((byte *)(ptr+2),_ivnom+8)) ptr=(void*)*ptr;
-      if (!strcmp((byte *)(ptr+2),_ivnom+8)) { // id encontrado
+      while (*ptr && strcmp((char *)(ptr+2),(char *)_ivnom+8)) ptr=(unsigned char **)*ptr;
+      if (!strcmp((char *)(ptr+2),(char *)_ivnom+8)) { // id encontrado
         ivnom.b=_ivnom; // lo saca de vnom
         next_pieza=(int)*(ptr+1);
         if (next_pieza<256 && next_pieza>=0) { // palabra reservada (token)
@@ -1679,7 +1701,7 @@ void lexico(void) {
       while (*ivnom.b=lower[*_source++]) h=((byte)(h<<1)+(h>>7))^(*ivnom.b++);
       ivnom.b++; _source--; if (ivnom.b-vnom>max_obj*long_med_id) c_error(0,100);
       ptr=&vhash[h];
-      while (*ptr && strcmp((byte *)(ptr+2),_ivnom+8)) ptr=(void*)*ptr;
+      while (*ptr && strcmp((char *)(ptr+2),(char *)_ivnom+8)) ptr=(byte**)*ptr;
       if (!strcmp((byte *)(ptr+2),_ivnom+8)) { // id encontrado
         ivnom.b=_ivnom; // lo saca de vnom
         pieza=(int)*(ptr+1);
