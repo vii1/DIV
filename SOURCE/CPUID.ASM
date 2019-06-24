@@ -14,7 +14,7 @@ OPND32 MACRO op_code, op_erand
   ENDIF
 ENDM
 
-CPUID MACRO
+_CPUID MACRO
 	db      0fh     ; Hardcoded opcode for CPUID instruction
 	db      0a2h
 ENDM
@@ -29,7 +29,7 @@ STEPPING_MASK   equ     0fh
   PUBLIC _cpu_type
 
 vendor_id       db      12 dup (?)
-_cpu_type       db      ?
+_cpu_type       db      0
 modell          db      ?
 stepping        db      ?
 id_flag         db      0
@@ -175,7 +175,7 @@ check_vendor:
 	mov     id_flag, 1              ; set flag indicating use of CPUID inst.
 	OPND32
 	xor     ax, ax                  ; set up input for CPUID instruction
-	CPUID                           ; macro for CPUID instruction
+	_CPUID                           ; macro for CPUID instruction
 	OPND32
 	mov     word ptr vendor_id, bx  ; setup to test for vendor id
 	OPND32
@@ -202,7 +202,7 @@ cpuid_data:
 	xor     ax, ax                  ; otherwise, use as input to CPUID
 	OPND32
 	inc     ax                      ; and get stepping, model and family
-	CPUID
+	_CPUID
 	mov     stepping, al
 	and     stepping, STEPPING_MASK ; isolate stepping info
 
