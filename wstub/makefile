@@ -24,6 +24,7 @@ $(OUTDIR)\$(EXE): $(OBJS)
 		name $^@ &
 !ifeq CONFIG debug
 		debug all &
+		option symfile=$^* &
 !endif
 		option map=$^* &
 		path $(OUTDIR) &

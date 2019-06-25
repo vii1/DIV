@@ -63,8 +63,11 @@ void main(int argc,char *argv[]) {
   chdir(full);
 
   av[0]="SYSTEM\\DOS4GW.EXE";
-  if (cpu_type>=5) av[1]=argv[0];
-  else av[1]="SYSTEM\\D.386";
+  if (cpu_type>=5) {
+    av[1]=argv[0];
+  } else {
+    av[1]="SYSTEM\\D.386";
+  }
   av[2]="INIT";
   av[3]=getcmd(cmdline);
   av[4]=NULL;
