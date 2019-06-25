@@ -34,6 +34,8 @@ d.386: wstub d.mif .SYMBOLIC
 	$(MAKE) -f d.mif CPU=386 d.386
 
 wstub: $(%STUB) .SYMBOLIC
+
+$(%STUB): wstub\makefile wstub\wstub.c source\cpuid.asm
 	! pushd wstub && $(MAKE) CONFIG=$(%CONFIG) && popd
 
 clean: .SYMBOLIC
