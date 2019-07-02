@@ -146,7 +146,7 @@ void llrender_create(llrender *llrender_struct,sprite3d *newcamera)
 //  video=vid;
   llrender_struct->mmdist[0]=llrender_struct->dist_max*0.33;
   llrender_struct->mmdist[1]=llrender_struct->dist_max*0.66;
-  for (i=0;i<256;i++)
+  //for (i=0;i<256;i++) // ?????????? - vii
 // Datos cambiantes
   llrender_struct->ancho_pantalla=newcamera->ancho; //video->Ancho;
   llrender_struct->alto_pantalla=newcamera->alto; //video->Alto;

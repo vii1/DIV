@@ -42,25 +42,28 @@ wmaterial   wmat;
   fread(&sWork,1,2,file);   // Versi¢n
   fread(&complex_struct->nObjects,1,2,file);// Numero de Objetos
   if(complex_struct->nObjects>MAXOBJECTS)       {ERROR=ERR10;exit(1);};
-  for(i=0;i<complex_struct->nObjects;i++)
+  for(i=0;i<complex_struct->nObjects;i++) {
     if ((complex_struct->Objects[i]=(lptobject)lf_malloc(sizeof(tobject)))==NULL)
       return;
+  }
   fread(&complex_struct->nMaterials,1,2,file);  // Numero de materiales
   if ((complex_struct->Materials=(lptmaterial)lf_malloc(sizeof(tmaterial)*complex_struct->nMaterials))==NULL)
     return;
   fread(&complex_struct->nDummies,1,2,file);  // Numero de Dummies
-  if(complex_struct->nDummies)
+  if(complex_struct->nDummies) {
     if ((complex_struct->Dummies=(lptbbox)lf_malloc(sizeof(tbbox)*complex_struct->nDummies))==NULL)
       return;
-  else
+  } else {
     complex_struct->Dummies=NULL;
+  }
 
   fread(&complex_struct->nTapes,1,2,file);  // Numero de Cintas
-  if(complex_struct->nTapes)
+  if(complex_struct->nTapes) {
     if ((complex_struct->Tapes=(lpttape)lf_malloc(sizeof(ttape)*complex_struct->nTapes))==NULL)
       return;
-  else
+  } else {
     complex_struct->Tapes=NULL;
+  }
 
   fread(&complex_struct->nFrames,1,2,file); // Numero de animaciones
   if ((complex_struct->Anims=(lptmatrix)lf_malloc(sizeof(tmatrix)*complex_struct->nObjects*complex_struct->nFrames))==NULL)
@@ -87,9 +90,10 @@ wmaterial   wmat;
       return;
 
     fread(&complex_struct->Objects[i]->nFaces,1,2,file);  // Numero de caras
-    if (complex_struct->Objects[i]->nFaces)
+    if (complex_struct->Objects[i]->nFaces) {
       if ((complex_struct->Objects[i]->Faces=(lptface)lf_malloc(sizeof(tface)*complex_struct->Objects[i]->nFaces))==NULL)
         return;
+    }
 
     fread(&matindex,1,2,file);  // Material usado.
     fread(complex_struct->Objects[i]->name,1,20,file);  // Nombre del objeto
@@ -165,8 +169,12 @@ wmaterial   wmat;
   for(i=0;i<complex_struct->nObjects;i++)
     for(j=0;j<complex_struct->Objects[i]->nFaces;j++)
       complex_struct->Objects[i]->Faces[j].tipo_map=complex_struct->Objects[i]->Faces[j].material->tipo_map;
-  fread(complex_struct->Dummies,sizeof(tbbox),complex_struct->nDummies,file);
-  fread(complex_struct->Tapes,sizeof(ttape),complex_struct->nTapes,file);
+  if( complex_struct->Dummies != NULL ) {
+    fread(complex_struct->Dummies,sizeof(tbbox),complex_struct->nDummies,file);
+  }
+  if( complex_struct->Tapes != NULL ) {
+    fread(complex_struct->Tapes,sizeof(ttape),complex_struct->nTapes,file);
+  
 
 #ifdef TAPES_ACTIVAS
   for(i=0;i<complex_struct->nTapes;i++)
@@ -187,8 +195,9 @@ wmaterial   wmat;
     }
   }
 #endif
-  if(complex_struct->Tapes!=NULL) lf_free(complex_struct->Tapes);
-
+    //if(complex_struct->Tapes!=NULL) 
+    lf_free(complex_struct->Tapes);
+  }
 
   fread(complex_struct->Anims,sizeof(tmatrix),complex_struct->nFrames*complex_struct->nObjects,file);
   fclose(file);
