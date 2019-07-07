@@ -292,7 +292,7 @@ void GenSpr0(void)
     } else if(TipoModelo[2]) {
       memcpy(anim_spr,   anim_spr_enano,   2000);
       memcpy(&lanim_spr, &lanim_spr_enano, sizeof(struct t_listbox));
-      lanim_spr.maximo=anim_total_mujer;
+      lanim_spr.maximo=anim_total_enano;
     }
   }
 
