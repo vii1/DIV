@@ -1130,7 +1130,6 @@ void llrender_clipping_3d_down(llrender *llrender_struct,lptface face_in)
 
 void llrender_Pinta_Triangulo(llrender *llrender_struct,lptface face, int mmlevel, int tipo)
 {
-#ifdef NOTYET
   int altura;
   float faltura,temp,largo;
   int x1,u,v,dudx,dvdx;
@@ -1799,6 +1798,5 @@ void llrender_Pinta_Triangulo(llrender *llrender_struct,lptface face, int mmleve
       }
     }
   }
-#endif
 }
 

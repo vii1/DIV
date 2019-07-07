@@ -5,6 +5,8 @@
 //  Procedimientos en ensamblador
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
+extern int direccion_textura;
+
 //extern "C" {
 
 void nucleo8_8(int v, int u, int du, int dv, int ancho, short *destino);

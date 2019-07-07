@@ -3,10 +3,12 @@
 #include <math.h>
 #include "complex.hpp"
 
-#define TAPES_ACTIVAS
+//#define TAPES_ACTIVAS
 
 extern long complex_x_ini,complex_x_fin;
 extern long complex_y_ini,complex_y_fin;
+
+lptvertex *tapes_vert1, *tapes_vert2;
 
 void complex_create(complex *complex_struct,hlrender *hlrnd,char *name,Resource *res)
 {
@@ -175,6 +177,13 @@ wmaterial   wmat;
   if( complex_struct->Tapes != NULL ) {
     fread(complex_struct->Tapes,sizeof(ttape),complex_struct->nTapes,file);
   
+    tapes_vert1 = (lptvertex*)malloc(complex_struct->nTapes*sizeof(lptvertex));
+    tapes_vert2 = (lptvertex*)malloc(complex_struct->nTapes*sizeof(lptvertex));
+    for(i=0;i<complex_struct->nTapes;i++) {
+      tapes_vert1[i] = &complex_struct->Objects[complex_struct->Tapes[i].Obj1]->Vertices[complex_struct->Tapes[i].Vert1];
+      tapes_vert2[i] = &complex_struct->Objects[complex_struct->Tapes[i].Obj2]->Vertices[complex_struct->Tapes[i].Vert2];
+    }
+
 
 #ifdef TAPES_ACTIVAS
   for(i=0;i<complex_struct->nTapes;i++)
@@ -234,7 +243,11 @@ int i;
     for(i=0;i<complex_struct->nMaterials;i++)
       sprite3d_DestroyTexture(complex_struct->hl_render->ccamera,complex_struct->Materials[i].textura);
     if(complex_struct->nMaterials)
-      lf_free(complex_struct->Materials);
+      lf_free(complex_struct->Materials);    
+    if(complex_struct->nTapes) {
+      free(tapes_vert1);
+      free(tapes_vert2);
+    }
     for(i=0;i<complex_struct->nObjects;i++)
     {
       lf_free(complex_struct->Objects[i]->Vertices);
@@ -283,6 +296,16 @@ void  complex_draw(complex *complex_struct)
 
   complex_x_ini=complex_struct->hl_render->ccamera->ancho;complex_x_fin=0;
   complex_y_ini=complex_struct->hl_render->ccamera->alto;complex_y_fin=0;
+  for( i=0; i < complex_struct->nTapes; ++i ) {
+    tapes_vert2[i]->fpx = tapes_vert1[i]->fpx = (tapes_vert2[i]->fpx + tapes_vert1[i]->fpx) * 0.5;
+    tapes_vert2[i]->fpy = tapes_vert1[i]->fpy = (tapes_vert2[i]->fpy + tapes_vert1[i]->fpy) * 0.5;
+    tapes_vert2[i]->sz = tapes_vert1[i]->sz;
+    tapes_vert2[i]->r = tapes_vert1[i]->r;
+    tapes_vert2[i]->g = tapes_vert1[i]->g;
+    tapes_vert2[i]->b = tapes_vert1[i]->b;
+    tapes_vert2[i]->intensidad = tapes_vert1[i]->intensidad;
+    tapes_vert2[i]->sutherland_cohen = tapes_vert1[i]->sutherland_cohen;
+  }
   for(i=0;i<complex_struct->nObjects;i++)
     hlrender_drawobject(complex_struct->hl_render,complex_struct->wobjects[i]);
 

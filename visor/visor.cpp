@@ -32,18 +32,18 @@ int lib_3d_alto=0;
 char *lib_3d_buffer=NULL;
 
 void lfset(void *, long, long);
-/*
+
 #pragma aux lfset = \
 	"rep stosw" \
         parm caller [edi] [eax] [ecx]\
 	modify exact [edi eax ecx] \
-*/
 
 
-void lfset(void *buf, long c, long d) {
-	printf("Should fill buffer with c for d bytes\n");
-	return;
-}
+
+//void lfset(void *buf, long c, long d) {
+//	//printf("Should fill buffer with c for d bytes\n");
+//  memset(buf, c, d);
+//}
 
 void reescalar_sprite3d(buffer_sprite3d  *sbuffer);
 
