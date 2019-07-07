@@ -15,3 +15,9 @@
 # carpetas
 /bin
 /_trash
+/_basura
+/build.dos/debug.*
+/build.dos/release.*
+/wstub/debug
+/wstub/release
+/.vscode
