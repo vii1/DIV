@@ -12,6 +12,10 @@
 *.map
 *.lst
 
+# copias de seguridad
+*.bak
+*.bac
+
 # carpetas
 /bin
 /_trash

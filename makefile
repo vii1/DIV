@@ -67,7 +67,7 @@ install: all .SYMBOLIC
 	$(COPY) system\*.* $(INSTALL_DIR)\system
 	$(COPY) $(%OUTDIR).386\d.386 $(INSTALL_DIR)\system
 	$(COPY) help\*.* $(INSTALL_DIR)\help
-	$(COPY) /S bin\genspr\*.* $(INSTALL_DIR)\genspr
+	$(COPY) /S genspr\*.* $(INSTALL_DIR)\genspr
 	if exist $(INSTALL_DIR)\system\setup.bin del $(INSTALL_DIR)\system\setup.bin
 	if exist $(INSTALL_DIR)\system\session.dtf del $(INSTALL_DIR)\system\session.dtf
 	if exist $(INSTALL_DIR)\system\user.nfo del $(INSTALL_DIR)\system\user.nfo
