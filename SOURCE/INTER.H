@@ -79,7 +79,7 @@ void volcado(char *);
 void restore(char *,char *);
 void init_ghost(void);
 void crear_ghost(void);
-void find_color(byte,byte,byte);
+//void find_color(byte,byte,byte);
 
 // S-prites
 
@@ -443,6 +443,13 @@ void read_joy(void);
 #define _y1         17 // parcial (dump_type==0 y restore_background==0)
 #define _FCount     18 //Cuenta de llamadas a funcion (para saltarse retornos en frame)
 #define _Caller     19   //ID del proceso o funcion llamador (0 si ha sido el kernel)
+
+#ifdef _X
+#undef _X
+#endif
+#ifdef _Z
+#undef _Z
+#endif
 
 #define _Father     20 //Id del padre del proceso (0 si no existe)
 #define _Son        21 //Id del £ltimo hijo que ha creado (0 sne)

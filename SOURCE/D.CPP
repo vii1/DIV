@@ -3875,9 +3875,9 @@ void debug0(void) {
 //  Funciones que pintan el cขdigo fuente en la ventana del debugger
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-void get_line(int n) { // A partir de una direcciขn IP, obtiene la pos. de la sentencia
+int get_line(int n) { // A partir de una direcciขn IP, obtiene la pos. de la sentencia
   int x=0;
-  if (line==NULL) return;
+  if (line==NULL) return 0;
   for (x=0;x<num_sentencias;x++) if (n>=line[x*6] && n<=line[x*6+1]) break;
   if (x<num_sentencias) {
     mem1=line[x*6]; mem2=line[x*6+1];
@@ -3888,6 +3888,7 @@ void get_line(int n) { // A partir de una direcciขn IP, obtiene la pos. de la se
     linea1=line[2]-1; columna1=line[3];
     linea2=line[4]-1; columna2=line[5];
   }
+  return linea1;
 }
 
 int get_ip(int n) { // A partir de una lกnea, obtiene la direcciขn IP de la sentencia

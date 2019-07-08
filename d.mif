@@ -95,7 +95,7 @@ $(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
 
 .asm.obj:
 !ifeqi %ASM WASM
-	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
 !else
 	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^.
 !endif

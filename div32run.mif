@@ -1,0 +1,128 @@
+# Makefile para la DIV32RUN.DLL en todas sus variantes
+
+!ifeq SESSION 1
+%OPTIONS += -DDEBUG
+SYSTEM=dos4g
+OUTDIR = $(%OUTDIR).$(CPU)\session
+!ifeq CPU 586
+EXE=session.div
+!else
+EXE=session.386
+!endif
+!else
+SYSTEM=pmodew
+OUTDIR = $(%OUTDIR).$(CPU)\div32run
+!ifeq CPU 586
+EXE=div32run.ins
+!else
+EXE=div32run.386
+!endif
+!endif
+
+WASM=$(%WASM_EXE)
+TASM=$(%TASM_EXE)
+WASM_OPTIONS=$(%WASM_OPTIONS)
+TASM_OPTIONS=$(%TASM_OPTIONS)
+
+!ifeq CPU 586
+%OPTIONS += -5r -fp5
+WASM_OPTIONS = -5r -fp5
+!else
+%OPTIONS += -3r -fpc
+WASM_OPTIONS = -3r -fpc
+!endif
+
+SOURCES = divdll1.c divdll2.c c.cpp cdrom.cpp d.cpp det_vesa.cpp divfli.cpp divkeybo.cpp &
+	divlengu.cpp divmixer.cpp divsound.cpp divtimer.cpp f.cpp i.cpp ia.cpp joy.cpp kernel.cpp &
+	mouse.cpp s.cpp v.cpp a.asm cpuid.asm timer.asm vesa.asm
+
+# VPE (modo-8)
+SOURCES += vpe\draw_cw.cpp vpe\draw_f.cpp vpe\draw_o.cpp vpe\draw_sw.cpp vpe\fixed.cpp vpe\gfx.cpp vpe\globals.cpp &
+	vpe\hard.cpp vpe\load.cpp vpe\mem.cpp vpe\object.cpp vpe\scan.cpp vpe\update.cpp vpe\view.cpp vpe\vpe.cpp &
+	vpe\vpedll.cpp vpe\zone.cpp
+
+# NETLIB (red)
+SOURCES += netlib\red.cpp netlib\net.c netlib\comlib.c netlib\comm.c netlib\ipxlib.c netlib\dpmi_net.c
+
+OBJS = $(SOURCES:.cpp=.obj)
+OBJS = $(OBJS:.c=.obj)
+OBJS = $(OBJS:.asm=.obj)
+
+JUDAS_LIB = judas\judas.lib
+JPEG_LIB = jpeglib\libjpeg.lib
+LIBS = judas\judas.lib jpeglib\libjpeg.lib source\zlib.lib source\svga.lib source\pmode.lib source\tflc_w32.lib
+
+.BEFORE
+#	@echo WASM = $(WASM)
+#	@echo WASM_OPTIONS = $(WASM_OPTIONS)
+	@if not exist $(%OUTDIR).$(CPU) mkdir $(%OUTDIR).$(CPU)
+	@if not exist $(OUTDIR) mkdir $(OUTDIR)
+	@if not exist $(OUTDIR)\source mkdir $(OUTDIR)\source
+	@if not exist $(OUTDIR)\vpe mkdir $(OUTDIR)\vpe
+
+$(EXE): $(OUTDIR)\$(EXE) .SYMBOLIC
+
+$(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
+	*wlink &
+		system $(SYSTEM) &
+		name $(OUTDIR)\$^. &
+!ifeqi %CONFIG debug
+		debug all &
+!endif
+		option stack=64k
+		option map=$(OUTDIR)\$^& &
+		path $(OUTDIR) &
+		file { $(OBJS) } &
+		libfile { $(LIBS) }
+
+.c: source;vbe
+
+.cpp: source;vbe;netlib
+
+.asm: source
+
+.obj: $(OUTDIR);$(OUTDIR)\source;$(OUTDIR)\vpe
+
+.c.obj:
+	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)\$[:$^. -fr=$(OUTDIR)\$[:$^& $<
+
+.cpp.obj:
+	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)\$[:$^. -fr=$(OUTDIR)\$[:$^& $<
+
+.asm.obj:
+!ifeqi %ASM WASM
+	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+!else
+	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^.
+!endif
+#vesa.obj: vesa.asm
+#!ifeqi %ASM WASM
+#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#!else
+#	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^.
+#!endif
+#
+#timer.obj: timer.asm
+#!ifeqi %ASM WASM
+#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#!else
+#	$(TASM) $(TASM_OPTIONS) /m $<,$(OUTDIR)\$^.
+#!endif
+#
+#a.obj: a.asm
+#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#
+#visor\t.obj: visor\t.asm
+#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+
+$(JUDAS_LIB):
+	! pushd $^: && $(MAKE) $^. && popd
+
+$(JPEG_LIB):
+	! pushd $^: && $(MAKE) $^. && popd
+
+clean: .SYMBOLIC
+	-del $(OUTDIR)\*.err
+	-del $(OUTDIR)\*.obj
+	-del $(OUTDIR)\*.exe
+	-del $(OUTDIR)\vpe\*.err $(OUTDIR)\vpe\*.obj

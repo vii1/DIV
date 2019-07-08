@@ -1,3 +1,4 @@
+MAKE=$(MAKE) -h
 CONFIG = release
 %CONFIG=$(CONFIG)
 %OUTDIR = build.dos\$(%CONFIG)
@@ -25,7 +26,7 @@ ASM = WASM
 
 %STUB = wstub\$(%CONFIG)\wstub.exe
 
-all: d.exe d.386 .SYMBOLIC
+all: d.exe d.386 session.div session.386 div32run.ins div32run.386 .SYMBOLIC
 
 d.exe: wstub d.mif .SYMBOLIC
 	$(MAKE) -f d.mif CPU=586 d.exe
@@ -33,14 +34,27 @@ d.exe: wstub d.mif .SYMBOLIC
 d.386: wstub d.mif .SYMBOLIC
 	$(MAKE) -f d.mif CPU=386 d.386
 
+session.div: div32run.mif .SYMBOLIC
+	$(MAKE) -f div32run.mif CPU=586 SESSION=1 session.div
+
+session.386: div32run.mif .SYMBOLIC
+	$(MAKE) -f div32run.mif CPU=386 SESSION=1 session.386
+	
+div32run.ins: div32run.mif .SYMBOLIC
+	$(MAKE) -f div32run.mif CPU=586 SESSION=0 div32run.ins
+	
+div32run.386: div32run.mif .SYMBOLIC
+	$(MAKE) -f div32run.mif CPU=586 SESSION=0 div32run.386
+	
 wstub: $(%STUB) .SYMBOLIC
 
 $(%STUB): wstub\makefile wstub\wstub.c source\cpuid.asm
 	! pushd wstub && $(MAKE) CONFIG=$(%CONFIG) && popd
 
 clean: .SYMBOLIC
-	$(MAKE) -f d.mif CPU=586 clean
-	$(MAKE) -f d.mif CPU=386 clean
+	@for %i in (586 386) do $(MAKE) -f d.mif CPU=%i clean
+	@for %i in (586 386) do $(MAKE) -f div32run.mif CPU=%i SESSION=1 clean
+	@for %i in (586 386) do $(MAKE) -f div32run.mif CPU=%i SESSION=0 clean
 
 .SILENT
 install: all .SYMBOLIC
