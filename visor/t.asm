@@ -24,7 +24,6 @@
                 PUBLIC mask_nucleo8_64_, mask_nucleo8_128_, mask_nucleo8_256_
 
 
-
 ; void __userpurge nucleo8_8(int v@<eax>, int u@<edx>, int du@<ebx>, int dv@<ecx>, int ancho, __int16 *destino)
 nucleo8_8_       PROC
 
@@ -63,7 +62,7 @@ destino         = dword ptr  12
                 xor     eax, eax
                 neg     ebp
 
-@bucle:
+bucle1:
                 add     ecx, clock2
                 mov     ax, [esi+ebx*2]
                 adc     edx, clock1
@@ -72,7 +71,7 @@ destino         = dword ptr  12
                 mov     [edi+ebp*2], ax
                 rol     ebx, 3
                 inc     ebp
-                jnz     short @bucle
+                jnz     short bucle1
                 pop     edx
                 pop     ecx
                 pop     ebx
@@ -125,7 +124,7 @@ destino         = dword ptr  12
                 xor     eax, eax
                 neg     ebp
 
-@bucle:
+bucle2:
                 add     ecx, clock2
                 mov     ax, [esi+ebx*2]
                 adc     edx, clock1
@@ -134,7 +133,7 @@ destino         = dword ptr  12
                 mov     [edi+ebp*2], ax
                 rol     ebx, 4
                 inc     ebp
-                jnz     short @bucle
+                jnz     short bucle2
                 pop     edx
                 pop     ecx
                 pop     ebx
@@ -187,7 +186,7 @@ destino         = dword ptr  12
                 xor     eax, eax
                 neg     ebp
 
-@bucle:
+bucle3:
                 add     ecx, clock2
                 mov     ax, [esi+ebx*2]
                 adc     edx, clock1
@@ -196,7 +195,7 @@ destino         = dword ptr  12
                 mov     [edi+ebp*2], ax
                 rol     ebx, 5
                 inc     ebp
-                jnz     short @bucle
+                jnz     short bucle3
                 pop     edx
                 pop     ecx
                 pop     ebx
@@ -249,7 +248,7 @@ destino         = dword ptr  12
                 xor     eax, eax
                 neg     ebp
 
-@bucle:
+bucle4:
                 add     ecx, clock2
                 mov     ax, [esi+ebx*2]
                 adc     edx, clock1
@@ -258,7 +257,7 @@ destino         = dword ptr  12
                 mov     [edi+ebp*2], ax
                 rol     ebx, 6
                 inc     ebp
-                jnz     short @bucle
+                jnz     short bucle4
                 pop     edx
                 pop     ecx
                 pop     ebx
@@ -311,7 +310,7 @@ destino         = dword ptr  12
                 xor     eax, eax
                 neg     ebp
 
-@bucle:
+bucle5:
                 add     ecx, clock2
                 mov     ax, [esi+ebx*2]
                 adc     edx, clock1
@@ -320,7 +319,7 @@ destino         = dword ptr  12
                 mov     [edi+ebp*2], ax
                 rol     ebx, 7
                 inc     ebp
-                jnz     short @bucle
+                jnz     short bucle5
                 pop     edx
                 pop     ecx
                 pop     ebx
@@ -371,7 +370,7 @@ destino         = dword ptr  12
                 mov     clock2, eax
                 xor     eax, eax
 
-@bucle:
+bucle6:
                 add     ecx, clock2
                 mov     ax, [esi+ebx*2]
                 adc     edx, clock1
@@ -380,7 +379,7 @@ destino         = dword ptr  12
                 mov     [edi+ebp*2], ax
                 rol     ebx, 8
                 inc     ebp
-                jnz     short @bucle
+                jnz     short bucle6
                 pop     edx
                 pop     ecx
                 pop     ebx
@@ -432,20 +431,20 @@ destino         = dword ptr  12
                 xor     eax, eax
                 neg     ebp
 
-@bucle:
+bucle7:
                 add     ecx, clock2
                 mov     ax, [esi+ebx*2]
                 adc     edx, clock1
                 mov     ebx, 0E0000007h
                 and     ebx, edx
                 or      eax, eax
-                jz      short @cero
+                jz      short cero7
                 mov     [edi+ebp*2], ax
 
-@cero:
+cero7:
                 rol     ebx, 3
                 inc     ebp
-                jnz     short @bucle
+                jnz     short bucle7
                 pop     edx
                 pop     ecx
                 pop     ebx
@@ -497,20 +496,20 @@ destino         = dword ptr  12
                 xor     eax, eax
                 neg     ebp
 
-@bucle:
+bucle8:
                 add     ecx, clock2
                 mov     ax, [esi+ebx*2]
                 adc     edx, clock1
                 mov     ebx, 0F000000Fh
                 and     ebx, edx
                 or      eax, eax
-                jz      short @cero
+                jz      short cero8
                 mov     [edi+ebp*2], ax
 
-@cero:
+cero8:
                 rol     ebx, 4
                 inc     ebp
-                jnz     short @bucle
+                jnz     short bucle8
                 pop     edx
                 pop     ecx
                 pop     ebx
@@ -563,20 +562,20 @@ destino         = dword ptr  12
                 xor     eax, eax
                 neg     ebp
 
-@bucle:
+bucle9:
                 add     ecx, clock2
                 mov     ax, [esi+ebx*2]
                 adc     edx, clock1
                 mov     ebx, 0F800001Fh
                 and     ebx, edx
                 or      eax, eax
-                jz      short @cero
+                jz      short cero9
                 mov     [edi+ebp*2], ax
 
-@cero:
+cero9:
                 rol     ebx, 5
                 inc     ebp
-                jnz     short @bucle
+                jnz     short bucle9
                 pop     edx
                 pop     ecx
                 pop     ebx
@@ -629,20 +628,20 @@ destino         = dword ptr  12
                 xor     eax, eax
                 neg     ebp
 
-@bucle:
+bucleA:
                 add     ecx, clock2
                 mov     ax, [esi+ebx*2]
                 adc     edx, clock1
                 mov     ebx, 0FC00003Fh
                 and     ebx, edx
                 or      eax, eax
-                jz      short @cero
+                jz      short ceroA
                 mov     [edi+ebp*2], ax
 
-@cero:
+ceroA:
                 rol     ebx, 6
                 inc     ebp
-                jnz     short @bucle
+                jnz     short bucleA
                 pop     edx
                 pop     ecx
                 pop     ebx
@@ -695,20 +694,20 @@ destino         = dword ptr  12
                 xor     eax, eax
                 neg     ebp
 
-@bucle:
+bucleB:
                 add     ecx, clock2
                 mov     ax, [esi+ebx*2]
                 adc     edx, clock1
                 mov     ebx, 0FE00007Fh
                 and     ebx, edx
                 or      eax, eax
-                jz      short @cero
+                jz      short ceroB
                 mov     [edi+ebp*2], ax
 
-@cero:
+ceroB:
                 rol     ebx, 7
                 inc     ebp
-                jnz     short @bucle
+                jnz     short bucleB
                 pop     edx
                 pop     ecx
                 pop     ebx
@@ -759,20 +758,20 @@ destino         = dword ptr  12
                 mov     clock2, eax
                 xor     eax, eax
 
-@bucle:
+bucleC:
                 add     ecx, clock2
                 mov     ax, [esi+ebx*2]
                 adc     edx, clock1
                 mov     ebx, 0FF0000FFh
                 and     ebx, edx
                 or      eax, eax
-                jz      short @cero
+                jz      short ceroC
                 mov     [edi+ebp*2], ax
 
-@cero:
+ceroC:
                 rol     ebx, 8
                 inc     ebp
-                jnz     short @bucle
+                jnz     short bucleC
                 pop     edx
                 pop     ecx
                 pop     ebx
