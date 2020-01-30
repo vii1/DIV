@@ -36,5 +36,16 @@ judass3m.obj: judass3m.c
         wcc386 $(CFLAGS2) judass3m.c
 judasdma.obj: judasdma.c
         wcc386 $(CFLAGS2) judasdma.c
+
+#TODO: convertir judasasm.asm a WASM
 judasasm.obj: judasasm.asm
+#!ifeq %ASM TASM
         tasm32 /m /ml judasasm.asm
+#!else
+#        $(%WASM_EXE) -ml judasasm.asm
+#!endif
+
+clean: .SYMBOLIC
+        @if exist *.obj del *.obj
+        @if exist *.err del *.err
+        @if exist judas.lib del judas.lib

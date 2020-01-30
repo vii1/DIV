@@ -1,15 +1,50 @@
-MAKE=$(MAKE) -h
+# Makefile principal de DIV. WORK IN PROGRESS.
+# ``wmake install`` compilar  todo lo necesario y crear  el  rbol de ficheros
+# en la ruta indicada por INSTALL_DIR.
+
+# Se requiere Watcom 10.0 o superior, o bien OpenWatcom 1.0 o superior.
+
+#####################
+# COSAS CONFIGURABLES (pueden indicarse en la l¡nea de comando de wmake)
+#####################
+
+# Usa CONFIG=debug si quieres compilar una versi¢n depurable de DIV.
 CONFIG = release
+
+# INSTALL_DIR indica la ruta donde se instalar  DIV con ``wmake install``.
+# Recomiendo usarlo para instalar DIV dentro de una carpeta de DOSBOX.
+# Muy c¢modo para agilizar tu ciclo de modificar-compilar-depurar.
+#INSTALL_DIR = C:\DIV2
+INSTALL_DIR = $(%USERPROFILE)\dosbox\DIV
+
+# Siempre que se pueda, se usar  WASM, pero originalmente DIV se compilaba
+# usando Turbo Assembler (TASM). Esto podr¡a, potencialmente, originar bugs
+# debido a diferencias entre ambos ensambladores. El problema es que TASM es
+# privativo, por lo que damos preferencia a WASM. Pero si esto diera problemas,
+# quiz  prefieras conseguir una copia de TASM y usarlo en su lugar.
+ASM = WASM
+
+# Si usas TASM y tu versi¢n no dispone de TASM32.EXE, quiz  quieras cambiar
+# esta opci¢n.
+# TASM32.EXE deber¡a valer tanto para compilar en DOS como para Windows.
+#TASM_EXE = tasm.exe
+TASM_EXE = tasm32.exe
+
+# El comando que se usar  para copiar cosas con ``wmake install``.
+# Quiz  no te guste xcopy o quieras cambiar las opciones
+# (/Y sirve para sobreescribir archivos sin pedir confirmaci¢n).
+COPY = xcopy /Y
+
+############################
+# FIN DE COSAS CONFIGURABLES
+############################
+
+MAKE=$(MAKE) -h
 %CONFIG=$(CONFIG)
 %OUTDIR = build.dos\$(%CONFIG)
 
-#INSTALL_DIR = C:\DIV2
-INSTALL_DIR = $(%USERPROFILE)\dosbox\DIV
-COPY = xcopy /Y
-
-ASM = WASM
 %ASM=$(ASM)
-%TASM_EXE = tasm32.exe
+%TASM_EXE = $(TASM_EXE)
 %WASM_EXE = wasm.exe
 %CC = wcc386.exe
 
@@ -55,6 +90,8 @@ clean: .SYMBOLIC
 	@for %i in (586 386) do $(MAKE) -f d.mif CPU=%i clean
 	@for %i in (586 386) do $(MAKE) -f div32run.mif CPU=%i SESSION=1 clean
 	@for %i in (586 386) do $(MAKE) -f div32run.mif CPU=%i SESSION=0 clean
+	! pushd jpeglib && $(MAKE) clean && popd
+	! pushd judas && $(MAKE) clean && popd
 
 .SILENT
 install: all .SYMBOLIC

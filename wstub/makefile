@@ -39,6 +39,6 @@ cpuid.obj: ..\source\cpuid.asm
 	*$(ASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^@ -fr=$(OUTDIR)\$^* $<
 
 clean: .SYMBOLIC
-	-del $(OUTDIR)\*.err
-	-del $(OUTDIR)\*.obj
-	-del $(OUTDIR)\*.exe
+	@if exist $(OUTDIR)\*.err del $(OUTDIR)\*.err
+	@if exist $(OUTDIR)\*.obj del $(OUTDIR)\*.obj
+	@if exist $(OUTDIR)\*.exe del $(OUTDIR)\*.exe

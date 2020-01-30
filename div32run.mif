@@ -1,4 +1,9 @@
-# Makefile para la DIV32RUN.DLL en todas sus variantes
+# Makefile para la DIV32RUN.DLL en todas sus variantes.
+# SESSION=1 genera el int‚rprete que incorpora el trazador. Es el int‚rprete
+# que se ejecuta desde el IDE cuando arrancamos un programa.
+# SESSION=0 genera la DIV32RUN.DLL que se incluir  con el instalador de nuestro
+# juego. Pero a£n no es la versi¢n redistribuible, ya que al generar el
+# instalador se le agrega la tabla de textos traducidos.
 
 !ifeq SESSION 1
 %OPTIONS += -DDEBUG
@@ -53,8 +58,6 @@ JPEG_LIB = jpeglib\libjpeg.lib
 LIBS = judas\judas.lib jpeglib\libjpeg.lib source\zlib.lib source\svga.lib source\pmode.lib source\tflc_w32.lib
 
 .BEFORE
-#	@echo WASM = $(WASM)
-#	@echo WASM_OPTIONS = $(WASM_OPTIONS)
 	@if not exist $(%OUTDIR).$(CPU) mkdir $(%OUTDIR).$(CPU)
 	@if not exist $(OUTDIR) mkdir $(OUTDIR)
 	@if not exist $(OUTDIR)\source mkdir $(OUTDIR)\source
@@ -122,7 +125,8 @@ $(JPEG_LIB):
 	! pushd $^: && $(MAKE) $^. && popd
 
 clean: .SYMBOLIC
-	-del $(OUTDIR)\*.err
-	-del $(OUTDIR)\*.obj
-	-del $(OUTDIR)\*.exe
-	-del $(OUTDIR)\vpe\*.err $(OUTDIR)\vpe\*.obj
+	@if exist $(OUTDIR)\*.err del $(OUTDIR)\*.err
+	@if exist $(OUTDIR)\*.obj del $(OUTDIR)\*.obj
+	@if exist $(OUTDIR)\*.exe del $(OUTDIR)\*.exe
+	@if exist $(OUTDIR)\vpe\*.err del $(OUTDIR)\vpe\*.err
+	@if exist $(OUTDIR)\vpe\*.obj del $(OUTDIR)\vpe\*.obj

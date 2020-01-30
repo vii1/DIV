@@ -1,4 +1,6 @@
 # Makefile para el IDE
+# CPU=586 -> D.EXE
+# CPU=386 -> D.386
 
 OUTDIR = $(%OUTDIR).$(CPU)
 
@@ -56,8 +58,6 @@ JPEG_LIB = jpeglib\libjpeg.lib
 LIBS = judas\judas.lib jpeglib\libjpeg.lib source\zlib.lib source\svga.lib source\pmode.lib
 
 .BEFORE
-#	@echo WASM = $(WASM)
-#	@echo WASM_OPTIONS = $(WASM_OPTIONS)
 	@if not exist $(OUTDIR) mkdir $(OUTDIR)
 !ifeq CPU 586
 	@if not exist $(OUTDIR)\visor mkdir $(OUTDIR)\visor
@@ -129,11 +129,13 @@ $(%STUB):
 	! pushd wstub && $(MAKE) CONFIG=$(%CONFIG) && popd
 
 clean: .SYMBOLIC
-	-del $(OUTDIR)\*.err
-	-del $(OUTDIR)\*.obj
-	-del $(OUTDIR)\*.exe
-#	-del $(OUTDIR)\vpe\*.err $(OUTDIR)\vpe\*.obj
+	@if exist $(OUTDIR)\*.err del $(OUTDIR)\*.err
+	@if exist $(OUTDIR)\*.obj del $(OUTDIR)\*.obj
+	@if exist $(OUTDIR)\*.exe del $(OUTDIR)\*.exe
+#	@if exist $(OUTDIR)\vpe\*.err del $(OUTDIR)\vpe\*.err
+#	@if exist $(OUTDIR)\vpe\*.obj del $(OUTDIR)\vpe\*.obj
 !ifeq CPU 586
-	-del $(OUTDIR)\visor\*.err
-	-del $(OUTDIR)\visor\*.obj
+	@if exist $(OUTDIR)\visor\*.err del $(OUTDIR)\visor\*.err
+	@if exist $(OUTDIR)\visor\*.obj del $(OUTDIR)\visor\*.obj
 !endif
+	! pushd wstub $$ $(MAKE) CONFIG=$(%CONFIG) clean && popd
