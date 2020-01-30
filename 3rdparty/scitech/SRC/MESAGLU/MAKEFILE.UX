@@ -1,0 +1,45 @@
+#############################################################################
+#
+#                   Copyright (C) 1996 SciTech Software
+#                           All rights reserved.
+#
+# Descripton:   Generic makefile for the MGL version of Mesa GLU library.
+#
+# $Date:   09 Jul 1997 19:48:22  $ $Author:   KendallB  $
+#
+#############################################################################
+
+include $(SCITECH)/makedefs/startup.mk
+
+ifdef BUILD_DLL
+CFLAGS          += -DNO_GLU_MACROS
+else
+CFLAGS          += -DNO_GL_MACROS
+endif
+
+# Name of library and object files required to build it
+
+ifdef BUILD_DLL
+CFLAGS          += -DBUILD_DLL
+DLLFILE         = mesaglu$D
+LIBNAME         = mesaglu
+else
+ifdef STKCALL
+LIBNAME         = smesaglu
+else
+LIBNAME         = mesaglu
+endif
+endif
+LIBFILE         = $(LP)$(LIBNAME)$L
+
+OBJECTS         = glu$O mipmap$O nurbs$O nurbscrv$O nurbssrf$O nurbsutl$O \
+				  project$O quadric$O tess$O tesselat$O polytest$O
+ifdef BUILD_DLL
+OBJECTS         += gluinit$O
+endif
+
+# Define the list of object files to create dependency information for
+
+DEPEND_OBJ      = $(OBJECTS)
+
+include $(SCITECH)/makedefs/common.mk

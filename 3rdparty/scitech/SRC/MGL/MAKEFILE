@@ -1,0 +1,194 @@
+#############################################################################
+#
+#                   Copyright (C) 1996 SciTech Software.
+#                           All rights reserved.
+#
+# Descripton:   Generic makefile for the MegaGraph Graphics Library.
+#               Requires the SciTech Software makefile definitions package
+#               to be installed.
+#
+#               Builds the appropriate version depending on what target
+#               system is selected.
+#
+# $Date:   06 Oct 1997 10:29:16  $ $Author:   KendallB  $
+#
+#############################################################################
+
+# DOS Extender dependant flags
+
+CFLAGS          += $(DX_CFLAGS)
+ASFLAGS         += $(DX_ASFLAGS)
+
+LIBCLEAN        = mgl*.lib mgl*.a smgl*.lib mgl*.dll
+
+# Import variables from environment
+
+.IMPORT .IGNORE: MGL_LITE MGL_PRO MGL_FIX3D MGL_FLT3D NO_ASM
+
+# Compiler for No Assembler if requested
+
+.IF $(NO_ASM)
+CFLAGS          += -DNO_ASSEMBLER
+.ENDIF
+
+# List of all generic object files common to all versions
+
+COBJ_LITE       = regdisp$O regogl$O regmem$O mgraph$O devctx$O palette$O bitblt$O   \
+				  glyph$O line$O cliplfx$O scanline$O pixel$O rect$O 		\
+				  viewport$O stubs$O list$O cursor$O memset$O random$O 		\
+                  mgldll$O halftone$O rtrav$O
+
+COBJ_PRO        = ellipse$O ellipsea$O fline$O polygon$O polyline$O			\
+				  rectangl$O rmem$O rdraw$O runion$O rsect$O rdiff$O		\
+                  rmisc$O rrect$O rline$O rpoly$O rfpoly$O rellip$O         \
+				  rellipa$O border$O text$O font$O icon$O bitmap$O pcx$O	\
+                  jpeg$O tiff$O png$O polyhlp$O
+
+COBJ_3D         = cline$O rgbline$O zline$O czline$O rgbzline$O clipc$O 	\
+				  cliprgb$O clipz$O clipzc$O clipzrgb$O zbuf$O tri$O quad$O
+
+CPPOBJ          = mglcpp$O mglpoint$O mglrect$O mglrgn$O
+
+EMUCOBJ_LITE    = em_fillr$O em_divot$O em_image$O em_line$O em_monoi$O 	\
+				  em_scanl$O em_sblt$O
+
+EMUCOBJ_PRO     = em_bitf$O em_drwcv$O em_ella$O em_ellip$O em_trani$O 		\
+				  em_blt$O em_tblt$O em_fline$O em_rdraw$O					\
+                  em_scanc$O em_slist$O em_cpxpl$O em_trap$O em_poly$O      \
+                  em_pline$O
+
+EMUCOBJ_3D      = em_cline$O em_sline$O em_zline$O em_czlin$O em_szlin$O 	\
+				  em_ctrap$O em_strap$O em_ztrap$O em_cztrp$O em_sztrp$O 	\
+				  em_cpoly$O em_spoly$O em_zpoly$O em_czpol$O em_szpol$O 	\
+                  em_zbuf$O
+
+DRVCOBJ         = pack1$O pack4$O pack8$O pack16$O pack24$O pack32$O
+
+.IF $(NO_ASM)
+ASMOBJ          =
+DRVASMOBJ       =
+.ELSE
+ASMOBJ          = _monobm$O _fix32$O _memset$O _palette$O _stubs$O 			\
+				  _devctx$O _polygon$O _polyhlp$O _random$O _em_tran$O		\
+                  _em_zbuf$O _opengl$O
+
+DRVASMOBJ       = _pack8$O _pack16$O _pack24$O _pack32$O
+.ENDIF
+
+# Define the list of object files to create dependency information for
+
+MGLDEPEND_OBJ   = $(COBJ_LITE) $(COBJ_PRO) $(COBJ_3D) $(EMUCOBJ_LITE) 		\
+				  $(EMUCOBJ_PRO) $(EMUCOBJ_3D) $(DRVCOBJ) $(ASMOBJ) 		\
+				  $(DRVASMOBJ) testgr$O main$O ffill$O getopt$O mgldemo$O
+MGLDEPEND_SRC   = emulate;asm386;drivers\packed
+
+# Include definitions for the target system
+
+.IF $(USE_WIN32)
+.INCLUDE: "mglwin\mglwin.mk"
+.ELIF $(USE_WIN386)
+.INCLUDE: "mglwin\mglwin.mk"
+.ELIF $(USE_WIN16)
+.INCLUDE: "mglwin\mglwin.mk"
+.ELIF $(USE_OS2)
+.INCLUDE: "mglpm\mglpm.mk"
+.ELIF $(USE_X11)
+.INCLUDE: "mglx11/mglx11.mk"
+.ELSE
+.INCLUDE: "mgldos\mgldos.mk"
+.ENDIF
+
+.IF $(MGL_LITE)
+OBJECTS         = $(COBJ_LITE) $(EMUCOBJ_LITE) $(DRVCOBJ) $(LOCALCOBJ)		\
+				  $(LOCALDRVCOBJ)
+.ELIF $(MGL_PRO)
+OBJECTS         = $(COBJ_LITE) $(COBJ_PRO) $(EMUCOBJ_LITE) $(EMUCOBJ_PRO) 	\
+				  $(DRVCOBJ) $(LOCALCOBJ) $(LOCALDRVCOBJ)
+.ELSE
+OBJECTS         = $(COBJ_LITE) $(COBJ_PRO) $(COBJ_3D) $(EMUCOBJ_LITE) 		\
+				  $(EMUCOBJ_PRO) $(EMUCOBJ_3D) $(DRVCOBJ) $(LOCALCOBJ)		\
+				  $(LOCALDRVCOBJ)
+.ENDIF
+
+.IF $(PCASM)
+OBJECTS         += $(ASMOBJ) $(DRVASMOBJ) $(LOCALASMOBJ) $(LOCALDRVASMOBJ)
+.ENDIF
+
+# Tell dmake where to find source files
+
+.SOURCE: emulate asm386 drivers\packed $(LOCALSRC)
+
+# Target to build the library file
+
+all: $(LIBFILE)
+
+# Target to build the C++ library file
+
+$(LIBFILECPP): $(CPPOBJ)
+
+# Install the library files
+
+.IF $(MGL_LITE)
+installcpp:
+
+.ELIF $(MGL_PRO)
+installcpp:
+
+.ELIF $(MGL_FLT3D)
+installcpp:
+
+.ELSE
+installcpp: $(LIBFILECPP)
+    $(INSTALL) $(LIBFILECPP) $(LIB_DEST)
+.ENDIF
+
+.INCLUDE: "$(SCITECH)\makedefs\common.mk"
+
+# Target to build all DOS 32-bit libraries
+
+.SWAP .PHONY mkdos32:
+	@+build wc10-d32 install -u OPT=1
+	@+build wc11-d32 install -u OPT=1
+	@+build bc45-d32 install -u OPT=1
+	@+build dj20-d32 install -u OPT=1
+	@+build wc10-d32 installcpp -u OPT=1
+	@+build wc11-d32 installcpp -u OPT=1
+	@+build bc45-d32 installcpp -u OPT=1
+	@+build dj20-d32 installcpp -u OPT=1
+
+# Target to build all DOS libraries
+
+.PHONY mkdos: mkdos32 cleanexe
+
+# Target to build all win 32-bit libraries
+
+.SWAP .PHONY mkwin32:
+    @+build wc10-w32 install -u OPT=1
+    @+build wc11-w32 install -u OPT=1
+    @+build bc45-w32 install -u OPT=1
+    @+build bc50-w32 install -u OPT=1
+    @+build vc40-w32 install -u OPT=1
+    @+build vc50-w32 install -u OPT=1
+	@+build wc10-w32 installcpp -u OPT=1
+	@+build wc11-w32 installcpp -u OPT=1
+	@+build bc45-w32 installcpp -u OPT=1
+	@+build bc50-w32 installcpp -u OPT=1
+	@+build vc40-w32 installcpp -u OPT=1
+	@+build vc50-w32 installcpp -u OPT=1
+
+.SWAP .PHONY mkdll32:
+    @+build bc50-w32 install -u BUILD_DLL=1 USE_MT=1 OPT=1
+	@+build bc45-w32 install IMPORT_DLL=1
+	@+build bc50-w32 install IMPORT_DLL=1
+	@+build wc10-w32 install IMPORT_DLL=1
+	@+build wc11-w32 install IMPORT_DLL=1
+	@+build vc40-w32 install IMPORT_DLL=1
+	@+build vc50-w32 install IMPORT_DLL=1
+
+# Target to build all Windows libraries
+
+.PHONY mkwin: mkwin32 mkdll32 cleanexe
+
+# Target to build all libraries
+
+.PHONY mkall: mkdos32 mkwin32 mkdll32 cleanexe

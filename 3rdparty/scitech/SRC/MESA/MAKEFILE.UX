@@ -1,0 +1,49 @@
+#############################################################################
+#
+#                   Copyright (C) 1996 SciTech Software
+#                           All rights reserved.
+#
+# Descripton:   Generic makefile for the MGL version of Mesa.
+#
+# $Date:   09 Jul 1997 19:48:22  $ $Author:   KendallB  $
+#
+#############################################################################
+
+include $(SCITECH)/makedefs/startup.mk
+
+CFLAGS          += -DNO_GL_MACROS -DPC_HEADER
+
+# Name of library and object files required to build it
+
+ifdef BUILD_DLL
+CFLAGS          += -DBUILD_DLL
+DLLFILE         = mesagl$D
+LIBNAME         = mesagl
+else
+ifdef STKCALL
+LIBNAME         = smesagl
+else
+LIBNAME         = mesagl
+endif
+endif
+LIBFILE         = $(LP)$(LIBNAME)$L
+
+CORE_OBJS       = accum$O alpha$O alphabuf$O api$O attrib$O bitmap$O \
+				  blend$O clip$O context$O copypix$O depth$O \
+				  dlist$O drawpix$O enable$O eval$O feedback$O fog$O \
+				  get$O image$O light$O lines$O logic$O masking$O \
+				  matrix$O misc$O pb$O pixel$O points$O pointers$O \
+				  polygon$O rastpos$O readpix$O shade$O scissor$O \
+				  span$O stencil$O teximage$O texobj$O texture$O triangle$O \
+				  varray$O winpos$O vbfill$O vbrender$O vbxform$O xform$O \
+                  mmath$O rect$O texstate$O quads$O vb$O
+
+DRIVER_OBJS     = mmesa8$O mmesa16$O mmesa24$O mmesa32$O halftone$O mglmesa$O 
+
+OBJECTS         = $(CORE_OBJS) $(DRIVER_OBJS)
+
+# Define the list of object files to create dependency information for
+
+DEPEND_OBJ      = $(OBJECTS)
+
+include $(SCITECH)/makedefs/common.mk

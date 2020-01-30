@@ -1,0 +1,14 @@
+#############################################################################
+#
+#               Copyright (C) 1991-1997 SciTech Software, Inc.
+#                            All rights reserved.
+#
+# Descripton:   Specialised definitions for building the MGLWIN target
+#               version of the MGL.
+#
+# $Date:   07 Nov 1997 16:08:26  $ $Author:   KendallB  $
+#
+#############################################################################
+
+# TODO: The makefile for Linux needs to be done.
+

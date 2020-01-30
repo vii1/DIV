@@ -1,0 +1,62 @@
+#############################################################################
+#
+#                   Copyright (C) 1997 SciTech Software.
+#                           All rights reserved.
+#
+# Descripton:   Generic makefile for the PMODE library. Builds the library
+#               file and all example programs. Requires the SciTech Makefile
+#               utilities to be installed.
+#
+# $Date:   11 Nov 1996 13:32:00  $ $Author:   KendallB  $
+#
+#############################################################################
+
+MK_PMODE        = 1
+
+include $(SCITECH)/makedefs/startup.mk
+
+# Name of library and object files required to build it
+
+ifdef STKCALL
+LIBNAME         = spmode
+else
+LIBNAME         = pmode
+endif
+LIBFILE         = $(LP)pmode$L
+ifdef UNIX
+EXELIBS		   += $(LL)$(LIBNAME)$(LE) $(LL)conio$(LE) $(LL)ncurses$(LE)
+endif
+OBJECTS         = pmlite$O pmpro$O vflat$O _pmlite$O _pmpro$O _vflat$O
+
+# Names of all executable files built, and targerts to build them
+
+EXEFILES        = memtest$E biosptr$E video$E isvesa$E callreal$E \
+                  mouse$E tick$E key$E key15$E brk$E altbrk$E \
+                  critical$E altcrit$E vftest$E int10$E
+
+tests: $(EXEFILES)
+$(EXEFILES): $(LIBFILE)
+memtest$E:  memtest$O
+biosptr$E:  biosptr$O
+video$E:    video$O
+isvesa$E:   isvesa$O
+mouse$E:    mouse$O
+tick$E:     tick$O
+key$E:      key$O
+key15$E:    key15$O
+brk$E:    	brk$O
+altbrk$E:   altbrk$O
+critical$E: critical$O
+altcrit$E:  altcrit$O
+callreal$E: callreal$O
+vftest$E:   vftest$O
+int10$E:    int10$O
+
+# Define the list of object files to create dependency information for
+
+DEPEND_OBJ      = $(OBJECTS) memtest$O biosptr$O video$O isvesa$O mouse$O   \
+                  tick$O key$O key$O brk$O altbrk$O critical$O altcrit$O    \
+                  callreal$O vftest$O
+
+include $(SCITECH)/makedefs/common.mk
+

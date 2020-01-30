@@ -1,0 +1,94 @@
+#############################################################################
+#
+#                   Copyright (C) 1996 SciTech Software
+#                           All rights reserved.
+#
+# Descripton:   Generic makefile for the MegaVision Application Frameworks.
+#               Requires the SciTech Software makefile definitions package
+#               to be installed.
+#
+#               Specifying CHECKS on the command line will enable a
+#               debugging version of the MVis that does extra runtime
+#               checking.
+#
+# $Date:   11 Jul 1997 22:05:38  $ $Author:   KendallB  $
+#
+#############################################################################
+
+# Comment the following if you dont use pre-compiled headers
+
+.IF $(NO_PCH)
+.ELSE
+CFLAGS          += -DPC_HEADERS
+.ENDIF
+
+# Include definitions for the target system
+
+.IMPORT .IGNORE : MGLDOS MGLWIN MGLPM MGLX
+
+.IF $(USE_WIN32)
+CFLAGS          += -DMGLWIN
+.ENDIF
+
+# Name of library
+
+.IF $(CHECKS)
+CFLAGS          += -DDEBUG=2
+LIBFILE         = mvisdb$L
+.ELSE
+.IF $(STKCALL)
+LIBFILE         = smvis$L
+.ELSE
+LIBFILE         = mvis$L
+.ENDIF
+.ENDIF
+
+LIBCLEAN = mvis*.dll mvis*.lib mvis*.a smvis*.lib
+
+# All the object modules in the library
+
+OBJECTS =   mvision$O                                                   \
+            hotkey$O mbackgnd$O mbitbtn$O mbutton$O mcheckbx$O          \
+			mdesktop$O mdialog$O message$O mevent$O mfiledlg$O 			\
+			mfontmgr$O mframe$O mgroup$O minputl$O misc$O mlabel$O 		\
+			mlist$O mmenu$O mmenubar$O mmenuite$O mmltext$O mmodesel$O	\
+			mprogram$O mradio$O mrendera$O mscrollb$O msgbox$O 			\
+			mstatic$O msttext$O mtbbtn$O mtitleb$O mview$O mvtext$O		\
+			mwindow$O safetyp$O validvw$O viewstk$O
+
+# Define the list of object files to create dependency information for
+
+DEPEND_OBJ      = $(OBJECTS)
+
+.INCLUDE: "$(SCITECH)\makedefs\common.mk"
+
+# Target to build all DOS 32-bit libraries
+
+.SWAP .PHONY mkdos32:
+	@+build wc10-d32 install -u OPT=1 NO_PCH=1
+	@+build wc11-d32 install -u OPT=1 NO_PCH=1
+	@+build bc45-d32 install -u OPT=1
+	@+build dj20-d32 install -u OPT=1
+
+# Target to build all DOS libraries
+
+.PHONY mkdos: mkdos32 cleanexe
+
+# Target to build all win 32-bit libraries
+
+.SWAP .PHONY mkwin32:
+	@+build wc10-w32 install -u OPT=1 NO_PCH=1
+	@+build wc11-w32 install -u OPT=1 NO_PCH=1
+	@+build bc45-w32 install -u OPT=1
+	@+build bc50-w32 install -u OPT=1
+	@+build vc40-w32 install -u OPT=1
+	@+build vc50-w32 install -u OPT=1
+
+# Target to build all Windows libraries
+
+.PHONY mkwin: mkwin32 cleanexe
+
+# Target to build all libraries
+
+.PHONY mkall: mkdos32 mkwin32 cleanexe
+

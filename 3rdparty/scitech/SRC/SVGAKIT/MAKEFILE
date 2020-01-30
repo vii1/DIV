@@ -1,0 +1,140 @@
+#############################################################################
+#
+#                   Copyright (C) 1996 SciTech Software
+#                           All rights reserved.
+#
+# Descripton:   Generic makefile for the SuperVGA Kit. Requires the SciTech
+#               Software makefile definitions package to be installed.
+#
+# NOTE! If you wish to build apps that use the 16 bit version of the linkable
+#       libraries (rather then the DLL) you must ensure that 'segment
+#       packing' is not enabled. This option usually cannot be enabled from
+#       the command line, so you will need to manually link the application.
+#
+#       Alternatively you can simply use the pre-built 16 bit DLL that has
+#       been correctly linked.
+#
+# $Date:   19 Sep 1997 11:39:10  $ $Author:   KendallB  $
+#
+#############################################################################
+
+# DOS extender dependant flags
+
+CFLAGS          += $(DX_CFLAGS)
+ASFLAGS         += $(DX_ASFLAGS) -I$(SCITECH)\include\svgakit
+
+OBJECTS         = vesavbe$O svgasdk$O vbeaf$O font8x16$O vgapal$O gtfcalc$O cpu$O \
+                  _svgasdk$O _linsdk$O _vbeaf$O
+DOSOBJS         = event$O maskcode$O _event$O
+
+LIBCLEAN        = svga*.dll svga*.lib ssvga*.lib
+
+# Find the name of the library file to build
+
+.IF $(BUILD_DLL)
+MAKE_DLL        = 1
+.ENDIF
+.IF $(IMPORT_DLL)
+MAKE_DLL        = 1
+.ENDIF
+EXELIBS         = wdir16$L
+.IF $(MAKE_DLL)
+.IF $(USE_WIN16)
+DLLFILE         = svga16$D
+LIBFILE         = svga16$L
+EXELIBS         = wdir16$L
+.ELSE
+.IF $(USE_MT)
+DLLFILE         = svga32m$D
+LIBFILE         = svga32m$L
+EXELIBS         = wdir32m$L
+.ELSE
+DLLFILE         = svga32$D
+LIBFILE         = svga32$L
+EXELIBS         = wdir32$L
+.ENDIF
+.ENDIF
+.ELSE
+.IF $(STKCALL)
+LIBFILE         = ssvga$L
+.ELSE
+LIBFILE         = svga$L
+.ENDIF
+.IF $(USE_WIN16)
+.ELIF $(USE_WIN32)
+.ELSE
+OBJECTS         += $(DOSOBJS)
+.ENDIF
+.ENDIF
+
+.IF $(USE_WIN16)
+
+# Special target to build 16 bit DLL Borland C++ without code segment
+# packing. We need to call tlink directly, as currently there is no way to
+# pass the '-P-' linker command line option through from the BCC compiler.
+#
+# If you wish to rebuild the 16 bit DLL with another compiler other than
+# Borland C++, you will need to modify the makefile to link with the
+# appropriate linker and ensure segment packing is turned off.
+
+.IF $(BUILD_DLL)
+$(DLLFILE): $(OBJECTS)
+.IF $(DBG)
+    tlink -3 -Twd -c -P- -v -m @svgadll.rsp
+.ELSE
+    tlink -3 -Twd -c -P- @svgadll.rsp
+.ENDIF
+.ENDIF
+      
+.ENDIF
+
+# Target to build all DOS 32-bit libraries
+
+.SWAP .PHONY mkdos32:
+	@+build wc10-d32 install -u OPT_SIZE=1
+	@+build wc10-d32 install -u OPT_SIZE=1 STKCALL=1
+	@+build wc11-d32 install -u OPT_SIZE=1
+	@+build wc11-d32 install -u OPT_SIZE=1 STKCALL=1
+	@+build bc45-d32 install -u OPT_SIZE=1
+	@+build bc50-d32 install -u OPT_SIZE=1
+	@+build dj20-d32 install -u OPT_SIZE=1
+
+# Target to build all DOS libraries
+
+.PHONY mkdos: mkdos32 cleanexe
+
+# Target to build all win 32-bit libraries
+
+.SWAP .PHONY mkwin32:
+	@+build wc10-w32 install -u OPT_SIZE=1
+	@+build wc10-w32 install -u OPT_SIZE=1 STKCALL=1
+	@+build wc11-w32 install -u OPT_SIZE=1
+	@+build wc11-w32 install -u OPT_SIZE=1 STKCALL=1
+	@+build bc45-w32 install -u OPT_SIZE=1
+	@+build bc50-w32 install -u OPT_SIZE=1
+	@+build sc70-w32 install -u OPT_SIZE=1
+	@+build vc40-w32 install -u OPT_SIZE=1
+	@+build vc50-w32 install -u OPT_SIZE=1
+
+# Target to build all Windows libraries
+
+.PHONY mkwin: mkwin32 cleanexe
+
+# Target to build all libraries
+
+.PHONY mkall: mkdos32 mkwin32 cleanexe
+
+# Target to build all libraries for SciTech Display Doctor
+
+.SWAP .PHONY mksdd:
+    @+build bc50-d16 install -u OPT_SIZE=1
+	@+build wc10-d32 install -u OPT_SIZE=1
+    @+build bc50-w16 install -u OPT_SIZE=1
+    @+build bc50-w32 install -u OPT_SIZE=1
+	@+dmake cleanexe
+
+# Define the list of object files to create dependency information for
+
+DEPEND_OBJ      = $(OBJECTS) $(DOSOBJS)
+
+.INCLUDE: "$(SCITECH)\makedefs\common.mk"

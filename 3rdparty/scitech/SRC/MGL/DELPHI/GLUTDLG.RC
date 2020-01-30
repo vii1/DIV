@@ -1,0 +1,118 @@
+/****************************************************************************
+*
+*                       MegaGraph Graphics Library
+*
+*  ========================================================================
+*
+*    The contents of this file are subject to the SciTech MGL Public
+*    License Version 1.0 (the "License"); you may not use this file
+*    except in compliance with the License. You may obtain a copy of
+*    the License at http://www.scitechsoft.com/mgl-license.txt
+*
+*    Software distributed under the License is distributed on an
+*    "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+*    implied. See the License for the specific language governing
+*    rights and limitations under the License.
+*
+*    The Original Code is Copyright (C) 1991-1998 SciTech Software, Inc.
+*
+*    The Initial Developer of the Original Code is SciTech Software, Inc.
+*    All Rights Reserved.
+*
+*  ========================================================================
+*
+*
+* Language:     Windows Resource Compiler
+* Environment:  Win32
+*
+*
+****************************************************************************/
+
+#ifndef WORKSHOP_INVOKED
+  #include <windows.h>
+#endif
+#include "glutdlg.rh"
+
+IDD_MAINDLG DIALOG 30, 26, 222, 235
+STYLE DS_MODALFRAME | 0x4L | WS_POPUP | WS_VISIBLE | WS_DLGFRAME
+FONT 8, "MS Sans Serif"
+{
+ LISTBOX IDC_MODELIST, 9, 47, 203, 84, LBS_NOTIFY | WS_BORDER | WS_BORDER | WS_VSCROLL | WS_TABSTOP
+ DEFPUSHBUTTON "Run Demo", IDC_OK, 34, 215, 57, 14
+ PUSHBUTTON "Quit", IDC_CANCEL, 130, 215, 57, 14
+ LTEXT "Video mode to use:", -1, 10, 35, 178, 8, NOT WS_GROUP
+ CTEXT "Win32 Full Screen OpenGL Demo", IDC_VERSIONSTR, 18, 8, 186, 8, SS_CENTER | NOT WS_GROUP
+ CTEXT "Copyright (c) 1992-97 SciTech Software", IDC_COPYRIGHTSTR, 9, 19, 204, 8, SS_CENTER | NOT WS_GROUP
+ RADIOBUTTON "Windowed", IDC_WINDOWED, 16, 141, 47, 12, BS_RADIOBUTTON | WS_TABSTOP
+ RADIOBUTTON "8", IDC_8BIT, 69, 141, 18, 12, BS_RADIOBUTTON | WS_TABSTOP
+ RADIOBUTTON "15", IDC_15BIT, 95, 141, 21, 12, BS_RADIOBUTTON | WS_TABSTOP
+ RADIOBUTTON "16", IDC_16BIT, 124, 141, 21, 12, BS_RADIOBUTTON | WS_TABSTOP
+ RADIOBUTTON "24", IDC_24BIT, 153, 141, 21, 12, BS_RADIOBUTTON | WS_TABSTOP
+ RADIOBUTTON "32", IDC_32BIT, 182, 141, 21, 12, BS_RADIOBUTTON | WS_TABSTOP
+ GROUPBOX " Color Depth (bits per pixel)", -1, 8, 130, 206, 28, BS_GROUPBOX | WS_GROUP
+ GROUPBOX " MGL Options ", -1, 115, 162, 99, 47, BS_GROUPBOX | WS_GROUP
+ RADIOBUTTON "Use WinDirect Only", IDC_USEWDIRECT, 126, 171, 77, 12, BS_RADIOBUTTON | WS_TABSTOP
+ RADIOBUTTON "Use DirectDraw Only", IDC_USEDDRAW, 126, 182, 77, 12, BS_RADIOBUTTON | WS_TABSTOP
+ RADIOBUTTON "Use Both", IDC_USEBOTH, 126, 194, 77, 12, BS_RADIOBUTTON | WS_TABSTOP
+ GROUPBOX " OpenGL Options ", -1, 8, 162, 99, 47, BS_GROUPBOX | WS_GROUP
+ RADIOBUTTON "Microsoft", IDC_MICROSOFT, 17, 175, 44, 12, BS_RADIOBUTTON | WS_TABSTOP
+ RADIOBUTTON "Cosmo", IDC_COSMO, 17, 189, 44, 12, BS_RADIOBUTTON | WS_TABSTOP
+ RADIOBUTTON "Mesa", IDC_MESA, 61, 175, 33, 12, BS_RADIOBUTTON | WS_TABSTOP
+ RADIOBUTTON "Auto", IDC_AUTO, 61, 189, 33, 12, BS_RADIOBUTTON | WS_TABSTOP
+}
+
+#ifndef NO_ICON
+1 ICON 
+{
+ '00 00 01 00 01 00 20 20 10 00 00 00 00 00 E8 02'
+ '00 00 16 00 00 00 28 00 00 00 20 00 00 00 40 00'
+ '00 00 01 00 04 00 00 00 00 00 80 02 00 00 00 00'
+ '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
+ '00 00 00 00 80 00 00 80 00 00 00 80 80 00 80 00'
+ '00 00 80 00 80 00 80 80 00 00 C0 C0 C0 00 80 80'
+ '80 00 00 00 FF 00 00 FF 00 00 00 FF FF 00 FF 00'
+ '00 00 FF 00 FF 00 FF FF 00 00 FF FF FF 00 00 00'
+ '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
+ '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
+ '88 88 88 88 88 88 88 88 88 88 88 88 00 00 00 00'
+ '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
+ '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
+ '00 00 00 00 00 00 00 00 00 00 00 00 00 00 07 77'
+ '77 77 77 77 77 77 77 77 77 77 77 77 77 70 07 88'
+ '88 88 88 88 88 88 88 88 88 88 88 88 88 70 07 80'
+ '00 00 00 00 00 00 00 00 00 00 00 00 08 70 07 80'
+ '00 00 00 00 00 00 00 00 00 00 00 00 08 70 07 80'
+ '00 00 00 00 00 00 00 00 00 00 00 00 08 70 07 80'
+ '00 00 00 09 99 09 09 99 00 00 00 00 08 70 07 80'
+ '00 00 00 90 09 00 00 90 00 00 00 00 08 70 07 80'
+ '00 00 00 00 99 00 00 90 00 00 00 00 08 70 07 80'
+ '00 00 00 00 09 00 00 90 00 00 00 00 08 70 07 80'
+ '00 00 00 90 09 00 09 90 00 00 00 00 08 70 07 80'
+ '00 00 00 09 90 00 00 90 00 00 00 00 08 70 07 80'
+ '00 00 00 00 00 00 00 00 00 00 00 00 08 70 07 80'
+ '00 00 00 00 00 00 00 00 00 00 00 00 08 70 07 80'
+ '00 09 00 90 09 00 99 99 09 99 00 00 08 70 07 80'
+ '00 09 00 90 09 09 00 09 09 00 00 00 08 70 07 80'
+ '00 09 09 09 09 09 00 99 09 00 00 00 08 70 07 80'
+ '00 09 09 09 09 09 00 00 09 00 00 00 08 70 07 80'
+ '00 09 90 00 99 09 00 09 09 00 00 00 08 70 07 80'
+ '00 09 90 00 99 00 99 90 09 00 00 00 08 70 07 80'
+ '00 00 00 00 00 00 00 00 00 00 00 00 08 70 07 80'
+ '00 00 00 00 00 00 00 00 00 00 00 00 08 70 07 80'
+ '00 00 00 00 00 00 00 00 00 00 00 00 08 70 07 80'
+ '00 00 00 00 00 00 00 00 00 00 00 00 08 70 07 88'
+ '88 88 88 88 88 88 88 88 88 88 88 88 88 70 07 77'
+ '77 77 77 77 77 77 77 77 77 77 77 77 77 70 00 00'
+ '00 00 00 00 00 00 00 00 00 00 00 00 00 00 FF FF'
+ 'FF FF E0 00 00 07 E0 00 00 07 E0 00 00 07 FC 00'
+ '00 3F 80 00 00 01 00 00 00 00 00 00 00 00 00 00'
+ '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
+ '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
+ '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
+ '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
+ '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
+ '00 00 00 00 00 00 00 00 00 00 80 00 00 01'
+}
+#endif
+
+

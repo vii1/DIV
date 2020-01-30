@@ -1,0 +1,17 @@
+c0dl.obj+
+vesavbe.obj+
+svgasdk.obj+
+_svgasdk.obj+
+_linsdk.obj+
+font8x16.obj+
+vgapal.obj+
+gtfcalc.obj+
+cpu.obj
+svga16.dll, svga16.map
+wdir16.lib+
+noehwl.lib+
+import.lib+
+cwl.lib+
+mathwl.lib
+svga16.def
+

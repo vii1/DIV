@@ -1,0 +1,80 @@
+#############################################################################
+#
+#                   Copyright (C) 1996 SciTech Software
+#                           All rights reserved.
+#
+# Descripton: 	Generic makefile for the Quick3D library.
+#
+#               Creates a number of different libraries depending on the
+#               options used to create them with the following format:
+#
+#                   qm<d>_<flt>.lib
+#
+#               where <db> is either empty or 'd' for the debugging versions
+#               of the library compiled with DEBUG=2. You should set DEBUG=1
+#               or DEBUG=2 in your own code to add the debugging stuff in
+#               the header files. <flt> is the type of real numbers the
+#               library is compiled for and will be one of the following:
+#
+#                   fix - 16.16 fixed point
+#                   fl  - IEEE float's
+#                   fl7 - IEEE float's for 80387+
+#                   db  - IEEE double's
+#                   db7 - IEEE double's for 80387+
+#
+#               The standard fl and db libraries use the default compiler
+#               supplied floating point options, so work on all machines
+#               with or without and FPU. The fl7 and db7 libraries are
+#               compiled with the FPU387=1 flag and contain direct
+#               co-processor support for 80387+ FPU's.
+#
+# $Date:   26 Jun 1996 02:29:12  $ $Author:   KendallB  $
+#
+#############################################################################
+
+include $(SCITECH)/makedefs/startup.mk
+
+# Turn on the debugging version if desired
+
+ifdef CHECKS
+CFLAGS         += -DDEBUG=2
+LIBSTART        = q3dd
+else
+LIBSTART        = q3d
+endif
+
+# Object files required to build the libraries
+
+OBJECTS         = quick3d$O line3d$O poly3d$O render$O depthsrt$O \
+				  bsptree$O bsppoly$O lighting$O circle3d$O text3d$O
+
+ifdef FPU
+LIBEND          = 7
+endif
+
+ifdef FX_DOUBLE
+CFLAGS         += -DFX_DOUBLE
+ASFLAGS        += -DFX_DOUBLE
+LIBFILE         = $(LP)$(LIBSTART)_db$(LIBEND)$L
+OBJECTS        += $(FLASMOBJS)
+else
+ifdef FX_FIXED
+CFLAGS         += -DFX_FIXED -DFIXED386
+ASFLAGS        += -DFIXED386
+LIBFILE         = $(LP)$(LIBSTART)_fix$L
+OBJECTS        += $(FIXASMOBJS)
+else
+CFLAGS         += -DFX_FLOAT
+ASFLAGS        += -DFX_FLOAT
+LIBFILE         = $(LP)$(LIBSTART)_fl$(LIBEND)$L
+OBJECTS        += $(FLASMOBJS)
+endif
+endif
+
+all: lib
+
+# Define the list of object files to create dependency information for
+
+DEPEND_OBJ      = $(OBJECTS)
+
+include $(SCITECH)/makedefs/common.mk

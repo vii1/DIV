@@ -1,0 +1,31 @@
+#############################################################################
+#
+#                   Copyright (C) 1997 SciTech Software
+#                           All rights reserved.
+#
+# Descripton:   Generic makefile for the SVGAKit library.
+#
+# $Date:   05 Feb 1996 20:44:30  $ $Author:   KendallB  $
+#
+#############################################################################
+
+include $(SCITECH)/makedefs/startup.mk
+
+# Name of library and object files required to build it
+
+OBJECTS         = vesavbe$O svgasdk$O vbeaf$O font8x16$O vgapal$O gtfcalc$O \
+				  cpu$O _svgasdk$O _linsdk$O _vbeaf$O
+DOSOBJS         = event$O maskcode$O _event$O
+
+ifdef STKCALL
+LIBNAME			= ssvga
+else
+LIBNAME         = svga
+endif
+LIBFILE         = $(LP)$(LIBNAME)$L
+
+# Define the list of object files to create dependency information for
+
+DEPEND_OBJ      = $(OBJECTS)
+
+include $(SCITECH)/makedefs/common.mk

@@ -1,0 +1,49 @@
+;****************************************************************************
+;*
+;*						MegaGraph Graphics Library
+;*
+;*               Copyright (C) 1991-1997 SciTech Software, Inc.
+;*                            All rights reserved.
+;*
+;*  ======================================================================
+;*       This library is free software; you can use it and/or
+;*       modify it under the terms of the SciTech MGL Software License.
+;*
+;*       This library is distributed in the hope that it will be useful,
+;*       but WITHOUT ANY WARRANTY; without even the implied warranty of
+;*       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;*       SciTech MGL Software License for more details.
+;*  ======================================================================
+;*
+;* Filename:    $Workfile:   biosdata.equ  $
+;* Version:     $Revision:   1.2  $
+;*
+;* Language:	8086 Assembler
+;* Environment:	IBM PC (MS DOS)
+;*
+;* Description:	General equates for the IBM PC BIOS data area.
+;*
+;* $Date:   01 Oct 1997 05:23:22  $ $Author:   KendallB  $
+;*
+;****************************************************************************
+
+EQUIP_FLAG		= BYTE es:010h	; BIOS =ipment flags
+CRT_MODE		= BYTE es:049h	; Current BIOS video mode
+CRT_COLS		= WORD es:04Ah	; Number of displayed character columns
+CRT_LEN			= WORD es:04Ch	; Size of video buffer in bytes
+CRT_START		= WORD es:04Eh	; Offset of start of video buffer
+CURSOR_POSN		= WORD es:050h	; Cursor position arrays
+CURSOR_MODE		= WORD es:060h	; Scanlines for cursor
+ACTIVE_PAGE		= BYTE es:062h	; Currently displayed video page number
+ADDR_6845		= WORD es:063h	; I/O port address of CRT controller
+CRT_MODE_SET	= BYTE es:065h	; Current value of mode control register
+CRT_PALETTE		= BYTE es:066h	; Current value of CGA color select reg
+TICKS			= DWORD es:06Ch	; The Master clock count
+ROLLOVER		= BYTE es:070h	; Set to one when clock moves past 12am
+ROWS			= BYTE es:084h	; Number of displayed character rows - 1
+POINTS			= WORD es:085h	; Height of character matrix
+INFO			= BYTE es:087h	; INFO byte
+INFO_3			= BYTE es:088h	; INFO_3 byte
+Flags			= BYTE es:089h	; Miscellaneous flags
+DCC				= BYTE es:08Ah	; Display Combination Code table index
+SAVE_PTR		= DWORD es:0A8h	; Pointer to BIOS save areas
