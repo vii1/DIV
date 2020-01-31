@@ -8,9 +8,9 @@ MAKEFILE = makefile.w32
 .c.obj:
    $(CC) $(CC_OPTS) -c $<
 
-all: $(TF_LIB)
+all: $(TF_LIB) .SYMBOLIC
 
-clean:
+clean: .SYMBOLIC
    -del *.obj
    -del $(TF_LIB)
 
@@ -18,7 +18,7 @@ $(TF_LIB): tflib.obj tfanimat.obj tfframe.obj tfbuffer.obj
    -del $(TF_LIB)
    wlib $(TF_LIB) +tflib.obj +tfanimat.obj +tfframe.obj +tfbuffer.obj
 
-tflib.obj: $(MAKEFILE) tflib.c .AUTODEPEND
-tfanimat.obj: $(MAKEFILE) tfanimat.c .AUTODEPEND
-tfframe.obj: $(MAKEFILE) tfframe.c .AUTODEPEND
-tfbuffer.obj: $(MAKEFILE) tfbuffer.c .AUTODEPEND
+tflib.obj: tflib.c .AUTODEPEND
+tfanimat.obj: tfanimat.c .AUTODEPEND
+tfframe.obj: tfframe.c .AUTODEPEND
+tfbuffer.obj: tfbuffer.c .AUTODEPEND

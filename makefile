@@ -92,6 +92,8 @@ clean: .SYMBOLIC
 	@for %i in (586 386) do $(MAKE) -f div32run.mif CPU=%i SESSION=0 clean
 	! pushd jpeglib && $(MAKE) clean && popd
 	! pushd judas && $(MAKE) clean && popd
+	! pushd 3rdparty\zlib && $(MAKE) -f watcom\watcom_f.mak clean && popd
+	! pushd 3rdparty\topflc && $(MAKE) -f makefile.w32 clean && popd
 
 .SILENT
 install: all .SYMBOLIC

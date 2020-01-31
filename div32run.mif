@@ -55,7 +55,11 @@ OBJS = $(OBJS:.asm=.obj)
 
 JUDAS_LIB = judas\judas.lib
 JPEG_LIB = jpeglib\libjpeg.lib
-LIBS = judas\judas.lib jpeglib\libjpeg.lib source\zlib.lib source\svga.lib source\pmode.lib source\tflc_w32.lib
+ZLIB_LIB = 3rdparty\zlib\zlib_f.lib
+SVGA_LIB = source\svga.lib
+PMODE_LIB = source\pmode.lib
+TFLC_LIB = 3rdparty\topflc\tflc_w32.lib
+LIBS = $(JUDAS_LIB) $(JPEG_LIB) $(ZLIB_LIB) $(SVGA_LIB) $(PMODE_LIB) $(TFLC_LIB)
 
 .BEFORE
 	@if not exist $(%OUTDIR).$(CPU) mkdir $(%OUTDIR).$(CPU)
@@ -123,6 +127,12 @@ $(JUDAS_LIB):
 
 $(JPEG_LIB):
 	! pushd $^: && $(MAKE) $^. && popd
+
+$(ZLIB_LIB):
+	! pushd $^: && $(MAKE) -f watcom\watcom_f.mak $^. && popd
+
+$(TFLC_LIB):
+	! pushd $^: && $(MAKE) -f makefile.w32 $^. && popd
 
 clean: .SYMBOLIC
 	@if exist $(OUTDIR)\*.err del $(OUTDIR)\*.err
