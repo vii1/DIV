@@ -2,7 +2,7 @@
 
 Entre las dependencias de DIV se encuentran varias que, deduzco, salieron de un conjunto de librerías de SciTech llamado MGL, un kit pensado para el desarrollo de aplicaciones gráficas profesionales.
 
-Buscando en Internet pude descargar la última versión que pude (la 5.1-r14, aunque probablemente Hammer Technologies usó la 3.0). Como es un kit muy grande y complejo, en esta carpeta pretendo incluir únicamente lo esencial para compilar y mejorar DIV.
+Buscando en Internet pude descargar la versión 4.05 (aunque probablemente Hammer Technologies usó la 3.0). Me decidí por esta versión porque parece ser que en la versión 5 quitaron cosas que requiere DIV, como el SVGAKIT. Como MGL es un kit muy grande y complejo, en esta carpeta pretendo incluir únicamente lo esencial para compilar y mejorar DIV.
 
 La forma oficial de compilar MGL es mediante un programa llamado DMAKE, que es un "meta-make" pensado para funcionar con diversos compiladores. DMAKE lee el makefile original y lo traduce al make del compilador destino. Sin embargo no he encontrado por ninguna parte el código fuente de DMAKE, por lo que prefiero prescindir de él y traducir los makefiles necesarios al formato de Watcom.
 
