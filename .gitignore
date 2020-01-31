@@ -16,6 +16,9 @@
 *.bak
 *.bac
 
+# ficheros temporales de programas externos
+/3rdparty/scitech/doc/MGL/*.[Gg][Ii][Dd]
+
 # carpetas
 /bin
 /_trash
