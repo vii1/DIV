@@ -1,0 +1,31 @@
+CC = bcc
+CC_FLAGS = -w2 -ml -2 -G
+CC_OPTS = $(CC_FLAGS)
+TF_LIB = tflc_bc.lib
+
+MAKEFILE = makefile.bc
+
+.autodepend
+
+.c.obj:
+   $(CC) $(CC_OPTS) -c $<
+
+all: $(TF_LIB) example.exe
+
+clean:
+   -del example.exe
+   -del *.obj
+   -del $(TF_LIB)
+
+$(TF_LIB): tflib.obj tfanimat.obj tfframe.obj tfbuffer.obj
+   -del $(TF_LIB)
+   tlib $(TF_LIB) +tflib.obj +tfanimat.obj +tfframe.obj +tfbuffer.obj
+
+tflib.obj: $(MAKEFILE) tflib.c
+tfanimat.obj: $(MAKEFILE) tfanimat.c
+tfframe.obj: $(MAKEFILE) tfframe.c
+tfbuffer.obj: $(MAKEFILE) tfbuffer.c
+
+example.exe: $(MAKEFILE) example.c $(TF_LIB)
+   $(CC) $(CC_OPTS) example.c $(TF_LIB)
+

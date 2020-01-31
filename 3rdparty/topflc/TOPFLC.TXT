@@ -1,0 +1,381 @@
+TopFLC library v1.0
+Copyright 1996 Johannes Lehtinen
+All rights reserved
+
+   ------------------------------------------------------------------
+   Please read the file license.txt because it includes the license
+   agreement which gives you the right to use this library. By
+   compiling, linking, distributing or modifying any of the files
+   included in this packet you indicate that you accept all the terms
+   in the license.
+   ------------------------------------------------------------------
+
+
+FILE LIST AND DESCRIPTIONS
+--------------------------
+
+   topflc.txt        Library documentation
+   license.txt       License agreement
+   descript.ion      4DOS file descriptions
+   file_id.diz       Short packette description
+   topflc.h          Library header file
+   tfframe.c         TopFLC library source
+   tfbuffer.c        TopFLC library source
+   tfanimat.c        TopFLC library source
+   tflib.c           TopFLC library source
+   tflib.h           TopFLC library source
+   tfanimat.h        TopFLC library source
+   example.c         TopFLC example source
+   example.exe       TopFLC example executable
+   makefile.bc       Makefile for Borland C++ v3.1
+   makefile.w16      Makefile for Watcom C16 v10.0
+   makefile.w32      Makefile for Watcom C32 v10.0
+   tflc_bc.lib       Library for Borland C++ v3.1
+   tflc_w16.lib      Library for Watcom C16 v10.0
+   tflc_w32.lib      Library for Watcom C32 v10.0
+
+
+LIBRARY DESCRIPTION
+-------------------
+
+   TopFLC library is aimed mainly for freeware game developers. It
+   includes a small set of functions which can be used to decode FLI
+   and FLC animations. Full C sources of decoding routines are
+   provided and packet includes also a little example program which
+   can be used to view FLI and FLC animations on fixed frame rate.
+
+   C-source of library should be quite ANSI compatible so it can be
+   compiled with almost any available compiler. The packet includes
+   compiled binaries for Borland C and Watcom C16/C32. The example
+   program was written for Borland C or Watcom C16. The library itself
+   does not contain any display routines or any other system depended
+   functions so it can be used almost any environment to decode
+   FLI/FLC animations.
+
+
+HOW TO LINK WITH THE LIBRARY
+----------------------------
+
+   To link your program with precompiled binaries you need a compiler
+   which can use Borland or Watcom library files. The 16-bit
+   precompiled binaries were compiled in large memory model so you
+   should use the same model to compile your own program. You must
+   include the header file topflc.h in the sources which use TopFLC
+   library functions or data structures/types.
+
+   The 16-bit binaries (tflc_bc.lib for Borland C and tflc_w16.lib for
+   Watcom C16) can only handle frames smaller than 64Kb (320x200 is
+   maximum resolution for animations). The 32-bit binary (tflc_w32.lib
+   for Watcom C32) can handle also bigger frames. When animation is
+   decoded from memory using 16-bit library the size of the animation
+   must be less than 64Kb.
+
+   The precompiled binaries are compiled using 80386 instruction set
+   so 386+ is required to run a program using these libraries.
+
+
+HOW TO COMPILE THE LIBRARY
+--------------------------
+
+   The library C-source should be quite ANSI compatible so the library
+   should compile quite easily on any compiler. Files tflib.c,
+   tfanimat.c, tfbuffer.c and tfframe.c should be compiled to object
+   files which can be then linked to form executable program or
+   library. The packet includes makefiles for Borland C (makefile.bc),
+   Watcom C16 (makefile.w16) and Watcom C32 (makefile.w32).
+
+
+HOW TO USE THE LIBRARY
+----------------------
+
+   Here are short explanations for each of the library functions.
+
+
+   Library handling
+   ----------------
+
+      TFStatus TFErrorHandler_Set(TFErrorHandler handler);
+
+         Arguments:  <handler>      Pointer to user error handler
+         Returns:    TF_SUCCESS on success (always)
+
+         This function is used to set external error handler. Whenever
+         some library function fails the given error handler is called
+         with character string indicating error situation. This
+         function is provided so that for example in games programmer
+         doesn't have to care about error values returned. If there
+         should be an error the error handler could for example quit
+         the whole program and report the fatal error to the user.
+
+
+   Animation handling
+   ------------------
+
+      TFAnimation *TFAnimation_NewFile(char *name);
+
+         Arguments:  <name>         Name of the animation file
+         Returns:    Pointer to animation on success
+                     NULL on failure
+
+         This function opens FLI/FLC animation file with given name.
+         Function can fail if the file is not FLI/FLC animation file
+         or there is not enough memory or the file I/O is not
+         succesfull. The file will be kept open for reading until
+         animation is closed using TFAnimation_Delete(). When
+         animation is opened using this function, it is decoded
+         reading the file frame by frame so fast decoding rates can
+         not be reached if the file is located on floppy disk drive or
+         CD-ROM drive.
+
+
+      TFAnimation *TFAnimation_NewHandle(FILE *handle);
+
+         Arguments:  <handle>       Handle of animation file
+         Returns:    Pointer to animation on success
+                     NULL on failure
+
+         This function reads FLI/FLC animation from the current
+         position of given file handle. Function can fail if no
+         FLI/FLC animation is found on current position or there is
+         not enough memory or the file I/O is not succesfull. The file
+         is not closed when TFAnimation_Delete() is called. When
+         animation is opened using this function, it is decoded
+         reading the file frame by frame so fast decoding rates can
+         not be reached if the file is located on floppy disk drive or
+         CD-ROM drive.
+
+
+      TFAnimation *TFAnimation_NewMem(void *raw);
+
+         Arguments:  <raw>          Pointer to animation data
+         Returns:    Pointer to animation on success
+                     NULL on failure
+
+         This function reads FLI/FLC animation from given memory
+         address. When using 16-bit compiler the animation size must
+         be smaller than 64Kb. This function is meant to be used in
+         32-bit applications. Function can fail if no FLI/FLC
+         animation is found on given address or there is not enough
+         memory. Memory is not freed when TFAnimation_Delete() is
+         called.
+
+
+      TFStatus TFAnimation_Delete(TFAnimation *animation);
+
+         Arguments:  <animation>    Pointer to animation to be deleted
+         Returns:    TF_SUCCESS on success
+                     TF_FAILURE on failure
+
+         This function deletes animation from memory. If the animation
+         was opened by filename the file is closed. Function returns
+         always TF_SUCCESS.
+
+
+      TFStatus TFAnimation_DeleteAll(void);
+
+         Arguments:  None
+         Returns:    TF_SUCCESS on success
+                     TF_FAILURE on failure
+
+         This function calls TFAnimation_Delete() for each existing
+         animation. Function returns always TF_SUCCESS.
+
+
+      TFStatus TFAnimation_GetInfo(TFAnimation *animation,
+                                   TFAnimationInfo *info);
+
+         Arguments:  <animation>    Pointer to animation
+                     <info>         Pointer to user supplied info
+                                    structure
+         Returns:    TF_SUCCESS on success
+                     TF_FAILURE on failure
+
+         This returns fills user supplied info structure, which
+         definition is:
+
+         struct TFAnimationInfo
+         {
+            short Width, Height;       /* Dimensions of animation */
+            short NumFrames;           /* Number of frames */
+            short CurFrame;            /* Index of next frame (0 for
+                                       *  first one) */
+            TFUByte *Frame;            /* Frame buffer (NULL if not set) */
+            TFUByte (*Palette)[256][3];/* Palette buffer (NULL if not set) */
+            TFStatus LoopFlag;         /* TF_TRUE if animation is to be looped
+                                       *  (default is TF_FALSE) */
+         };
+
+         Function returns always TF_SUCCESS.
+
+
+      TFStatus TFAnimation_SetLooping(TFAnimation *animation, TFStatus state);
+
+         Arguments:  <animation>    Pointer to animation
+                     <state>        TF_FALSE or TF_TRUE
+         Returns:    TF_SUCCESS on success
+                     TF_FAILURE on failure
+
+         This function sets animation loop flag. If <state> is
+         TF_FALSE animation is not looped, else if <state> is TF_TRUE
+         animation is looped. By default animation is not looped.
+         Function returns always TF_SUCCESS.
+
+
+      TFStatus TFAnimation_SetPaletteFunction(TFAnimation *animation,
+                                              TFPaletteFunction update_func);
+
+         Arguments:  <animation>    Pointer to animation
+                     <update_func>  Pointer to user palette function
+         Returns:    TF_SUCCESS on success
+                     TF_FAILURE on failure
+
+         This function sets palette update function for animation. It
+         is user supplied function which is called with pointer to
+         palette table every time palette of the animation changes.
+         Function returns always TF_SUCCESS.
+
+
+   Buffer Handling
+   ---------------
+
+      TFStatus TFBuffers_Set(TFAnimation *animation, void *framebuffer,
+                             void *palettebuffer);
+
+         Arguments:  <animation>    Pointer to animation
+                     <framebuffer>  Pointer to user supplied frame buffer
+                     <palettebuffer>Pointer to user supplied palette buffer
+         Returns:    TF_SUCCESS on success
+                     TF_FAILURE on failure
+
+         This function sets user supplied frame buffer and palette
+         buffer for animation. These buffers are used to store
+         decoded frame data and current palette and without them
+         animation can not be decoded. The size of the frame buffer
+         should be <animation width> * <animation height> bytes while
+         the size of the palette buffer should be 768 bytes. User
+         supplied buffers are not freed when animation is deleted.
+         Function returns always TF_SUCCESS.
+
+
+      TFStatus TFBuffers_Alloc(TFAnimation *animation);
+
+         Arguments:  <animation>    Pointer to animation
+         Returns:    TF_SUCCESS on success
+                     TF_FAILURE on failure
+
+         This function allocates frame buffer and palette buffer.
+         Function can fail if there is not enough memory. These
+         buffers are used to store decoded frame data and current
+         palette and without them animation can not be decoded.
+         Buffers allocated by this function are freed when animation
+         is deleted.
+
+
+      TFStatus TFBuffers_Free(TFAnimation *animation);
+
+         Arguments:  <animation>    Pointer to animation
+         Returns:    TF_SUCCESS on success
+                     TF_FAILURE on failure
+
+         This function frees buffers allocated by TFBuffers_Alloc().
+
+
+   Frame handling
+   --------------
+
+      TFStatus TFFrame_Decode(TFAnimation *animation);
+
+         Arguments:  <animation>    Pointer to animation
+         Returns:    TF_SUCCESS on success
+                     TF_FAILURE on failure
+
+         This function decodes the next frame of the animation and
+         updates frame buffer and palette buffer. Function can fail if
+         there are no buffers allocated or there are no more frames
+         left in animation. Frame data is stored to frame buffer as
+         raw color indexed data.
+
+
+      TFStatus TFFrame_Reset(TFAnimation *animation);
+
+         Arguments:  <animation>    Pointer to animation
+         Returns:    TF_SUCCESS on success
+                     TF_FAILURE on failure
+
+         This function resets frame count so that the next frame to be
+         decoded is the first frame of animation. Function always
+         returns TF_SUCCESS.
+
+
+      TFStatus TFFrame_Seek(TFAnimation *animation, int frame);
+
+         Arguments:  <animation>    Pointer to animation
+                     <frame>        Frame index (first frame is 0)
+         Returns:    TF_SUCCESS on success
+                     TF_FAILURE on failure
+
+         This function seeks to given frame. Function can fail if
+         the frame index is illegal or if it is impossible to decode
+         frames. This function is usually rather slow because FLI/FLC
+         animations can not be decoded backwards and only way to go
+         backwards is to start decoding from beginning of the
+         animation.
+
+
+CONTACTING AUTHOR
+-----------------
+
+   Any kind of comments, bug reports and registerations are welcome.
+   The author can be reached by:
+
+      e-mail:        johannes.lehtinen@hut.fi
+      phone:         +358-50-5163025
+      snail-mail:    Johannes Lehtinen
+                     Muurlantie 340 B
+                     FIN-25130 MUURLA
+                     Finland
+
+
+TO BE RELEASED BY ABACUS
+------------------------
+
+   Abacus is about to release software during the following 12 months
+   (probably in this order):
+
+      Obscure        Puzzle game which combines Tetris and traditional
+                     worm game in a totally new way. The game uses
+                     640x480/256 VESA graphics and it has over 2 Mb of
+                     great 16-channel game music.
+
+      <Intro>        Intro for the demo party Assembly'96 organized
+                     (according the rumors :-) late in the summer in
+                     Helsinki, Finland.
+
+      GenGFX         Generic graphics library for DOS and Linux
+                     (possibly also other environments like OS/2
+                     included later).
+
+      Floaters       2D racing game which uses SVGA graphics and also
+                     this one has a great soundtrack. Project has been
+                     freezed because we are trying to find more
+                     talented graphicians.
+
+   All of these products are going to be released as a freeware. Maybe
+   also shareware versions could be released later if we can find more
+   talented people to do graphics and coding. We are still doing this
+   as a hobby so we cannot hire people (excluding possible profits for
+   possible shareware versions). And for those of you who think 2D is
+   nothing: We're about to start developing our own 3D library so
+   there could also be some 3D products coming out next year (We are
+   extremely interested about the new accelerated 3D hardware).
+
+
+---
+January 28th, 1996 in Muurla, Finland
+
+Johannes Lehtinen
+Snowman of Abacus (Not _the_ Snowman)
+Author of TopFLC library
+
+
+

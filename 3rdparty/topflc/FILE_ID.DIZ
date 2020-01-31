@@ -1,0 +1,6 @@
+TOPFLC LIBRARY v1.0 - TopFLC library includes
+small set of C-routines to decode FLI/FLC
+animations. Full C-source of library is
+included as well as compiled binaries for
+Borland and Watcom. Author of the library is
+Johannes Lehtinen.

@@ -1,0 +1,20 @@
+topflc.txt        Library documentation
+license.txt       License agreement
+descript.ion      4DOS file descriptions
+topflc.h          Library header file
+tfframe.c         TopFLC library source
+tfbuffer.c        TopFLC library source
+tfanimat.c        TopFLC library source
+tflib.c           TopFLC library source
+tflib.h           TopFLC library source
+tfanimat.h        TopFLC library source
+example.c         TopFLC example source
+example.exe       TopFLC example executable
+makefile.bc       Makefile for Borland C++ v3.1
+makefile.w16      Makefile for Watcom C16 v10.0
+makefile.w32      Makefile for Watcom C32 v10.0
+tflc_bc.lib       Library for Borland C++ v3.1
+tflc_w16.lib      Library for Watcom C16 v10.0
+tflc_w32.lib      Library for Watcom C32 v10.0
+file_id.diz       Short packette description
+

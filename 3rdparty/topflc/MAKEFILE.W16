@@ -1,0 +1,29 @@
+CC = wcl
+CC_FLAGS = -otx -bt=dos -ml -w10 -3 -fpi -za
+CC_OPTS = $(CC_FLAGS)
+TF_LIB = tflc_w16.lib
+
+MAKEFILE = makefile.w16
+
+.c.obj:
+   $(CC) $(CC_OPTS) -c $<
+
+all: $(TF_LIB) example.exe
+
+clean:
+   -del example.exe
+   -del *.obj
+   -del $(TF_LIB)
+
+$(TF_LIB): tflib.obj tfanimat.obj tfframe.obj tfbuffer.obj
+   -del $(TF_LIB)
+   wlib $(TF_LIB) +tflib.obj +tfanimat.obj +tfframe.obj +tfbuffer.obj
+
+tflib.obj: $(MAKEFILE) tflib.c .AUTODEPEND
+tfanimat.obj: $(MAKEFILE) tfanimat.c .AUTODEPEND
+tfframe.obj: $(MAKEFILE) tfframe.c .AUTODEPEND
+tfbuffer.obj: $(MAKEFILE) tfbuffer.c .AUTODEPEND
+
+example.exe: $(MAKEFILE) example.c $(TF_LIB) .AUTODEPEND
+   $(CC) $(CC_OPTS) example.c $(TF_LIB)
+

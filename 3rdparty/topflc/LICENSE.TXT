@@ -1,0 +1,89 @@
+TopFLC library v1.0
+Copyright 1996 Johannes Lehtinen
+All rights reserved
+
+
+LICENSE AGREEMENT
+-----------------
+
+   -------------------------------------------------------------------
+   TopFLC library is copyrighted software. Only this license gives you
+   the right to use and distribute it. By compiling, linking,
+   modifying or distributing this library you indicate that you
+   accept all the terms in this license agreement.
+   -------------------------------------------------------------------
+
+   This license agreement applies to all the files in the original
+   TopFLC library distribution packet (named topflc10.*).
+
+   The library can be distributed on condition that:
+
+      -  All the files inluded in the original distribution packet are
+         copied at the same time (files must not be separated from
+         other library files).
+      -  All the files copied are identical to the files in the
+         original distribution packet.
+      -  No charge is taken for the copy nor for copying expenses.
+      -  The copy is not connected to any other product but
+         distributed as an individual library.
+
+   The library can be compiled, linked and modified on condition that:
+
+      -  No part of the library is used to produce any kind of
+         commercial software product (like program or library).
+         Shareware products are considered commercial.
+      -  If the library is used to produce any kind of product which
+         is distributed, there should be statement in the product
+         documentation or in the executable that the product uses
+         "TopFLC library v1.0 by ABACUS".
+      -  If the library is used to produce any kind of product, which
+         is distributed, the author of the product should be
+         registered TopFLC library user (registration is free). See
+         REGISTRATION NOTES section for more information.
+
+   If you are not satisfied with this license (you want to use library
+   in commercial product or include it to CD-ROM collection or
+   something like that), please contact the author of TopFLC library.
+
+   Author of this library is Johannes Lehtinen (Also known as Snowman
+   of Abacus). He can be contacted by:
+
+      e-mail:        johannes.lehtinen@hut.fi
+      phone:         +358-50-5163025
+      snail-mail:    Johannes Lehtinen
+                     Muurlantie 340 B
+                     FIN-25130 MUURLA
+                     Finland
+
+   Please use Finnish or English. E-mail is preferred.
+
+
+REGISTRATION NOTES
+------------------
+
+   To use this library in any kind of distributed product, you have to
+   be a registered TopFLC library user. Registration is free, you just
+   have to send the following information to the author of TopFLC
+   library:
+
+      -  Your real name (required)
+      -  Possible handle and group
+      -  Your location (country and city)
+      -  Contact information (e-mail address preferred)
+      -  Your current version of TopFLC
+
+   The idea of this registration is to inform me about how and by whom
+   my library is being used. I can also use it to inform the library
+   users about bugfixes, new versions and other related products.
+
+
+-----------------------------------------------------------------------
+
+January 26th, 1996 in Espoo, Finland
+
+   Johannes Lehtinen
+   Snowman of Abacus
+   The author of TopFLC library v1.0
+
+
+
