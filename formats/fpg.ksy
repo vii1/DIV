@@ -64,9 +64,9 @@ types:
       cpoint:
         seq:
           - id: x
-            type: u2
+            type: s2
           - id: y
-            type: u2
+            type: s2
     seq:
       - id: code
         type: u4
