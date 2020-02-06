@@ -28,3 +28,6 @@
 /wstub/debug
 /wstub/release
 /.vscode
+
+# los exe de PMODEW sí los queremos
+!/pmwlite/*.[Ee][Xx][Ee]
