@@ -41,7 +41,8 @@ COPY = xcopy /Y
 
 MAKE=$(MAKE) -h
 %CONFIG=$(CONFIG)
-%OUTDIR = build.dos\$(%CONFIG)
+%OUTDIR_BASE = build.dos
+%OUTDIR = $(%OUTDIR_BASE)\$(%CONFIG)
 
 %ASM=$(ASM)
 %TASM_EXE = $(TASM_EXE)
@@ -64,21 +65,27 @@ MAKE=$(MAKE) -h
 all: d.exe d.386 session.div session.386 div32run.ins div32run.386 .SYMBOLIC
 
 d.exe: wstub d.mif .SYMBOLIC
+	if not exist $(%OUTDIR_BASE) mkdir $(%OUTDIR_BASE)
 	$(MAKE) -f d.mif CPU=586 d.exe
 
 d.386: wstub d.mif .SYMBOLIC
+	if not exist $(%OUTDIR_BASE) mkdir $(%OUTDIR_BASE)
 	$(MAKE) -f d.mif CPU=386 d.386
 
 session.div: div32run.mif .SYMBOLIC
+	if not exist $(%OUTDIR_BASE) mkdir $(%OUTDIR_BASE)
 	$(MAKE) -f div32run.mif CPU=586 SESSION=1 session.div
 
 session.386: div32run.mif .SYMBOLIC
+	if not exist $(%OUTDIR_BASE) mkdir $(%OUTDIR_BASE)
 	$(MAKE) -f div32run.mif CPU=386 SESSION=1 session.386
 	
 div32run.ins: div32run.mif .SYMBOLIC
+	if not exist $(%OUTDIR_BASE) mkdir $(%OUTDIR_BASE)
 	$(MAKE) -f div32run.mif CPU=586 SESSION=0 div32run.ins
 	
 div32run.386: div32run.mif .SYMBOLIC
+	if not exist $(%OUTDIR_BASE) mkdir $(%OUTDIR_BASE)
 	$(MAKE) -f div32run.mif CPU=586 SESSION=0 div32run.386
 	
 wstub: $(%STUB) .SYMBOLIC
