@@ -31,8 +31,11 @@ En 2015, MikeDX, antiguo miembro de FastTrak, anunció que había retomado el c�
 
 ## Cómo compilar
 * Clona el repositorio con `git clone https://github.com/vii1/DIV.git`
-* Descarga e instala [OpenWatcom](http://www.openwatcom.org/) (de momento los makefiles son sólo para la versión DOS/Windows, aunque en teoría Watcom permite la compilación cruzada desde otros sistemas operativos. Si lo intentas, házmelo saber).
-* Inicia una consola con el Build Environment de Watcom (lo encontrarás en la carpeta Open Watcom del menú de Windows).
+* Descarga e instala [OpenWatcom](http://www.openwatcom.org/) (de momento los makefiles son sólo para la versión DOS/Windows, aunque en teoría Watcom permite la compilación cruzada desde otros sistemas operativos. Si lo intentas, házmelo saber). Es necesario tener el compilador de *16 bit* y el del *32 bit* para DOS.
+* En DOS
+    * wmake no lanza la compilación de wstub, siendo necesario entrar al directorio wstub y lanzar el wmake antes de compilar el programa principal.
+* En Windows
+    * Inicia una consola con el Build Environment de Watcom (lo encontrarás en la carpeta Open Watcom del menú de Windows).
 * Desde el directorio raíz del proyecto, ejecuta `wmake`. De momento sólo se compila el IDE (ficheros `D.EXE` y `D.386`), aún estoy en el proceso de escribir los makefiles para crear el resto de archivos esenciales (`DIV32RUN.DLL`, `SESSION.*`, etc).
 
 Para ejecutar tu DIV recién compilado, necesitarás crear el árbol de directorios y ficheros necesario. Puedes basarte en una instalación de DIV 2 que ya tengas (haz copias de seguridad), o bien puedes dejar que `wmake` haga el trabajo por ti:
