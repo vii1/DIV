@@ -3,6 +3,10 @@
 # NOTE: modules which are or might be called from within an interrupt have the
 # -zu option, to tell that SS != DS. It'll crash otherwise.
 
+ASM=$(%ASM)
+TASM_EXE=$(%TASM_EXE)
+WASM_EXE=$(%WASM_EXE)
+
 #CFLAGS1= -oneatx -w3 -zp4 -fpc -3r
 CFLAGS1= -oneatx -w3 -zp4 -fp5 -5r -q
 #CFLAGS1= /d2 /wx /zp4 /fp5 /mf /bt=dos /5r
@@ -37,13 +41,18 @@ judass3m.obj: judass3m.c
 judasdma.obj: judasdma.c
         wcc386 $(CFLAGS2) judasdma.c
 
-#TODO: convertir judasasm.asm a WASM
+# En TASM se compila directamente judasasm.asm
+# En WASM se compila judasasm.was, que generamos a partir del .obj compilado
+# con TASM.
+!ifeq ASM TASM
 judasasm.obj: judasasm.asm
-#!ifeq %ASM TASM
-        tasm32 /m /ml judasasm.asm
-#!else
-#        $(%WASM_EXE) -ml judasasm.asm
-#!endif
+        $(TASM_EXE) /m /ml judasasm.asm
+judasasm.was: judasasm.obj
+        wdis -a -l=judasasm.was judasasm.obj
+!else
+judasasm.obj: judasasm.was
+        $(WASM_EXE) -ml judasasm.was
+!endif
 
 clean: .SYMBOLIC
         @if exist *.obj del *.obj

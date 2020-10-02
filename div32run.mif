@@ -37,17 +37,20 @@ WASM_OPTIONS = -5r -fp5
 WASM_OPTIONS = -3r -fpc
 !endif
 
-SOURCES = divdll1.c divdll2.c c.cpp cdrom.cpp d.cpp det_vesa.cpp divfli.cpp divkeybo.cpp &
-	divlengu.cpp divmixer.cpp divsound.cpp divtimer.cpp f.cpp i.cpp ia.cpp joy.cpp kernel.cpp &
-	mouse.cpp s.cpp v.cpp a.asm cpuid.asm timer.asm vesa.asm
+SOURCES = divdll1.c divdll2.c c.cpp cdrom.cpp d.cpp det_vesa.cpp divfli.cpp &
+	divkeybo.cpp divlengu.cpp divmixer.cpp divsound.cpp divtimer.cpp f.cpp &
+	i.cpp ia.cpp joy.cpp kernel.cpp mouse.cpp s.cpp v.cpp a.asm cpuid.asm &
+	timer.asm vesa.asm
 
 # VPE (modo-8)
-SOURCES += vpe\draw_cw.cpp vpe\draw_f.cpp vpe\draw_o.cpp vpe\draw_sw.cpp vpe\fixed.cpp vpe\gfx.cpp vpe\globals.cpp &
-	vpe\hard.cpp vpe\load.cpp vpe\mem.cpp vpe\object.cpp vpe\scan.cpp vpe\update.cpp vpe\view.cpp vpe\vpe.cpp &
-	vpe\vpedll.cpp vpe\zone.cpp
+SOURCES += vpe\draw_cw.cpp vpe\draw_f.cpp vpe\draw_o.cpp vpe\draw_sw.cpp &
+	vpe\fixed.cpp vpe\gfx.cpp vpe\globals.cpp vpe\hard.cpp vpe\load.cpp &
+	vpe\mem.cpp vpe\object.cpp vpe\scan.cpp vpe\update.cpp vpe\view.cpp &
+	vpe\vpe.cpp vpe\vpedll.cpp vpe\zone.cpp
 
 # NETLIB (red)
-SOURCES += netlib\red.cpp netlib\net.c netlib\comlib.c netlib\comm.c netlib\ipxlib.c netlib\dpmi_net.c
+SOURCES += netlib\red.cpp netlib\net.c netlib\comlib.c netlib\comm.c &
+	netlib\ipxlib.c netlib\dpmi_net.c
 
 OBJS = $(SOURCES:.cpp=.obj)
 OBJS = $(OBJS:.c=.obj)
@@ -98,7 +101,7 @@ $(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
 
 .asm.obj:
 !ifeqi %ASM WASM
-	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+	*$(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
 !else
 	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^.
 !endif

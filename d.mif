@@ -1,6 +1,6 @@
 # Makefile para el IDE
-# CPU=586 -> D.EXE
-# CPU=386 -> D.386
+# CPU=586 genera D.EXE
+# CPU=386 genera D.386
 
 OUTDIR = $(%OUTDIR).$(CPU)
 
@@ -25,11 +25,13 @@ EXE = d.386
 OP_STUB = option nostub
 !endif
 
-SOURCES = cdrom.cpp det_vesa.cpp div.cpp divasm.cpp divbasic.cpp divbin.cpp divbrow.cpp divc.cpp &
-	divcalc.cpp divcdrom.cpp divcolor.cpp divdsktp.cpp divedit.cpp diveffec.cpp divfont.cpp divforma.cpp &
-	divfpg.cpp divgama.cpp divhandl.cpp divhelp.cpp divinsta.cpp divkeybo.cpp divlengu.cpp &
-	divmap3d.cpp divmix.cpp divmixer.cpp divmouse.cpp divpaint.cpp divpalet.cpp divpcm.cpp divsb.cpp &
-	divsetup.cpp divsound.cpp divspr.cpp divsprit.cpp divtimer.cpp divvideo.cpp divwindo.cpp fpgfile.cpp &
+SOURCES = cdrom.cpp det_vesa.cpp div.cpp divasm.cpp divbasic.cpp divbin.cpp &
+	divbrow.cpp divc.cpp divcalc.cpp divcdrom.cpp divcolor.cpp divdsktp.cpp &
+	divedit.cpp diveffec.cpp divfont.cpp divforma.cpp divfpg.cpp divgama.cpp &
+	divhandl.cpp divhelp.cpp divinsta.cpp divkeybo.cpp divlengu.cpp &
+	divmap3d.cpp divmix.cpp divmixer.cpp divmouse.cpp divpaint.cpp &
+	divpalet.cpp divpcm.cpp divsb.cpp divsetup.cpp divsound.cpp divspr.cpp &
+	divsprit.cpp divtimer.cpp divvideo.cpp divwindo.cpp fpgfile.cpp &
 	grabador.cpp ifs.cpp divdll1.c divdll2.c a.asm
 SOURCES += vesa.asm timer.asm
 
@@ -41,9 +43,9 @@ SOURCES += vesa.asm timer.asm
 
 !ifeq CPU 586
 # VISOR (generador de sprites) s¢lo para pentium
-SOURCES += visor\animated.cpp visor\complex.cpp visor\fileanim.cpp visor\global.cpp visor\hlrender.cpp &
-	visor\llrender.cpp visor\resource.cpp visor\sprite3d.cpp visor\visor.cpp &
-	t.asm
+SOURCES += visor\animated.cpp visor\complex.cpp visor\fileanim.cpp &
+	visor\global.cpp visor\hlrender.cpp visor\llrender.cpp visor\resource.cpp &
+	visor\sprite3d.cpp visor\visor.cpp t.asm
 #	visor\main.cpp
 !else
 SOURCES += nopentium.c
