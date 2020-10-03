@@ -22,7 +22,7 @@ INSTALL_DIR = $(%USERPROFILE)\dosbox\DIV
 # debido a diferencias entre ambos ensambladores. El problema es que TASM es
 # privativo, por lo que damos preferencia a WASM. Pero si esto diera problemas,
 # quiz  prefieras conseguir una copia de TASM y usarlo en su lugar.
-ASM = WASM
+ASM = TASM
 
 # Si usas TASM y tu versi¢n no dispone de TASM32.EXE, quiz  quieras cambiar
 # esta opci¢n.
@@ -48,8 +48,11 @@ MAKE=$(MAKE) -h
 %WASM_EXE = wasm.exe
 %CC = wcc386.exe
 
-%OPTIONS = -wx -mf -bt=dos -i=judas -i=netlib -i=vbe -zq
+%OPTIONS = -wx -mf -i=judas -i=netlib -i=vbe -zq
 %TASM_OPTIONS = /w2 /z /ml
+
+%WCC386 = -bt=dos
+%WASM = -bt=dos
 
 !ifeqi %CONFIG debug
 %OPTIONS += -d2
@@ -74,26 +77,22 @@ session.div: div32run.mif .SYMBOLIC
 
 session.386: div32run.mif .SYMBOLIC
 	$(MAKE) -f div32run.mif CPU=386 SESSION=1 session.386
-	
+
 div32run.ins: div32run.mif .SYMBOLIC
 	$(MAKE) -f div32run.mif CPU=586 SESSION=0 div32run.ins
-	
+
 div32run.386: div32run.mif .SYMBOLIC
 	$(MAKE) -f div32run.mif CPU=586 SESSION=0 div32run.386
-	
+
 wstub: $(%STUB) .SYMBOLIC
 
 $(%STUB): wstub\makefile wstub\wstub.c source\cpuid.asm
 	! pushd wstub && $(MAKE) CONFIG=$(%CONFIG) && popd
 
-clean: .SYMBOLIC
+clean: clean_judas clean_jpeg clean_tflc clean_zlib clean_svga clean_pmode .SYMBOLIC
 	@for %i in (586 386) do $(MAKE) -f d.mif CPU=%i clean
 	@for %i in (586 386) do $(MAKE) -f div32run.mif CPU=%i SESSION=1 clean
 	@for %i in (586 386) do $(MAKE) -f div32run.mif CPU=%i SESSION=0 clean
-	! pushd jpeglib && $(MAKE) clean && popd
-	! pushd judas && $(MAKE) clean && popd
-	! pushd 3rdparty\zlib && $(MAKE) -f watcom\watcom_f.mak clean && popd
-	! pushd 3rdparty\topflc && $(MAKE) -f makefile.w32 clean && popd
 
 .SILENT
 install: all .SYMBOLIC
@@ -129,3 +128,14 @@ install: all .SYMBOLIC
 .SILENT
 testinstall: install .SYMBOLIC
 	for %i in (setup.bin session.dtf user.nfo) do $(COPY) system\%i $(INSTALL_DIR)\system
+
+!include 3rdparty.mif
+
+libclean: .SYMBOLIC
+	@echo --------------------------------------------------------------
+	@echo Esto eliminara el contenido de 3rdparty\lib.
+	@echo Tendras que recompilar las librerias (necesitaras TASM)
+	@echo o bien volver a descargarlas.
+	@echo No se recomienda!! LEE EL README PRIMERO!!
+	@%stop
+	-del 3rdparty\lib\*.lib

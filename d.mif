@@ -4,6 +4,7 @@
 
 OUTDIR = $(%OUTDIR).$(CPU)
 
+MAKE=$(MAKE) -h
 WASM=$(%WASM_EXE)
 TASM=$(%TASM_EXE)
 WASM_OPTIONS=$(%WASM_OPTIONS)
@@ -55,13 +56,6 @@ OBJS = $(SOURCES:.cpp=.obj)
 OBJS = $(OBJS:.c=.obj)
 OBJS = $(OBJS:.asm=.obj)
 
-JUDAS_LIB = judas\judas.lib
-JPEG_LIB = jpeglib\libjpeg.lib
-ZLIB_LIB = 3rdparty\zlib\zlib_f.lib
-SVGA_LIB = source\svga.lib
-PMODE_LIB = source\pmode.lib
-LIBS = $(JUDAS_LIB) $(JPEG_LIB) $(ZLIB_LIB) $(SVGA_LIB) $(PMODE_LIB)
-
 .BEFORE
 	@if not exist $(OUTDIR) mkdir $(OUTDIR)
 !ifeq CPU 586
@@ -70,6 +64,9 @@ LIBS = $(JUDAS_LIB) $(JPEG_LIB) $(ZLIB_LIB) $(SVGA_LIB) $(PMODE_LIB)
 #	@if not exist $(OUTDIR)\vpe mkdir $(OUTDIR)\vpe
 
 $(EXE): $(OUTDIR)\$(EXE) .SYMBOLIC
+
+!include 3rdparty.mif
+LIBS = $(JUDAS_LIB) $(JPEG_LIB) $(ZLIB_LIB) $(SVGA_LIB) $(PMODE_LIB)
 
 $(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
 	*wlink &
@@ -123,15 +120,6 @@ $(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
 #
 #visor\t.obj: visor\t.asm
 #	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
-
-$(JUDAS_LIB):
-	! pushd $^: && $(MAKE) $^. && popd
-
-$(JPEG_LIB):
-	! pushd $^: && $(MAKE) $^. && popd
-
-$(ZLIB_LIB):
-	! pushd $^: && $(MAKE) -f watcom\watcom_f.mak $^. && popd
 
 $(%STUB):
 	! pushd wstub && $(MAKE) CONFIG=$(%CONFIG) && popd

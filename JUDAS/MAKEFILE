@@ -41,17 +41,12 @@ judass3m.obj: judass3m.c
 judasdma.obj: judasdma.c
         wcc386 $(CFLAGS2) judasdma.c
 
-# En TASM se compila directamente judasasm.asm
-# En WASM se compila judasasm.was, que generamos a partir del .obj compilado
-# con TASM.
-!ifeq ASM TASM
 judasasm.obj: judasasm.asm
+!ifeq ASM TASM
         $(TASM_EXE) /m /ml judasasm.asm
-judasasm.was: judasasm.obj
-        wdis -a -l=judasasm.was judasasm.obj
 !else
-judasasm.obj: judasasm.was
-        $(WASM_EXE) -ml judasasm.was
+        @echo ERROR: Es necesario Turbo Assembler para compilar JUDAS
+        @%abort
 !endif
 
 clean: .SYMBOLIC

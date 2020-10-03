@@ -5,18 +5,18 @@ ASM=$(%ASM)
 %INCLUDE += INCLUDE;$(SCITECH)\INCLUDE
 C_FLAGS = -zq-j-w2-s -fh -fhq -onaslmr-5r -DDOS4GW
 TASM_FLAGS = /t /mx /m /D__FLAT__ /DSTDCALL_MANGLE /iINCLUDE &
-	/i$(SCITECH)\INCLUDE /q -DDOS4GW -I$(SCITECH)\include\svgakit
-SOURCES = vesavbe.c svgasdk.c vbeaf.c font8x16.c vgapal.c gtfcalc.c event.c &
-	maskcode.c cpu.asm _svgasdk.asm _linsdk.asm _vbeaf.asm _event.asm
+	/i$(SCITECH)\INCLUDE /q -DDOS4GW -I$(SCITECH)\include\pmode
+SOURCES = pmlite.c pmpro.c vflat.c _pmlite.asm _pmpro.asm _vflat.asm
 OBJS = $(SOURCES:.c=.obj)
 OBJS = $(OBJS:.asm=.obj)
+WAS = $(SOURCES_ASM:.asm=.was)
 
 LIBCMD = -+$(OBJS: = -+)
 
-all: svga.lib .SYMBOLIC
+all: pmode.lib .SYMBOLIC
 
-svga.lib: $(OBJS)
-	*wlib -q $^ $(LIBCMD)
+pmode.lib: $(OBJS)
+	*wlib -q $@ $(LIBCMD)
 
 .c.obj:
 	*$(CC) $(C_FLAGS) $<
@@ -25,7 +25,7 @@ svga.lib: $(OBJS)
 !ifeq ASM TASM
 	$(TASM) $(TASM_FLAGS) $<
 !else
-	@echo ERROR: Es necesario Turbo Assembler para compilar las librer¡as de SciTech
+	@echo ERROR: Es necesario Turbo Assembler para compilar las librerï¿½as de SciTech
 	@%abort
 !endif
 
@@ -33,3 +33,4 @@ clean: .SYMBOLIC
 	-del *.obj
 	-del *.lib
 	-del *.err
+	-del *.pch

@@ -1,0 +1,62 @@
+# include de variables y targets de las librer¡as 3rd party
+
+SCITECH = 3rdparty\scitech
+%INCLUDE += $(SCITECH)\include
+
+JUDAS_LIB = 3rdparty\lib\judas.lib
+JPEG_LIB = 3rdparty\lib\libjpeg.lib
+ZLIB_LIB = 3rdparty\lib\zlib_f.lib
+SVGA_LIB = 3rdparty\lib\svga.lib
+PMODE_LIB = 3rdparty\lib\pmode.lib
+TFLC_LIB = 3rdparty\lib\tflc_w32.lib
+
+JUDAS_DIR = judas
+JPEG_DIR = jpeglib
+ZLIB_DIR = 3rdparty\zlib
+SVGA_DIR = $(SCITECH)\src\svgakit
+PMODE_DIR = $(SCITECH)\src\pmode
+TFLC_DIR = 3rdparty\topflc
+
+!ifndef COPY
+COPY = copy /y
+!endif
+
+lib3p_dir: .SYMBOLIC
+	@if not exist 3rdparty\lib mkdir 3rdparty_lib
+
+$(JUDAS_LIB): lib3p_dir
+	! pushd $(JUDAS_DIR) && $(MAKE) $^. && popd
+	$(COPY) $(JUDAS_DIR)\$^. $^:
+
+$(JPEG_LIB): lib3p_dir
+	! pushd $(JPEG_DIR) && $(MAKE) $^. && popd
+	$(COPY) $(JPEG_DIR)\$^. $^:
+
+$(ZLIB_LIB): lib3p_dir
+	! pushd $(ZLIB_DIR) && $(MAKE) -f watcom\watcom_f.mak $^. && popd
+	$(COPY) $(ZLIB_DIR)\$^. $^:
+
+$(SVGA_LIB): lib3p_dir
+	! pushd $(SVGA_DIR) && $(MAKE) -f makefile.wat $^. SCITECH=..\.. && popd
+	$(COPY) $(SVGA_DIR)\$^. $^:
+
+$(PMODE_LIB): lib3p_dir
+	! pushd $(PMODE_DIR) && $(MAKE) -f makefile.wat $^. SCITECH=..\.. && popd
+	$(COPY) $(PMODE_DIR)\$^. $^:
+
+$(TFLC_LIB): lib3p_dir
+	! pushd $(TFLC_DIR) && $(MAKE) -f makefile.w32 $^. && popd
+	$(COPY) $(TFLC_DIR)\$^. $^:
+
+clean_judas: .SYMBOLIC
+	! pushd $(JUDAS_DIR) && $(MAKE) clean && popd
+clean_jpeg: .SYMBOLIC
+	! pushd $(JPEG_DIR) && $(MAKE) clean && popd
+clean_tflc: .SYMBOLIC
+	! pushd $(TFLC_DIR) && $(MAKE) -f makefile.w32 clean && popd
+clean_zlib: .SYMBOLIC
+	! pushd $(ZLIB_DIR) && $(MAKE) -f watcom\watcom_f.mak clean && popd
+clean_svga: .SYMBOLIC
+	! pushd $(SVGA_DIR) && $(MAKE) -f makefile.wat clean && popd
+clean_pmode: .SYMBOLIC
+	! pushd $(PMODE_DIR) && $(MAKE) -f makefile.wat clean && popd
