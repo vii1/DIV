@@ -12,29 +12,23 @@
 #               SciTech Software Makefile Utilities package to be
 #               installed.
 #
-# $Date:   20 Dec 1997 02:38:02  $ $Author:   KendallB  $
+# $Date:   20 Feb 1996 14:35:34  $ $Author:   KendallB  $
 #
 #############################################################################
 
 # DOS extender dependant flags
 
 CFLAGS          += $(DX_CFLAGS)
-ASFLAGS         += $(DX_ASFLAGS) -I$(SCITECH)\include\ztimer
+ASFLAGS         += $(DX_ASFLAGS)
 
 # Name of library and object files required to build it
 
-.IF $(BUILD_DLL)
-LIBFILE         = ztimeri$L
-DLLFILE         = ztimer$D
-.ELSE
 .IF $(STKCALL)
 LIBFILE         = sztimer$L
 .ELSE
 LIBFILE         = ztimer$L
 .ENDIF
-.ENDIF
-LIBCLEAN        = sztimer$L ztimer$L ztimer$D
-OBJECTS         = ulztimer$O cpuinfo$O lztimer$O ztimer$O _cpuinfo$O
+OBJECTS         = lztimer$O ulztimer$O ztimer$O
 
 # Name of executable files built
 
@@ -44,55 +38,10 @@ all: $(EXEFILES)
 
 test$E: test$O $(LIBFILE)
 testc$E: testc$O $(LIBFILE)
-testcpu$E: testcpu$O $(LIBFILE)
 
 # Define the list of object files to create dependency information for
 
 DEPEND_OBJ      = $(OBJECTS) test$O testc$O
 
 .INCLUDE: "$(SCITECH)\makedefs\common.mk"
-
-# Target to build all DOS 32-bit libraries
-
-.SWAP .PHONY mkdos32:
-    @+build bc45-d32 install -u OPT_SIZE=1
-    @+build wc10-d32 install -u OPT_SIZE=1
-    @+build wc11-d32 install -u OPT_SIZE=1
-    @+build dj20-d32 install -u OPT_SIZE=1
-
-# Target to build all DOS libraries
-
-.PHONY mkdos: mkdos32 cleanexe
-
-# Target to build all win 32-bit libraries
-
-.SWAP .PHONY mkwin32:
-    @+build wc10-w32 install -u OPT_SIZE=1
-    @+build wc11-w32 install -u OPT_SIZE=1
-    @+build bc45-w32 install -u OPT_SIZE=1
-    @+build bc50-w32 install -u OPT_SIZE=1
-    @+build vc40-w32 install -u OPT_SIZE=1
-    @+build vc50-w32 install -u OPT_SIZE=1
-
-# Target to build Windows 32-bit DLL's
-
-.SWAP .PHONY mkdll32:
-    @+build bc50-w32 install -u BUILD_DLL=1 OPT=1
-
-# Target to build all Windows libraries
-
-.PHONY mkwin: mkwin32 mkdll32 cleanexe
-
-# Target to build all libraries
-
-.PHONY mkall: mkdos32 mkwin32 mkdll32 cleanexe
-
-# Target to build all libraries for SciTech Display Doctor
-
-.SWAP .PHONY mksdd:
-    @+build bc50-d16 install -u OPT_SIZE=1
-    @+build wc10-d32 install -u OPT_SIZE=1
-    @+build bc50-w16 install -u OPT_SIZE=1
-    @+build bc50-w32 install -u OPT_SIZE=1
-    @+dmake cleanexe
 

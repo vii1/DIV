@@ -2,24 +2,11 @@
 *
 *								 makedep
 *
-*  ========================================================================
+*					Copyright (C) 1994 SciTech Software.
+*							All rights reserved.
 *
-*    The contents of this file are subject to the SciTech MGL Public
-*    License Version 1.0 (the "License"); you may not use this file
-*    except in compliance with the License. You may obtain a copy of
-*    the License at http://www.scitechsoft.com/mgl-license.txt
-*
-*    Software distributed under the License is distributed on an
-*    "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-*    implied. See the License for the specific language governing
-*    rights and limitations under the License.
-*
-*    The Original Code is Copyright (C) 1991-1998 SciTech Software, Inc.
-*
-*    The Initial Developer of the Original Code is SciTech Software, Inc.
-*    All Rights Reserved.
-*
-*  ========================================================================
+* Filename:		$Workfile:   makedep.c  $
+* Version:		$Revision:   1.0  $
 *
 * Language:		ANSI C
 * Environment:	MSDOS
@@ -31,6 +18,7 @@
 *
 *				Written specifically for use with the DMAKE program.
 *
+* $Date:   12 Feb 1996 22:24:32  $ $Author:   KendallB  $
 *
 ****************************************************************************/
 
@@ -38,10 +26,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <dos.h>
-#ifdef	__MSDOS__
 #include <dir.h>
-#endif
+#include <dos.h>
 #include "getopt.h"
 
 #define	MAX_SRC_DIR     20
@@ -57,18 +43,18 @@
 
 /*------------------------- Global variables ------------------------------*/
 
-char filenames[MAX_FILES][_MAX_PATH];
+char filenames[MAX_FILES][MAXPATH];
 int	incnum = 0;
-char incdir[MAX_SRC_DIR][_MAX_PATH];
+char incdir[MAX_SRC_DIR][MAXPATH];
 int srcnum = 1;
-char srcdir[MAX_SRC_DIR][_MAX_PATH] = {""};
+char srcdir[MAX_SRC_DIR][MAXPATH] = {""};
 int numDepend;
-char dependList[MAX_DEPEND][_MAX_PATH];
+char dependList[MAX_DEPEND][MAXPATH];
 char *srcexts[] 	 		= {".c",".cc",".cpp",".cxx",".asm"};
 int	type;
-ibool ignoreSys;
-ibool relativePaths;
-ibool debug = false;
+bool ignoreSys;
+bool relativePaths;
+bool debug = false;
 
 #define	NUMEXT	(sizeof(srcexts) / sizeof(char*))
 
@@ -120,7 +106,7 @@ char *skiptowhite(char *s)
 	return *s ? s : NULL;
 }
 
-void readfilenames(char *name,char filenames[MAX_FILES][_MAX_PATH],
+void readfilenames(char *name,char filenames[MAX_FILES][MAXPATH],
 	int *numfiles)
 /****************************************************************************
 *
@@ -135,7 +121,7 @@ void readfilenames(char *name,char filenames[MAX_FILES][_MAX_PATH],
 *
 ****************************************************************************/
 {
-	char	buf[_MAX_PATH];
+	char	buf[MAXPATH];
 	FILE	*f;
 
 	*numfiles = 0;
@@ -212,7 +198,7 @@ int getSrcName(char *srcname,char *dependname)
 ****************************************************************************/
 {
 	int				i,j;
-	char			tmp[_MAX_PATH],drive[_MAX_DRIVE],dir[_MAX_DIR];
+	char			tmp[MAXPATH],drive[_MAX_DRIVE],dir[_MAX_DIR];
 	char			name[_MAX_FNAME],ext[_MAX_EXT];
 	struct find_t	f;
 
@@ -253,7 +239,7 @@ int getSrcName(char *srcname,char *dependname)
 	return -1;
 }
 
-void addIncName(char *incname,ibool sysInclude)
+void addIncName(char *incname,bool sysInclude)
 /****************************************************************************
 *
 * Function:		addIncName
@@ -266,7 +252,7 @@ void addIncName(char *incname,ibool sysInclude)
 ****************************************************************************/
 {
 	int				i,j;
-	char			tmp[_MAX_PATH],cwd[_MAX_PATH],drive[_MAX_DRIVE];
+	char			tmp[MAXPATH],cwd[MAXPATH],drive[_MAX_DRIVE];
 	char			dir[_MAX_DIR],name[_MAX_FNAME],ext[_MAX_EXT];
 	char			cdrive[_MAX_DRIVE],cdir[_MAX_DIR],cname[_MAX_FNAME];
 	char			cext[_MAX_EXT],tdir[_MAX_DIR],*p,*cp;
@@ -283,7 +269,7 @@ void addIncName(char *incname,ibool sysInclude)
 				fprintf(stderr,"found\n");
 			if (relativePaths && !sysInclude) {
 				_splitpath(tmp,drive,dir,name,ext);
-				getcwd(cwd,_MAX_PATH);
+				getcwd(cwd,MAXPATH);
 				strlwr(cwd);
 				backslash(cwd);
 				_splitpath(cwd,cdrive,cdir,cname,cext);
@@ -394,8 +380,8 @@ void buildDependList(char *srcname)
 		}
 }
 
-void processFiles(FILE *out,char filenames[MAX_FILES][_MAX_PATH],
-	int numfiles,ibool uppercase)
+void processFiles(FILE *out,char filenames[MAX_FILES][MAXPATH],
+	int numfiles,bool uppercase)
 /****************************************************************************
 *
 * Function:		processFiles
@@ -409,7 +395,7 @@ void processFiles(FILE *out,char filenames[MAX_FILES][_MAX_PATH],
 ****************************************************************************/
 {
 	int		i,j;
-	char    srcname[_MAX_PATH];
+	char    srcname[MAXPATH];
 
 	for (i = 0; i < numfiles; i++) {
 		if ((type = getSrcName(srcname,filenames[i])) == -1)
@@ -441,13 +427,13 @@ int main(int argc,char *argv[])
 	char	*argument,*s,*d;
 	char	tmp[255];
 	FILE	*out = stdout;
-	ibool	uppercase;
+	bool	uppercase;
 
 	uppercase = ignoreSys = relativePaths = false;
 
 	/* Read include file directories from the INCLUDE evironment var */
 
-	getcwd(tmp,_MAX_PATH);
+	getcwd(tmp,MAXPATH);
 	strlwr(tmp);
 	strcpy(incdir[incnum],tmp);
 	backslash(incdir[incnum++]);

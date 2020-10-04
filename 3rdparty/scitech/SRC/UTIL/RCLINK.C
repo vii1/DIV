@@ -1,23 +1,10 @@
 /****************************************************************************
 *
-*  ========================================================================
+*					Copyright (C) 1995 SciTech Software.
+*							All rights reserved.
 *
-*    The contents of this file are subject to the SciTech MGL Public
-*    License Version 1.0 (the "License"); you may not use this file
-*    except in compliance with the License. You may obtain a copy of
-*    the License at http://www.scitechsoft.com/mgl-license.txt
-*
-*    Software distributed under the License is distributed on an
-*    "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-*    implied. See the License for the specific language governing
-*    rights and limitations under the License.
-*
-*    The Original Code is Copyright (C) 1991-1998 SciTech Software, Inc.
-*
-*    The Initial Developer of the Original Code is SciTech Software, Inc.
-*    All Rights Reserved.
-*
-*  ========================================================================
+* Filename:		$Workfile:   rclink.c  $
+* Version:		$Revision:   1.0  $
 *
 * Language:		Borland C++ 3.1 (not tested with anything else)
 * Environment:	MSDOS
@@ -29,6 +16,7 @@
 *
 *				Note, this program is a *real* simple hack, but it works.
 *
+* $Date:   12 Feb 1996 22:24:34  $ $Author:   KendallB  $
 *
 ****************************************************************************/
 
@@ -38,36 +26,19 @@
 #include <ctype.h>
 #include <process.h>
 
-#define	DEBUG
-
 #define	MAX_LINES	300
 #define LD_CMD		argv[1]
 #define	RC_CMD		argv[2]
 #define EXE_FILE	argv[3]
 #define	RSP_FILE	argv[4]
-#define RES_EXT 	".res"
-#define RES_LEN 	4
-#define	BUF_SIZE	2048
 
 char	*lines[MAX_LINES];
-char	buf[BUF_SIZE];
+char	buf[255];
 char	resFile[_MAX_DIR];
 
-int findstr(char *p,char *resFile,int *resLen,char *str,int len)
-{
-	char *start = p;
+/* We only want a very small stack */
 
-	while (*p != '0' && *p != ' ' && *p != ',' && *p != '\n') {
-		if (strncmp(p,str,len) == 0) {
-			*resLen = p - start + len;
-			memcpy(resFile,start,*resLen);
-			resFile[*resLen] = '\0';
-			return 1;
-			}
-		p++;
-		}
-	return 0;
-}
+extern unsigned _stklen = 256;
 
 int main(int argc, char *argv[])
 {
@@ -80,6 +51,15 @@ int main(int argc, char *argv[])
 		return -1;
 		}
 
+	/* Find the name of the .res file that we need to strip from the
+	 * linker response file.
+	 */
+	strcpy(resFile,EXE_FILE);
+	if ((p = strchr(resFile,'.')) != NULL)
+		*p = '\0';
+	strcat(resFile,".res");
+	resLen = strlen(resFile);
+
 	/* Read all lines from input file. Input file is small enough that we
 	 * can read the entire file in.
 	 */
@@ -88,7 +68,7 @@ int main(int argc, char *argv[])
 		exit(1);
 		}
 	numLines = 0;
-	while (fgets(buf,BUF_SIZE,f)) {
+	while (fgets(buf,255,f)) {
 		if ((lines[numLines] = strdup(buf)) == NULL) {
 			printf("Out of memory reading input file!\n");
 			exit(1);
@@ -101,7 +81,7 @@ int main(int argc, char *argv[])
 	fclose(f);
 
 	/* Dump all lines back to the response file, stripping out the .res
-	 * file name.
+	 * file name
 	 */
 	if ((f = fopen(RSP_FILE, "wt")) == NULL) {
 		printf("Unable to update response file!\n");
@@ -112,7 +92,7 @@ int main(int argc, char *argv[])
 		p2 = buf;
 		bufLen = 0;
 		while (*p) {
-			if (!foundRes && findstr(p, resFile, &resLen, RES_EXT, RES_LEN)) {
+			if (!foundRes && strnicmp(p,resFile,resLen) == 0) {
 				if (bufLen > 1 && *(p-1) == ',')
 					p2 -= 1;
 				else if (bufLen > 2 && *(p-2) == ',')
@@ -120,16 +100,7 @@ int main(int argc, char *argv[])
 				p += resLen;
 				if (*p == ' ')
 					p++;
-				if (bufLen == 0) {
-					if (*p == '\n')
-						p++;
-					else if (*p == ',' && *(p+1) == '\n')
-						p += 2;
-					}
 				foundRes = 1;
-#ifdef	DEBUG
-				printf("Found resource file: %s\n", resFile);
-#endif
 				}
 			else {
 				*p2++ = *p++;
@@ -143,48 +114,13 @@ int main(int argc, char *argv[])
 
 	/* Now run the linker to link the final output file */
 	sprintf(buf,"@%s", RSP_FILE);
-#ifdef	DEBUG
-	printf("%s %s\n", LD_CMD, buf);
-#endif
-	if ((i = spawnlp(P_WAIT, LD_CMD, LD_CMD, buf, NULL)) != 0)
-		return i;
+	spawnlp(P_WAIT, LD_CMD, LD_CMD, buf, NULL);
 
-	if (stricmp(RC_CMD,"wbind") == 0) {
-		/* Special case code for building Watcom Win386 extended Windows
-		 * applications to call the wbind utility with the correct
-		 * format. wbind automatically calls the resource compiler
-		 */
-		p = EXE_FILE; p2 = buf;
-		while (*p != 0 && *p != '.')
-			*p2++ = *p++;
-		*p2 = 0;
-		strcat(buf,".exe");
-		if (foundRes) {
-#ifdef	DEBUG
-			printf("%s %s -q -R -q %s %s\n", RC_CMD, buf, resFile, buf);
-#endif
-			if ((i = spawnlp(P_WAIT, RC_CMD, RC_CMD, buf, "-q", "-R", "-q", resFile, buf, NULL)) != 0)
-				return i;
-			}
-		else {
-#ifdef	DEBUG
-			printf("%s %s -q -n\n", RC_CMD, buf);
-#endif
-			spawnlp(P_WAIT, RC_CMD, RC_CMD, buf, "-n", "-q", NULL);
-			}
-		}
-	else {
-		/* Now run the resource compiler to bind the resources if we found the
-		 * .res file in the list of objects
-		 */
-		if (foundRes) {
-#ifdef	DEBUG
-			printf("%s %s %s\n", RC_CMD, resFile, EXE_FILE);
-#endif
-			if ((i = spawnlp(P_WAIT, RC_CMD, RC_CMD, resFile, EXE_FILE, NULL)) != 0)
-				return i;
-			}
-		}
+	/* Now run the resource compiler to bind the resources if we found the
+	 * .res file in the list of objects
+	 */
+	if (foundRes)
+		spawnlp(P_WAIT, RC_CMD, RC_CMD, resFile, EXE_FILE, NULL);
 
 	return 0;
 }

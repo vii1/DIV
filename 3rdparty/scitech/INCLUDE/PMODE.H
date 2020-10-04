@@ -2,25 +2,11 @@
 *
 *						 	  PM/Lite Library
 *
-*  ========================================================================
+*					Copyright (C) 1996 SciTech Software.
+*							All rights reserved.
 *
-*    The contents of this file are subject to the SciTech MGL Public
-*    License Version 1.0 (the "License"); you may not use this file
-*    except in compliance with the License. You may obtain a copy of
-*    the License at http://www.scitechsoft.com/mgl-license.txt
-*
-*    Software distributed under the License is distributed on an
-*    "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-*    implied. See the License for the specific language governing
-*    rights and limitations under the License.
-*
-*    The Original Code is Copyright (C) 1991-1998 SciTech Software, Inc.
-*
-*    The Initial Developer of the Original Code is SciTech Software, Inc.
-*    All Rights Reserved.
-*
-*  ========================================================================
-*
+* Filename:		$Workfile:   pmode.h  $
+* Version:		$Revision:   1.1  $
 *
 * Language:		ANSI C
 * Environment:	Real mode and 16/32 bit Protected Mode under MSDOS
@@ -51,17 +37,14 @@
 *
 *               32 bit Extenders:
 *
-*					Windows 3.1 (Watcom Win386)
 *					Windows 3.1 (Win32s)
 *					Windows '95 (Win32)
 *					Phar Lap TNT DOS Extender
 *					Symantec DOSX
 *					FlashTek X-32/X-32VM
 *					Borland DPMI32
-*					Tenberry DOS/4GW
-*					Causeway DOS/4GW replacement
-*					PMODE/W DOS/4GW replacement
-*                   DJGPP V2 for GNU C++
+*					Rational DOS/4GW
+*                   DJGPP go32 for GNU C++          * NO SELECTORS YET!! *
 *
 *				Currently supports the following compilers:
 *
@@ -75,16 +58,17 @@
 *					Watcom C++ 10.0, 16 bit
 *                   Watcom C++ 10.0, 32 bit
 *					Metaware High C++ 3.21, 32 bit
-*					DJGPP V2 port of GNU C++, 32 bit
+*					DJGPP port of GNU C++, 32 bit	* NO SELECTORS YET!! *
 *
+* $Date:   10 Apr 1996 18:15:40  $ $Author:   KendallB  $
 *
 ****************************************************************************/
 
 #ifndef	__PMODE_H
 #define	__PMODE_H
 
-#ifndef	__SCITECH_H
-#include "scitech.h"
+#ifndef	__DEBUG_H
+#include "debug.h"
 #endif
 
 /*--------------------------- Macros and Typedefs -------------------------*/
@@ -98,18 +82,17 @@
  *		DOSX		- Symantec C++ DOSX
  *		X32VM		- Flashtek X-32/X-32VM
  *      DPMI32      - Borland's DPMI32 DOS Power Pack Extender
- *		DOS4GW		- Rational DOS/4GW, DOS/4GW Pro, Causeway and PMODE/W
+ *		DOS4GW		- Rational DOS/4GW and DOS/4GW Professional
  *		DJGPP		- DJGPP port of GNU C++
  *
  * If none is specified, we will automatically determine which operating
  * system is being targetted and the following will be defined (provided by
- * scitech.h header file):
+ * debug.h header file):
  *
  *		__MSDOS16__		- Default for 16 bit MSDOS mode
  *		__MSDOS32__		- Default for 32 bit MSDOS
  *		__WINDOWS16__	- Default for 16 bit Windows
  *		__WINDOWS32__	- Default for 32 bit Windows
- *		__WIN386__		- Default for 32 bit Watcom Win386 extended Windows
  *
  * One of the following will be defined automatically for you to select
  * which memory model is in effect:
@@ -121,8 +104,7 @@
 
 #if defined(TNT) || defined(DOSX) || defined(X32VM) || defined(DPMI32)		\
 	|| defined(DOS4GW) || defined(DJGPP) || defined(__WINDOWS32__)			\
-	|| defined(__MSDOS32__) || defined(__WIN386__) || defined(__UNIX__)     \
-	|| defined(__BEOS__) || defined(__WIN32_VXD__)
+	|| defined(__MSDOS32__)
 #define	PM386
 #elif defined(DPMI16) || defined(__WINDOWS16__)
 #define	PM286
@@ -132,10 +114,35 @@
 
 #pragma pack(1)
 
-/* Provide the typedefs for the PM_int386 functions, which issue native
- * interrupts in real or protected mode and can pass extended registers
- * around.
+/* Provide definitions for the real mode register structures passed to
+ * the PM_int86() and PM_int86x() routines.
  */
+
+#if defined(REALMODE) || defined(PM286)
+#include <dos.h>
+typedef union REGS RMREGS;
+typedef struct SREGS RMSREGS;
+#else
+struct _RMWORDREGS {
+	ushort ax, bx, cx, dx, si, di, cflag, pad1;
+	};
+
+struct _RMBYTEREGS {
+	uchar   al, ah, bl, bh, cl, ch, dl, dh;
+	};
+
+typedef union {
+	struct  _RMWORDREGS x;
+	struct  _RMBYTEREGS h;
+	} RMREGS;
+
+typedef struct {
+	ushort  es;
+	ushort  cs;
+	ushort  ss;
+	ushort	ds;
+	} RMSREGS;
+#endif
 
 struct _PMDWORDREGS {
 	ulong	eax,ebx,ecx,edx,esi,edi,cflag;
@@ -173,27 +180,6 @@ typedef struct {
 	ushort	gs;
 	} PMSREGS;
 
-/* Provide definitions for the real mode register structures passed to
- * the PM_int86() and PM_int86x() routines. Note that we provide our own
- * functions to do this for 16-bit code that calls the PM_int386 functions.
- */
-
-typedef PMREGS 	RMREGS;
-typedef PMSREGS	RMSREGS;
-
-typedef struct {
-	long	edi;
-	long	esi;
-	long	ebp;
-	long	reserved;
-	long	ebx;
-	long	edx;
-	long	ecx;
-	long	eax;
-	short	flags;
-	short	es,ds,fs,gs,ip,cs,sp,ss;
-	} DPMI_regs;
-
 /* Define a macro for creating physical base addresses from segment:offset */
 
 #define MK_PHYS(s,o)  (((ulong)(s) << 4) + (ulong)(o))
@@ -227,9 +213,7 @@ uint int _x32_stack_size = s32;
 #define DECLARE_STACK(s16,s32)
 #endif
 
-#if		defined(__WIN32_VXD__)
-#define	PMAPI	_ASMAPI			/* 'C' calling conventions for VxD's	*/
-#elif	defined(__WINDOWS32__)
+#if		defined(__WINDOWS32__)
 #define	PMAPI	_DLLASM			/* 'C' calling conventions for Win32	*/
 #elif	defined(__WINDOWS16__)
 #define	PMAPI	_DLLAPI			/* Pascal calling conventions for Win16	*/
@@ -241,15 +225,6 @@ uint int _x32_stack_size = s32;
 
 #ifdef	__cplusplus
 extern "C" {			/* Use "C" linkage when in C++ mode	*/
-#endif
-
-/* Routines to initialise the PM/Pro library. Only necessary for
- * running under Watcom Win386 extended Windows memory model (but you can
- * call it for all supported environments).
- */
-
-#ifdef	__WIN386__
-ibool	PMAPI PM_initWin386(void);
 #endif
 
 /* Routine to return either PM_realMode, PM_286 or PM_386 */
@@ -264,9 +239,9 @@ int 	PMAPI PM_getModeType(void);
 uchar 	PMAPI PM_getByte(uint s, uint o);
 ushort 	PMAPI PM_getWord(uint s, uint o);
 ulong 	PMAPI PM_getLong(uint s, uint o);
-void 	PMAPI PM_setByte(uint s, uint o, uchar v_);
-void 	PMAPI PM_setWord(uint s, uint o, ushort v_);
-void 	PMAPI PM_setLong(uint s, uint o, ulong v_);
+void 	PMAPI PM_setByte(uint s, uint o, uchar v);
+void 	PMAPI PM_setWord(uint s, uint o, ushort v);
+void 	PMAPI PM_setLong(uint s, uint o, ulong v);
 
 /* Routines for copying data between the applications data space and
  * memory accessible through a selector and offset.
@@ -292,10 +267,6 @@ uint 	PMAPI PM_getVGAColorTextSelector(void);
 uint 	PMAPI PM_getVGAMonoTextSelector(void);
 uint 	PMAPI PM_getVGAGraphSelector(void);
 
-/* Routine to return a linear pointer to the VGA frame buffer memory */
-
-void * 	PMAPI PM_getA0000Pointer(void);
-
 /* Routines to map/free physical memory into the current DS segment. After
  * the mapping has been allocated, it cannot be freed. Hence you should
  * only allocate the mapping once and cache the value for use by other
@@ -307,16 +278,6 @@ void * 	PMAPI PM_getA0000Pointer(void);
  */
 
 void * 	PMAPI PM_mapPhysicalAddr(ulong base,ulong limit);
-
-/* Routine to map a 16:16 far pointer to a flat 32 bit near pointer for
- * Watcom Win386. Note that if the memory pointed to by the pointer is
- * not locked, it may move and the pointer will become invalid, so ensure
- * the memory is locked before this function is called.
- */
-
-#ifdef	__WIN386__
-void * PMAPI PM_mapPointerFlat(ulong farPtr16);
-#endif
 
 /* Routine to load save default data segment selector value into a code
  * segment variable, and another to load the value into the DS register.
@@ -342,17 +303,10 @@ void 	PMAPI PM_mapRealPointer(uint *sel,uint *off,uint r_seg,uint r_off);
 uint 	PMAPI PM_createSelector(ulong base,ulong limit);
 void 	PMAPI PM_freeSelector(uint sel);
 
-/* Routine to create a 16-bit code selector to the specified data memory
- * with the same priviledge level as the calling code. This is used so that
- * 32-bit code can call 16-bit protected mode code directly via a 16:32
- * far call. The selector can be freed with PM_freeSelector().
- */
-ibool 	PMAPI PM_createCode16Alias(void *ptr,ulong limit,uint *sel,uint *off);
-
 /* Routine to create 32 bit code segment alias selector from a data
  * selector. This is only useful for 16 bit Windows code that
  * needs to be able to call 32 bit protected mode code in a USE32 segment.
- * The selector can be freed with PM_freeSelector().
+ * The selector can be freed with PM_freeSelector();
  */
 
 #ifdef	__WINDOWS16__
@@ -377,13 +331,6 @@ uint 	PMAPI PM_createCode32Alias(uint sel);
 
 int 	PMAPI PM_allocRealSeg(uint size,uint *sel,uint *off,uint *r_seg,uint *r_off);
 void	PMAPI PM_freeRealSeg(uint sel,uint off);
-
-/* Routine to allocate a block of locked memory, and return both the
- * linear and physical addresses of the memory.
- */
-
-void *	PMAPI PM_allocLockedMem(uint size,ulong *physAddr);
-void	PMAPI PM_freeLockedMem(void *p);
 
 /* Routine to call a real mode assembly language procedure. Register
  * values are passed in and out in the 'regs' and 'sregs' structures. We
@@ -413,16 +360,6 @@ void 	PMAPI PM_callRealMode(uint seg,uint off, RMREGS *regs,RMSREGS *sregs);
 int 	PMAPI PM_int86(int intno, RMREGS *in, RMREGS *out);
 int 	PMAPI PM_int86x(int intno, RMREGS *in, RMREGS *out,RMSREGS *sregs);
 
-/* Routine to generate a real mode interrupt. This is identical to the
- * above function, but takes a DPMI_regs structure for the registers
- * which has a lot more information. It is only available from 32-bit
- * protected mode.
- */
-
-#ifdef	PM386
-void	PMAPI DPMI_int86(int intno, DPMI_regs *regs);
-#endif
-
 /* Routines to generate native interrupts (ie: protected mode interrupts
  * for protected mode apps) using an interface the same as that use by
  * int86() and int86x() in realmode. These routines are required because
@@ -450,12 +387,6 @@ void 	PMAPI _PM_setRMvect(int intno, long realisr);
  */
 
 void	PMAPI PM_availableMemory(ulong *physical,ulong *total);
-
-/* Return the address of a global VESA real mode transfer buffer for use
- * by applications.
- */
-
-ibool	PMAPI PM_getVESABuf(uint *len,uint *sel,uint *off,uint *rseg,uint *roff);
 
 #ifdef	__cplusplus
 }						/* End of "C" linkage for C++	*/

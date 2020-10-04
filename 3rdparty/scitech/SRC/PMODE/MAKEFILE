@@ -6,14 +6,14 @@
 # Descripton:   Generic makefile for the PMODE library. Builds the library
 #               file and all example programs.
 #
-# $Date:   11 Nov 1996 13:32:00  $ $Author:   KendallB  $
+# $Date:   12 Feb 1996 21:58:56  $ $Author:   KendallB  $
 #
 #############################################################################
 
 # Add DOS extender dependant flags to command line
 
 CFLAGS          += $(DX_CFLAGS)
-ASFLAGS         += $(DX_ASFLAGS) -I$(SCITECH)\include\pmode
+ASFLAGS         += $(DX_ASFLAGS)
 
 # Name of library and object files required to build it
 
@@ -22,7 +22,7 @@ LIBFILE         = spmode$L
 .ELSE
 LIBFILE         = pmode$L
 .ENDIF
-LIBCLEAN        = pmode*.lib spmode*.lib
+LIBCLEAN        = pmpro*.lib pmpro*.dll
 OBJECTS         = pmlite$O pmpro$O vflat$O _pmlite$O _pmpro$O _vflat$O
 
 # Change destination for library file depending on extender being used
@@ -49,8 +49,15 @@ LIB_DEST        := $(LIB_BASE)\win32
 
 EXEFILES        = memtest$E biosptr$E video$E isvesa$E callreal$E		\
                   mouse$E tick$E key$E key15$E brk$E altbrk$E           \
-                  critical$E altcrit$E vftest$E int10$E
+                  critical$E altcrit$E vftest$E
 
+# Extra files for the professional version
+
+.IMPORT .IGNORE: PRO
+
+.IF $(BUILD_DLL)
+all: $(LIBFILE)
+.ELSE
 all: $(EXEFILES)
 
 $(EXEFILES): $(LIBFILE)
@@ -68,45 +75,14 @@ altbrk$E:   altbrk$O
 critical$E: critical$O
 altcrit$E:  altcrit$O
 callreal$E: callreal$O
-vftest$E:   vftest$O
-int10$E:    int10$O
+vftest$E: vftest$O
+.ENDIF
 
 # Define the list of object files to create dependency information for
 
 DEPEND_OBJ      = $(OBJECTS) memtest$O biosptr$O video$O isvesa$O mouse$O   \
-				  tick$O key$O key$O brk$O altbrk$O critical$O altcrit$O    \
-				  callreal$O vftest$O
+                  tick$O key$O key$O brk$O altbrk$O critical$O altcrit$O    \
+                  callreal$O vftest$O
 
 .INCLUDE: "$(SCITECH)\makedefs\common.mk"
 
-# Target to build all DOS 16-bit libraries
-
-.SWAP .PHONY mkdos16:
-    @+build bc31-d16 install -u OPT_SIZE=1
-    @+build bc45-d16 install -u OPT_SIZE=1
-    @+build bc50-d16 install -u OPT_SIZE=1
-    @+build wc10-d16 install -u OPT_SIZE=1
-    @+build wc11-d16 install -u OPT_SIZE=1
-    @+build wc11-d16 install -u OPT_SIZE=1
-
-# Target to build all DOS 32-bit libraries
-
-.SWAP .PHONY mkdos32:
-    @+build bc45-d32 install -u OPT_SIZE=1
-    @+build bc50-d32 install -u OPT_SIZE=1
-    @+build wc10-d32 install -u OPT_SIZE=1
-    @+build wc11-d32 install -u OPT_SIZE=1
-    @+build dj20-d32 install -u OPT_SIZE=1
-
-# Target to build all libraries
-
-.PHONY mkdos: mkdos16 mkdos32 cleanexe
-
-.PHONY mkall: mkdos
-
-# Target to build all libraries for SciTech Display Doctor
-
-.SWAP .PHONY mksdd:
-    @+build bc50-d16 install -u OPT_SIZE=1
-    @+build wc10-d32 install -u OPT_SIZE=1
-	@+dmake cleanexe

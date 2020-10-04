@@ -1,0 +1,25 @@
+/****************************************************************************
+*
+*                          WinDirect Test Program
+*
+*                   Copyright (C) 1995 SciTech Software.
+*							All rights reserved.
+*
+* Filename:		$Workfile:   wdvga32.rc  $
+* Version:		$Revision:   1.0  $
+* Author:		Kendall Bennett
+*
+* Language:		Windows Resource Compiler
+* Environment:	Windows 3.1
+*
+* $Date:   05 Feb 1996 18:42:42  $ $Author:   KendallB  $
+*
+****************************************************************************/
+
+#ifndef WORKSHOP_INVOKED
+  #include <windows.h>
+#endif
+
+ID_APP ICON "idapp.ico"
+
+

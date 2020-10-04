@@ -2,25 +2,11 @@
 *
 *				VFlat - DOS Virtual Flat Linear Framebuffer
 *
-*  ========================================================================
+*                   Copyright (C) 1996 SciTech Software.
+*							All rights reserved.
 *
-*    The contents of this file are subject to the SciTech MGL Public
-*    License Version 1.0 (the "License"); you may not use this file
-*    except in compliance with the License. You may obtain a copy of
-*    the License at http://www.scitechsoft.com/mgl-license.txt
-*
-*    Software distributed under the License is distributed on an
-*    "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-*    implied. See the License for the specific language governing
-*    rights and limitations under the License.
-*
-*    The Original Code is Copyright (C) 1991-1998 SciTech Software, Inc.
-*
-*    The Initial Developer of the Original Code is SciTech Software, Inc.
-*    All Rights Reserved.
-*
-*  ========================================================================
-*
+* Filename:		$Workfile:   vflat.c  $
+* Version:		$Revision:   1.3  $
 *
 * Language:		ANSI C
 * Environment:	IBM PC (MS DOS)
@@ -29,14 +15,14 @@
 *				fault handler is always installed to handle up to a 4Mb
 *				framebuffer with a window size of 4Kb or 64Kb in size.
 *
+* $Date:   18 Mar 1996 15:57:10  $ $Author:   KendallB  $
 *
 ****************************************************************************/
 
 #include <stdlib.h>
-#include "pmpro.h"
-
-#if	defined(DOS4GW)
 #include <dos.h>
+#include "pmpro.h"
+#include "debug.h"
 
 #define	VFLAT_START_ADDR	0xF0000000U
 #define	VFLAT_END_ADDR		0xF03FFFFFU
@@ -46,13 +32,15 @@
 #define PAGE_READ 			0
 #define PAGE_WRITE			2
 
+#if	defined(DOS4GW)
+
 /*-------------------------------------------------------------------------*/
 /* DOS4G/W, PMODE/W and CauseWay support.                       	   	   */
 /*-------------------------------------------------------------------------*/
 
-PRIVATE	ibool	installed = false;
-PRIVATE	ibool	haveDPMI = false;
-PUBLIC	ibool	_ASMAPI VF_haveCauseWay = false;
+PRIVATE	bool	installed = false;
+PRIVATE	bool	haveDPMI = false;
+PUBLIC	bool	_ASMAPI VF_haveCauseWay = false;
 PUBLIC	ushort	_ASMAPI VF_zeroSel = 0;
 
 /* Low level assembler code */
@@ -70,7 +58,7 @@ void * _ASMAPI VF_malloc(uint size)
 void _ASMAPI VF_free(void *p)
 { free(p); }
 
-PRIVATE ibool CheckDPMI(void)
+PRIVATE bool CheckDPMI(void)
 /****************************************************************************
 *
 * Function:		CheckDPMI
@@ -94,7 +82,7 @@ PRIVATE ibool CheckDPMI(void)
 	return false;
 }
 
-ibool PMAPI VF_available(void)
+bool PMAPI VF_available(void)
 /****************************************************************************
 *
 * Function:		VF_available
@@ -239,7 +227,7 @@ void PMAPI VF_exit(void)
 /* by the WinDirect DLL's.										   		   */
 /*-------------------------------------------------------------------------*/
 
-ibool PMAPI VF_available(void)
+bool PMAPI VF_available(void)
 {
 	return false;
 }

@@ -2,30 +2,22 @@
 *
 *							   Expand Include
 *
-*  ========================================================================
+*					Copyright (C) 1995 SciTech Software.
+*							All rights reserved.
 *
-*    The contents of this file are subject to the SciTech MGL Public
-*    License Version 1.0 (the "License"); you may not use this file
-*    except in compliance with the License. You may obtain a copy of
-*    the License at http://www.scitechsoft.com/mgl-license.txt
-*
-*    Software distributed under the License is distributed on an
-*    "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-*    implied. See the License for the specific language governing
-*    rights and limitations under the License.
-*
-*    The Original Code is Copyright (C) 1991-1998 SciTech Software, Inc.
-*
-*    The Initial Developer of the Original Code is SciTech Software, Inc.
-*    All Rights Reserved.
-*
-*  ========================================================================
+* Filename:		$Workfile:   expndinc.c  $
+* Version:		$Revision:   1.0  $
 *
 * Language:		ANSI C
 * Environment:	MSDOS
 *
-* Description:	Program to expand all assembler include files in the
-*				assembler source file into the resulting target
+* Description:	Program to expand all assembler include files between
+*
+*               ;BEGIN EXPAND INCLUDE
+*					and
+*				;END EXPAND INCLUDE
+*
+*				in the assembler source file into the resulting target
 *               source file. Because of a bug in the way that 32 bit
 *				linkers handle TASM's debug info (including BCC32 when
 *				debugging under TD32) the debuggers cannot correctly
@@ -37,8 +29,9 @@
 *				code.
 *
 *				This program is very simple and will only search for
-*				include files relative to the current directory.
+*				include files in the current directory.
 *
+* $Date:   12 Feb 1996 22:24:30  $ $Author:   KendallB  $
 *
 ****************************************************************************/
 
@@ -46,11 +39,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <dos.h>
-#ifdef	__MSDOS__
 #include <dir.h>
-#endif
-#include "scitech.h"
+#include <dos.h>
+#include "getopt.h"
 
 #define	BEGIN_STR		";BEGIN"
 #define	BEGIN_LEN       6
@@ -107,7 +98,7 @@ void expandIncludes(FILE *in,FILE *out)
 {
 	FILE	*inc;
 	char	incName[30],*p,*p2;
-	ibool    expanding = false;
+	bool    expanding = false;
 
 	while (fgets(line,sizeof(line),in)) {
 		if (expanding) {

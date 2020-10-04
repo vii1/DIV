@@ -2,25 +2,11 @@
 *
 *						 	   PM/Pro Library
 *
-*  ========================================================================
+*					Copyright (C) 1996 SciTech Software.
+*							All rights reserved.
 *
-*    The contents of this file are subject to the SciTech MGL Public
-*    License Version 1.0 (the "License"); you may not use this file
-*    except in compliance with the License. You may obtain a copy of
-*    the License at http://www.scitechsoft.com/mgl-license.txt
-*
-*    Software distributed under the License is distributed on an
-*    "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-*    implied. See the License for the specific language governing
-*    rights and limitations under the License.
-*
-*    The Original Code is Copyright (C) 1991-1998 SciTech Software, Inc.
-*
-*    The Initial Developer of the Original Code is SciTech Software, Inc.
-*    All Rights Reserved.
-*
-*  ========================================================================
-*
+* Filename:		$Workfile:   pmpro.h  $
+* Version:		$Revision:   1.0  $
 *
 * Language:		ANSI C
 * Environment:	Real mode and 16/32 bit Protected Mode under MSDOS
@@ -46,6 +32,7 @@
 *					Control C/Break (0x23/0x1B)
 *					Critical Error (0x24)
 *
+* $Date:   05 Feb 1996 21:44:32  $ $Author:   KendallB  $
 *
 ****************************************************************************/
 
@@ -108,13 +95,6 @@ void 	PMAPI PM_restoreMouseHandler(void);
 
 void 	PMAPI PM_resetMouseDriver(int hardReset);
 
-/* Routine to reset the mouse driver, and re-install the current
- * mouse interrupt handler if one was currently installed (since the
- * mouse reset will automatically remove this handler.
- */
-
-void 	PMAPI PM_resetMouseDriver(int hardReset);
-
 /* Routines to install and remove timer and keyboard interrupt handlers.
  * The handler routines are normal C functions. If the return value from
  * the function is PM_chainInt, the previous handler will be chained
@@ -131,28 +111,6 @@ void 	PMAPI PM_restoreTimerHandler(void);
 void 	PMAPI PM_setKeyHandler(PM_intHandler ih);
 void 	PMAPI PM_chainPrevKey(void);
 void 	PMAPI PM_restoreKeyHandler(void);
-
-/* Routine to install a protected mode Int 10h handling routine. The
- * installed int10 handler gets called in protected mode with DS set to
- * the current data selector, and ES:EDI pointing the the real mode DPMI
- * register structure at the time of the interrupt. The handler must be
- * written in assembler to be able to extract the real mode register values
- * from the structure passed in.
- *
- * To chain to the previous Int 10h handler you can use the normal
- * DPMI_int86() function, and the installed real mode handler will guard
- * against calling the protected mode handler twice and will simply call
- * the existing real mode interrupt.
- *
- * To allow real mode applications to call the real mode bank switch
- * function, you can call the PM_getRealBankFunc function that will return
- * the address of the real mode function that will issue an int10h to
- * perform the bank switching and reflect the call to protected mode.
- */
-
-int		PMAPI PM_setInt10Handler(PM_intHandler ih);
-long	PMAPI PM_getRealBankFunc(void);
-void 	PMAPI PM_restoreInt10Handler(void);
 
 /* Routines to hook and unhook the alternate Int 15h keyboard intercept
  * callout routine. Your event handler will need to return the following:
@@ -241,7 +199,7 @@ void 	PMAPI PM_restorePMvect(int intno, PMFARPTR isr);
  * a DPMI host like Windows or OS/2, this function will return a NULL.
  */
 
-ibool 	PMAPI VF_available(void);
+bool 	PMAPI VF_available(void);
 void * 	PMAPI VF_init(ulong baseAddr,int bankSize,int codeLen,void *bankFunc);
 void 	PMAPI VF_exit(void);
 

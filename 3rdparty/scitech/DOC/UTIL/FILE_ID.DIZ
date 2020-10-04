@@ -1,0 +1,7 @@
+SCITECH MAKEFILE UTILITIES v2.3: The SciTech
+ Makefile Utilities combines DMAKE with a
+ set of pre-configured configuration files
+ and batch files for re-compiling SciTech
+ Software products. Supports Borland C++,
+ Watcom C++, Visual C++, Symantec C++,
+ Metaware C++ and DJGPP.

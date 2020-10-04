@@ -1,23 +1,10 @@
 /****************************************************************************
 *
-*  ========================================================================
+*					Copyright (C) 1991 Kendall Bennett.
+*							All rights reserved.
 *
-*    The contents of this file are subject to the SciTech MGL Public
-*    License Version 1.0 (the "License"); you may not use this file
-*    except in compliance with the License. You may obtain a copy of
-*    the License at http://www.scitechsoft.com/mgl-license.txt
-*
-*    Software distributed under the License is distributed on an
-*    "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-*    implied. See the License for the specific language governing
-*    rights and limitations under the License.
-*
-*    The Original Code is Copyright (C) 1991-1998 SciTech Software, Inc.
-*
-*    The Initial Developer of the Original Code is SciTech Software, Inc.
-*    All Rights Reserved.
-*
-*  ========================================================================
+* Filename:		$Workfile:   loc.c  $
+* Version:		$Revision:   1.0  $
 *
 * Language:		C++ 3.0
 * Environment:	any
@@ -27,6 +14,7 @@
 *				file, along with the number of comment lines and number of
 *				blank lines in the file.
 *
+* $Date:   12 Feb 1996 22:24:32  $ $Author:   KendallB  $
 *
 * Revision History:
 * -----------------
@@ -41,14 +29,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "scitech.h"
+#include "debug.h"
 
 #define	LINE_SIZE	255			/* Maximum length of a line				*/
 
-ibool	asm_file = false;		/* True if file is an assembler file	*/
-ibool	inside_comment = false;	/* True if inside a 'C' comment			*/
+bool	asm_file = false;		/* True if file is an assembler file	*/
+bool	inside_comment = false;	/* True if inside a 'C' comment			*/
 
-ibool comment_line(const char *line)
+bool comment_line(const char *line)
 /****************************************************************************
 *
 * Function:		comment_line
@@ -96,7 +84,7 @@ ibool comment_line(const char *line)
 		}
 }
 
-ibool blank_line(const char *line)
+bool blank_line(const char *line)
 /****************************************************************************
 *
 * Function:		blank_line

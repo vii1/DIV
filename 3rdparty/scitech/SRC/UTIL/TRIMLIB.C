@@ -1,23 +1,10 @@
 /****************************************************************************
 *
-*  ========================================================================
+*					Copyright (C) 1994 SciTech Software.
+*							All rights reserved.
 *
-*    The contents of this file are subject to the SciTech MGL Public
-*    License Version 1.0 (the "License"); you may not use this file
-*    except in compliance with the License. You may obtain a copy of
-*    the License at http://www.scitechsoft.com/mgl-license.txt
-*
-*    Software distributed under the License is distributed on an
-*    "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-*    implied. See the License for the specific language governing
-*    rights and limitations under the License.
-*
-*    The Original Code is Copyright (C) 1991-1998 SciTech Software, Inc.
-*
-*    The Initial Developer of the Original Code is SciTech Software, Inc.
-*    All Rights Reserved.
-*
-*  ========================================================================
+* Filename:		$Workfile:   trimlib.c  $
+* Version:		$Revision:   1.0  $
 *
 * Language:		Borland C++ 3.1 (not tested with anything else)
 * Environment:	MSDOS
@@ -28,6 +15,7 @@
 *               DMAKE to automatically remove this if there are no libraries
 *				to be linked with the executable file).
 *
+* $Date:   12 Feb 1996 22:24:36  $ $Author:   KendallB  $
 *
 ****************************************************************************/
 
@@ -38,6 +26,7 @@
 
 int main(int argc, char *argv[])
 {
+	int		status,i;
 	char	buf[255],*p;
 	FILE	*infile,*outfile;
 

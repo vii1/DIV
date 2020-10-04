@@ -1,0 +1,91 @@
+
+                SciTech Software Common Makefile Utilities
+                ------------------------------------------
+
+Utilities in this package
+-------------------------
+
+These three utilities are very simple but help to simplify our makefiles.
+We use them all the time and the makefile in the archive that these
+files came in use these utilties. They must be placed in the path or in
+the current directory that you are executing make in.
+
+FOREACH: Simply performs a command on a number of files, where the files
+are specified in a list. This list can be manually created or can be
+passed directly to it via a temporary file in DMAKE.
+
+DJ_LD: Takes a set of command line parameters to be passed on to the DJGPP
+port of GNU C/C++ and compiles and links the code directly into a bounds .exe
+file that can be run directly. The DJGPP port has no command line option
+to do this automatically, so this provides that intermediate step.
+
+TRIMLIB: Takes a linker response file for Watcom C++ 10.0, and will trim
+out any empty LIBR statements (unfortunately we have not worked out how
+to get DMAKE to automatically trim these).
+
+MAKEDEP: Makefile dependency generator program, that will take a list of
+object files and search file all the related source files and build the
+dependencies lists for them. This allows the dependency tracking to be
+handled automatically from the makefiles and can be updated simply with
+a 'make depend'.
+
+RCLINK: Takes the name of the linker and resource compiler and compile
+definition files containing compile switches, objects files and the .res
+file to be linked. It then strips out the .res file from the object file
+list, passes all the object files to be linked by the linker and then
+runs the resouce compiler on the .res file and .exe file to bind the
+resources to the completed .exe file. This utility allows a single
+line to be used to define all the object files and resource file to be
+used when compiling a Windows executable, which simplifies our makefiles.
+
+GNU Utilities
+-------------
+
+A number of pre-compiled GNU utilities are provided in the makefile utilities
+archives. You can obtain the full source code to these from the internet
+Simtel-20 archive oak.oakland.edu in the pub\gnuish\futi*.zip archives.
+All of these utilities are covered by the GNU General Public License
+contained in the file COPYING in this directory. The following is a list
+of the GNU utilities included in this archive:
+
+RM.EXE  - Unix like file ReMove utility
+CP.EXE  - Unix like file CoPy utility
+MV.EXE  - Unix like file MoVe utility
+
+DMAKE 3.8
+---------
+
+This distribution also contains the executable for DMAKE 3.8. This very
+powerful version of the Unix MAKE is cross platform portable, and freely
+distributable under the GNU General Public License (see the file COPYING
+contained in this directory). We chose this version of MAKE to be our
+cross platform, cross compiler portable version of MAKE, since it allows
+one to change the standard behaviour with MAKE startup files (which forms
+the core of the SciTech Common Makefile Utilities Package). We have included
+for your reference the file DMAKE.MAN, which contains the ASCII text version
+of the manual pages for this program. You can get the official distribution
+archive from oak.oakland.edu int pub\msdos\c\dmake38e.zip archive, and the
+full source code is available in the pub\msdos\c\dmake38s.zip archive.
+
+If you wish to obtain the source code to any of the GNU utilities or the
+DMAKE program, contact us directly and we will forward your a copy of
+the source code providing you pay for the shipping charges.
+
+Copyright Notice
+----------------
+
+This package is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This package is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+Kendall Bennett, SciTech Software - February 1996

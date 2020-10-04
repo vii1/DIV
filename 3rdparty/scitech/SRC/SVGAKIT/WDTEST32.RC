@@ -1,0 +1,88 @@
+/****************************************************************************
+*
+*			The SuperVGA Kit - UniVBE Software Development Kit
+*
+*				 	Copyright (C) 1994 SciTech Software.
+*							All rights reserved.
+*
+* Filename:		$Workfile:   wdtest32.rc  $
+* Version:		$Revision:   1.1  $
+* Author:		Kendall Bennett
+*
+* Language:		Windows Resource Compiler
+* Environment:	Windows 3.1
+*
+* $Date:   28 Mar 1996 13:59:42  $ $Author:   KendallB  $
+*
+****************************************************************************/
+
+#ifndef WORKSHOP_INVOKED
+  #include <windows.h>
+#endif
+#include "wdtest.h"
+
+IDD_MAINDLG DIALOG 27, 29, 233, 243
+STYLE DS_MODALFRAME | 0x4L | WS_POPUP | WS_VISIBLE | WS_DLGFRAME
+FONT 8, "MS Sans Serif"
+{
+ LISTBOX IDC_MODELIST, 9, 47, 214, 99, LBS_NOTIFY | WS_BORDER | WS_BORDER | WS_VSCROLL | WS_TABSTOP
+ AUTORADIOBUTTON "4 bit", IDC_4BIT, 19, 161, 34, 12, BS_AUTORADIOBUTTON | WS_TABSTOP
+ AUTORADIOBUTTON "8 bit", IDC_8BIT, 19, 177, 31, 12, BS_AUTORADIOBUTTON | WS_TABSTOP
+ AUTORADIOBUTTON "15 bit", IDC_15BIT, 19, 193, 31, 12, BS_AUTORADIOBUTTON | WS_TABSTOP
+ AUTORADIOBUTTON "16 bit", IDC_16BIT, 53, 161, 31, 12, BS_AUTORADIOBUTTON | WS_TABSTOP
+ AUTORADIOBUTTON "24 bit", IDC_24BIT, 53, 177, 31, 12, BS_AUTORADIOBUTTON | WS_TABSTOP
+ AUTORADIOBUTTON "32 bit", IDC_32BIT, 53, 193, 31, 12, BS_AUTORADIOBUTTON | WS_TABSTOP
+ AUTOCHECKBOX "Use linear framebuffer", IDC_USELINEAR, 107, 160, 93, 12
+ AUTOCHECKBOX "Palette fade test", IDC_DOPALETTE, 107, 172, 93, 12
+ AUTOCHECKBOX "Virtual scroll test", IDC_DOVIRTUAL, 107, 184, 97, 12
+ AUTOCHECKBOX "Wait for vertical retrace", IDC_DORETRACE, 107, 196, 106, 12
+ DEFPUSHBUTTON "Test mode", IDC_TESTMODE, 13, 221, 50, 14
+ PUSHBUTTON "SVGA Info", IDC_SVGAINFO, 93, 221, 46, 14, WS_TABSTOP
+ PUSHBUTTON "Quit", IDCANCEL, 167, 221, 50, 14, WS_TABSTOP
+ LTEXT "Video mode to test:", -1, 10, 35, 178, 8, NOT WS_GROUP
+ GROUPBOX " Color Depth ", -1, 13, 150, 75, 63, BS_GROUPBOX | WS_GROUP
+ GROUPBOX " Options ", -1, 100, 150, 117, 63, BS_GROUPBOX | WS_GROUP
+ CTEXT "WinDirect %d bit Test Program - Release %s.%s", IDC_VERSIONSTR, 23, 8, 186, 8, SS_CENTER | NOT WS_GROUP
+ CTEXT "Copyright str", IDC_COPYRIGHTSTR, 14, 19, 204, 8, SS_CENTER | NOT WS_GROUP
+}
+
+ID_APP ICON "idapp.ico"
+
+IDD_NOTDETECTED DIALOG 23, 40, 205, 59
+STYLE DS_MODALFRAME | 0x4L | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "No VESA VBE detected!"
+FONT 8, "MS Sans Serif"
+{
+ DEFPUSHBUTTON "Ok", IDOK, 77, 36, 50, 14
+ CTEXT "VESA VBE 1.2 or higher SuperVGA interface not detected - please install UniVBE", -1, 25, 12, 155, 18
+}
+
+
+
+IDD_SVGAINFO DIALOG 26, 39, 290, 161
+STYLE DS_MODALFRAME | 0x4L | WS_POPUP | WS_VISIBLE | WS_DLGFRAME
+FONT 8, "MS Sans Serif"
+{
+ GROUPBOX " SuperVGA Information ", -1, 8, 6, 273, 83, BS_GROUPBOX
+ GROUPBOX " Capabilities", -1, 8, 91, 273, 40, BS_GROUPBOX
+ LTEXT "VBE Oem String:", -1, 15, 19, 80, 8
+ LTEXT "", IDC_OEMSTRING, 98, 19, 175, 8
+ LTEXT "", IDC_VBEVERSION, 98, 28, 175, 8
+ LTEXT "", IDC_VBEMEMORY, 98, 37, 175, 8
+ LTEXT "", IDC_OEMSOFTWAREREV, 98, 46, 175, 8
+ LTEXT "", IDC_OEMVENDORNAME, 98, 55, 175, 8
+ LTEXT "", IDC_OEMPRODUCTNAME, 98, 64, 175, 8
+ LTEXT "", IDC_OEMPRODUCTREV, 98, 73, 175, 8
+ LTEXT "", IDC_8BITDAC, 98, 104, 175, 8
+ LTEXT "", IDC_LINEARBUFFER, 98, 113, 175, 8
+ LTEXT "VBE Version:", -1, 15, 28, 80, 8
+ LTEXT "Video Memory:", -1, 15, 37, 80, 8
+ LTEXT "Oem Software Revision:", -1, 15, 46, 80, 8
+ LTEXT "Oem Vendor Name:", -1, 15, 55, 80, 8
+ LTEXT "Oem Product Name:", -1, 15, 64, 80, 8
+ LTEXT "Oem Product Revision:", -1, 15, 73, 80, 8
+ LTEXT "8 bit wide DAC:", -1, 15, 104, 80, 8
+ LTEXT "Linear framebuffer:", -1, 15, 114, 80, 8
+ DEFPUSHBUTTON "OK", IDOK, 120, 140, 50, 14
+}
+

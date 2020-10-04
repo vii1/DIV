@@ -1,0 +1,354 @@
+
+					Log of changes for the SuperVGA Kit
+					-----------------------------------
+
+Version 6.0 (April 1996)
+
+    - Added support for VBE/AF Accelerator Functions. The library API changed
+      somewhat to provide a common interface to both the standard VBE and
+      VBE/AF services, so code using the SuperVGA Kit can work on either
+      devices without any changes to the code.
+
+    - Added support for building the SuperVGA Kit as both 16 and 32 bit
+      DLL's under Windows. This required changing the API to move all global
+      variables out of the library and into a global structure which is
+      passed back to the application.
+
+    - Added WinDirect, PM/Pro and Zen Timer libraries to the SuperVGA Kit
+      installation for DOS and Windows.
+
+    - Added new support for the WinDirect DOS compatability library, which
+      provides DOS applications with an indentical interface to the
+      WinDirect fullscreen event handling interface for Windows.
+
+    - Updated the code to correctly pass the memory mapped IO selector to
+	  the VBE 2.0 display start address and palette programming routines.
+
+	- Changed palette setting code to automatically do conversion from 8
+	  bits per primary format to the 6 or 8 bit format used by the
+	  hardware palette if necessary. VBE/AF always takes data in 8 bit
+	  format, so this makes is standard across the library.
+
+	- Changed bank switched functions to not require the active display
+	  page to start on a 64Kb boundary, but can now start anywhere in
+	  video memory (required by VBE/AF).
+
+    - Changed names of WinDirect and PM/Pro DLL's to include the SuperVGA
+      Kit version number to avoid versioning problems in the field.
+
+    - Fixed bug in WinDirect 16 bit mouse coordinate scaling code to
+      return coorect coordinates.
+
+    - Fixed bug in WinDirect Alt-Tab code under Win95 causing the main
+      WinDirect window to lose the keyboard focus when restored.
+
+    - Fixed Win95 WinDirect support to allow the application to stop users
+      from Alt-Tab'ing away from the WinDirect app back to the desktop.
+
+    - Fixed minor bugs in WinDirect event handling code for Windows (control
+      keys not mapping).
+
+    - Added new flat thunking code for Win95 support. Should no longer need
+      to set the executeable type to Win31 for 32 bit apps.
+
+Version 5.2 (September 1995)
+
+	- Added support for VBE 2.0 bank switched devices that use memory mapped
+	  IO exclusively for bank switching according to the draft VBE 2.0
+	  clarifications. Some new SuperVGA devices require this to function
+	  properly with VBE 2.0.
+
+	- Added new virtual linear framebuffer emulation technology (code in
+      PM/Pro library) for DOS.
+
+    - Added code to map all video memory locations (both banked and hardware
+      linear buffers) into near memory, so no selectors are ever used to
+      access video memory anymore.
+
+    - Moved WinDirect support into a separate package.
+
+Version 5.1 (February 5 1995)
+
+    - Added new WinDirect technology and new SuperVGA Kit for Windows
+      test program.
+
+    - Added new hybrid 16/32 bit technology for running full 32 bit
+      protected mode code from 16 bit Windows apps. This allows 16 bit
+      protected mode Windows apps to call the VBE 2.0 protected mode
+      functions directly, and to run code to program a linear framebuffer
+      directly without needing Win32s.
+
+    - Added support for VBE 2.0 32 bit protected mode interface.
+
+    - Added support for VBE 2.0 linear framebuffer's.
+
+Version 5.0 (August 22 1994)
+
+	- Combined all test programs into a single test program to conserve
+	  on compiled code size.
+
+	- Added highly optimised assembly language line drawing routines for
+	  each color mode.
+
+	- Added support for 32 bits per pixel 16 million color modes.
+
+    - Ported to 32 bit protected mode for supported compilers.
+
+    - Added support for the new high speed protected mode interface in
+      UniVBE 5.0 for 32 bit protected mode.
+
+    - Added PROFILE.EXE performance profiling program.
+
+    - Added HELLOVBE.C hello world program for VBE programming.
+
+    - Renamed PARANOID.EXE to VBETEST.EXE.
+
+	- Added code to ensure log file is flushed to disk after each
+	  entry to aid in the debugging process in case VBETest causes a crash.
+
+Version 4.3 (20 March 1994)
+
+    - Added support for 16 and 32 bit protected mode.
+
+    - Enhanced reporting facilities and testing functions in PARANOID.
+
+Version 4.2 (22 Oct 1993)
+
+    - Shareware release of Universal VESA VBE, so source code was removed
+      from this archive.
+
+    - Added support for a few more advanced features of the VESA VBE.
+
+    - Fixed the library so that it now works in any video mode without
+      requiring the user program to set up any variables.
+
+Version 4.0 (18 Sep 1993)
+
+    - Added support for Microsoft C to the library. Now there is both a
+      Borland and MSC version of the library.
+
+    - Added support for the Universal VESA VBE's protected mode programming
+      interface to the code.
+
+    - The Universal VESA VBE is now completely separate to this package,
+      although they are distributed in the same archive.
+
+	- The entire SuperVGA kit has been re-written to work only with
+	  VESA VBE 1.2 or above compliant SuperVGA's (such as the Universal
+	  VESA VBE) and much of the code has been converted into C for
+	  readability and portability. Low level drawing code is still in
+	  assembler for speed.
+
+Version 3.2 (25 March 1993)
+
+    - Fixed problems with the Universal VESA TSR not correctly calculating
+      the total number of scanlines in video memory.
+
+    - More bug fixes for troublesome chipsets.
+
+    - Fixed problems with optional mode information (again) so that the
+      32k and 16m color video modes now work correctly.
+
+    - Added support for correct memory size determination for VESA version
+      1.2 and above. Also added support for this to the detectgr.asm module,
+      rather than using the horrible video mode hack to determine the size.
+
+    - Added support for 64k color modes. I had hoped not to do this, but
+      it seems a lot of video boards provide 64k but not 32k color modes.
+      It is also not possible to use 64k modes as pseudo 32k modes as
+      the bitmap layouts for the modes are different.
+
+    - Enhanced the support for the S3, by adding support for the HiColor
+      and TrueColor modes of the 801/805 and 928 cards.
+
+    - Fixed bank switching and extended page flipping to be able to
+      correctly access up to 4Mb on the S3 801/805 and 928 based card
+
+Version 3.1 (7 March 1993)
+
+    - Changed the Universal VESA TSR to compile in the large memory model,
+      and to startup in C to perform the SuperVGA detection etc. Thus it
+      now also takes command line arguments to force it to work with any
+      SuperVGA configuration. It can now also be compiled in testing mode
+      where it will call a C testing procedure after installing the interrupt
+      handlers so it can be debugged easily using Turbo Debugger. It will
+      not go TSR when in testing mode, but simply restore the interrupt
+      vectors and quit.
+
+    - Added support for returning optional mode information to the
+      Universal VESA TSR to make it more compatible.
+
+    - Fixed bugs in the detection of TrueColor video DAC's.
+
+    - Change the version numbering for the Universal VESA TSR to match
+      the SuperVGA test kit library.
+
+    - Added command line options to the programs to allow the
+      programs to be forced to run for a particular video card. This
+      includes the Universal VESA TSR.
+
+    - Added code to both the test programs and Univesal VESA TSR to
+      check the type of CPU before running the program.
+
+    - Fixed problems with clearing unavailable 24 bit video modes for
+      Genoa 7900 and Speedstar 24 cards. This should work now.
+
+    - Added code to detect whether the 1280x1024x16 color video mode
+      is available on ET4000 cards (older ones don't have it).
+
+    - Fixed problem with detecting 32k and 16m color support on Everex
+      Viewpoint TC card. Also fixed problem with not correctly calculating
+      the number of pages on Everex boards.
+
+    - Fixed problem with detecting the number of pages on Cirrus 5422
+      boards.
+
+    - Attempted to fix problem with extended flipping of Standard VGA
+      modes on Ahead SuperVGA's.
+
+Version 3.0 (30 Feb 1993)
+
+    - Added the Universal VESA TSR. This will provide full VESA 1.2 BIOS
+      functionality for all supported SuperVGA's.
+
+    - Restructured the test kit code into test programs and an underlying
+      'C' callable library for each video mode type (16, 256, 32k and
+      16m colors). Thus you can now easily use the library code in your
+      own programs.
+
+    - Fixed bugs with the Paradise WD90C30 video card.
+
+    - Add a number of hacks to the ET4000 code to make it work with all the
+      different 24 bit cards that have different mode numbers (MegaEva/2,
+      Diamond Speedstar 24, Genoa 7900).
+
+Version 2.1 (24 Feb 1993)
+
+    - The library is now '386 specific, given the incredibly cheap
+      price of '386 hardware (and the benefits obtained).
+
+    - Added support for all the standard EGA and VGA modes as well, so
+      you can test page flipping etc for all possible video modes.
+
+    - Better support for calculating the number of available pages, so
+      will work out correct number of pages for adpaters with > 1Mb on
+      board.
+
+    - Add support to determine the number of available pages for a
+      video mode during video adapter detection.
+
+    - Restructured the entire library to help in the development of the
+      Universal VESA TSR program. The framework has now been laid for
+      this project to progress.
+
+    - Added detection of available video pages for a specific mode
+      before the mode is actually set.
+
+    - Removed memcheck from VESA detection routine. This does not seem to
+      work correctly on all VESA boards. If the VESA BIOS gives incorrect
+      memory values by not restricting video modes depending on the available
+      memory, we can do nothing about it.
+
+    - Fixed up S3 support to only use the VESA 10xh video modes, and not the
+      20xh co-processed video modes, to ensure compatibility.
+
+    - Removed all support for the S3 1280x1024x16 color video mode. This
+      is such a silly mode that it is not worth supporting...
+
+    - Fixed bugs in a number of video adapter routines.
+
+Version 2.0 (28 Nov 1992)
+
+    - Modified code to be '286 processor dependant, for extra speed.
+      Who uses XT's for real Graphics anyway?
+
+    - Fixed bug in Trident 8900 page flipping code.
+
+    - Fixed bug in Paradise initialisation testing code.
+
+    - Fixed bug in numbering of VESA 32k video modes.
+
+    - Added a number of modules and include files to define the video
+      mode numbers supported by each particular video card.
+
+    - Added tables of symbolic video mode and driver names.
+
+    - Restructured the test programs to work with any of the supported
+      video modes, and to provide more useful information about whether
+      the test has succeeded or not.
+
+    - Added both 32k color and 16 million color test programs.
+
+    - Modified the mode setting code to remember if the EGA/VGA 43 line
+      mode was set, and to reset it when graphics mode is exited if it
+      was.
+
+    - Removed old write bank setting routines. Now you simply call
+      [NewBank] to set both the read/write banks, and [ReadBank] to
+      change the read bank to some other value.
+
+    - Added support for VESA SuperVGA extended page flipping!
+
+    - Detection of VESA SuperVGA's can be done either before or after
+      detection of all supported SuperVGA's.
+
+    - Added support for separate read/write banks and extended page
+      flipping for more boards.
+
+    - Added support for more SuperVGA's (AL2101, MXIC, Primus 2000,
+      RealTek 3106).
+
+    - Improved SuperVGA detection code by making the tests for each
+      video card a lot more stringent, to avoid misidentifications. Also
+      each routine will modify the list of available modes depending
+      on the installed chip version.
+
+    - Added support for detecting the type of Video DAC installed, for
+      both HiColor (15 bit) and TrueColor (24 bit) type DAC's.
+
+    - Added support for wierd boards like the S3, which have large
+      bytes per line values.
+
+    - Added support for the Oak Tech OTI-037C SuperVGA (only has
+      800x600x16 color mode tho).
+
+    - Fixed a number of bugs in the Trident 8900 code. Should work well now.
+
+Version 1.1 (19 Nov 92)
+
+    - Added memory detect routine for VESA compatible SuperVGA's.
+
+    - Saving the BytesPerLine value for VESA compatible SuperVGA's, and
+      better handling of VESA Video Mode numbers in MGL_detectGraph().
+
+    - Support for VESA 1.2 video modes (up to 1280x1024 16 million colors)
+
+    - Added support for AcuMos SuperVGA detection and bank switching
+
+    - Added support for S3 based SuperVGA's bank switching (missing
+      from previous release) and extended page flipping. Also added
+      checking for S3 HiColor video mode availability.
+
+    - Added support for detection of newer ATI SuperVGA chips that
+      support up to 1M of video ram.
+
+    - Fixed bug in bank switching code for Video7 V7VGA Version 5
+      chipsets (I think this is what the Video7 1024i has).
+
+    - Added code to differentiate between C&T 82C451/452/453 chips
+      as bank switching is different for each chip.
+
+    - Fixed bug in Tseng ET3000 bank switching code causing it not to
+      work in 256 color modes.
+
+    - Added enhanced memory size detection for Everex video boards
+
+    - Added support for separate read/write banks and extended page
+      flipping for Ahead B SuperVGA's
+
+    - Modified to check for HiColor DAC internally in MGL_detectGraph,
+      adjusting the list of available modes accordingly. Thus we no
+      longer have the grSVGA_ET4000HC et al device numbers.
+
+Version 1.0 - First public release (14 Nov 92)
+

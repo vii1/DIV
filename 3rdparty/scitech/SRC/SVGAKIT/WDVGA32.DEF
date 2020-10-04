@@ -1,0 +1,5 @@
+NAME 			WDVGA32
+DESCRIPTION 	'WinDirect Sample App'
+CODE          	LOADONCALL EXECUTEONLY
+DATA           	SINGLE
+

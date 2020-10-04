@@ -1,23 +1,10 @@
 /****************************************************************************
 *
-*  ========================================================================
+*					Copyright (C) 1994 SciTech Software.
+*							All rights reserved.
 *
-*    The contents of this file are subject to the SciTech MGL Public
-*    License Version 1.0 (the "License"); you may not use this file
-*    except in compliance with the License. You may obtain a copy of
-*    the License at http://www.scitechsoft.com/mgl-license.txt
-*
-*    Software distributed under the License is distributed on an
-*    "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-*    implied. See the License for the specific language governing
-*    rights and limitations under the License.
-*
-*    The Original Code is Copyright (C) 1991-1998 SciTech Software, Inc.
-*
-*    The Initial Developer of the Original Code is SciTech Software, Inc.
-*    All Rights Reserved.
-*
-*  ========================================================================
+* Filename:		$Workfile:   dj_ld.c  $
+* Version:		$Revision:   1.0  $
 *
 * Language:		Borland C++ 3.1 (not tested with anything else)
 * Environment:	MSDOS
@@ -45,18 +32,19 @@
 *				Unix format (-lmylib, which looks for the file libmylib.a).
 *				Since GCC will only search the current directory for a
 *				library named 'mylib.a', we handle searching the path
-*				specified in the LIB environment variable and
+*				specified in the LIBRARY_PATH environment variable and
 *				provide the full pathname to the library file to link with.
 *
 *				We will also get the values to
 *
+* $Date:   12 Feb 1996 22:24:28  $ $Author:   KendallB  $
 *
 ****************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <dir.h>
+#include <dir.h>
 #include <io.h>
 #include <process.h>
 
@@ -75,7 +63,7 @@ char	*libs[MAXLIBS];
 void addCommand(FILE *rspfile, char *command, int len)
 {
 	int		i;
-	char 	path[255];
+	char 	path[255],*p;
 
 	if (command[len-1] == 'a' && command[len-2] == '.') {
 		i = 0;
@@ -160,7 +148,8 @@ int main(int argc, char *argv[])
 		}
 
 	/* Build the response file to call GCC with */
-	rspfilename = tmpnam(NULL);
+
+	rspfilename = mktemp("TXXXXXX");
 	if ((rspfile = fopen(rspfilename, "wt")) == NULL) {
 		printf("Unable to open temporary file!\n");
 		exit(1);
@@ -169,7 +158,7 @@ int main(int argc, char *argv[])
 	/* Build the list of library directories from the environment variable */
 
 	i = 0;
-	if ((p = getenv("LIB")) != NULL) {
+	if ((p = getenv("LIBRARY_PATH")) != NULL) {
 		strcpy(libenv,p);
 		p = strtok(libenv,";");
 		while (p) {
@@ -192,21 +181,11 @@ int main(int argc, char *argv[])
 		fprintf(rspfile,"%s ", libs[i]);
 		}
 
-	/* Dump list of libraries after all object files AGAIN! We need to
-	 * do this to get around problems with the DJGPP single pass linker,
-	 * since some of the MGL libraries have interdependecies.
-	 */
-	for (i = 0; i < numlibs; i++) {
-		fprintf(rspfile,"%s ", libs[i]);
-		}
-
 	/* Set the name of the output file */
 	fprintf(rspfile, "-o %s\n", mainfile);
 	fclose(rspfile);
 
-#ifdef	DEBUG
 	printf("gcc @%s\n", rspfilename);
-#endif
 	strcpy(command, "@");
 	strcat(command, rspfilename);
 	status = spawnlp(P_WAIT, "gcc", "gcc", command, NULL);
@@ -214,19 +193,13 @@ int main(int argc, char *argv[])
 
 	if (status != 0) return status;
 	if (!debug) {
-#ifdef	DEBUG
 		printf("strip %s\n", mainfile);
-#endif
 		spawnlp(P_WAIT, "strip", "strip", mainfile, NULL);
 		}
-#ifdef	DEBUG
 	printf("coff2exe %s\n", mainfile);
-#endif
 	spawnlp(P_WAIT, "coff2exe", "coff2exe", mainfile, NULL);
 	if (!debug) {
-#ifdef	DEBUG
 		printf("rm %s\n", mainfile);
-#endif
 		spawnlp(P_WAIT, "rm", "rm", mainfile, NULL);
 		}
 

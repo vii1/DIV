@@ -2,27 +2,13 @@
 ;*
 ;*				VFlat - DOS Virtual Flat Linear Framebuffer
 ;*
-;*  ========================================================================
-;*
-;*    The contents of this file are subject to the SciTech MGL Public
-;*    License Version 1.0 (the "License"); you may not use this file
-;*    except in compliance with the License. You may obtain a copy of
-;*    the License at http://www.scitechsoft.com/mgl-license.txt
-;*
-;*    Software distributed under the License is distributed on an
-;*    "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-;*    implied. See the License for the specific language governing
-;*    rights and limitations under the License.
-;*
-;*    The Original Code is Copyright (C) 1991-1998 SciTech Software, Inc.
-;*
-;*    The Initial Developer of the Original Code is SciTech Software, Inc.
-;*    All Rights Reserved.
-;*
-;*  ========================================================================
+;*                  Copyright (C) 1996 SciTech Software
+;*							All rights reserved.
 ;*
 ;* 			  Based on original code Copyright 1994 Otto Chrons
 ;*
+;* Filename:    $Workfile:   _vflat.asm  $
+;* Version:     $Revision:   1.2  $
 ;*
 ;* Language:	80386 Assembler, TASM 4.0 or later
 ;* Environment:	IBM PC 32 bit protected mode
@@ -30,6 +16,7 @@
 ;* Description:	Low level page fault handler for re-mapping the SuperVGA
 ;*				to the new bank.
 ;*
+;* $Date:   18 Mar 1996 15:57:10  $ $Author:   KendallB  $
 ;*
 ;****************************************************************************
 
@@ -82,7 +69,7 @@ label	INT14Gate	FWORD
 INT14Offset     dd      0  			; eip of original vector
 INT14Selector   dw      0			; cs of original vector
 
-		$EXTRN  __PM_savedDS,USHORT
+		$EXTRN  _PM_savedDS,USHORT
 		$EXTRN	_VF_zeroSel,USHORT
 		$EXTRN	_VF_haveCauseWay,BOOL
 
@@ -127,7 +114,7 @@ PROC	PF_handler64k	far
 		push    es ds
 		mov		ebx,eax				; EBX := page fault address
 		and		ebx,not 0FFFFh		; Mask to 64k bank boundary
-		mov		ds,[cs:__PM_savedDS]; Load segment registers
+		mov		ds,[cs:_PM_savedDS]	; Load segment registers
 		mov     es,[_VF_zeroSel]
 
 ; Map in the page table for our virtual framebuffer area for modification

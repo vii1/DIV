@@ -1,0 +1,63 @@
+LIBRARY         SVGA60
+DESCRIPTION    	'16 bit SuperVGA Kit DLL'
+EXETYPE 		WINDOWS
+CODE 			PRELOAD MOVEABLE DISCARDABLE
+DATA 			PRELOAD MOVEABLE SINGLE
+HEAPSIZE 		16384
+
+; Export all functions with explicit ordinals
+
+EXPORTS
+    SV_INIT                    @2
+    SV_GETMODEINFO             @3
+    SV_GETMODENAME             @4
+    SV_SETMODE                 @5
+    SV_SETVIRTUALMODE          @6
+    SV_RESTOREMODE             @7
+    SV_RGBCOLOR                @8
+    SV_WRITETEXT               @9
+    SV_SETPALETTE              @10
+    SV_SETDISPLAYSTART         @11
+    SV_SETBANK                 @12
+    SV_PUTPIXEL                @13
+    SV_BEGINPIXEL              @14
+    SV_PUTPIXELFAST            @15
+    SV_ENDPIXEL                @16
+    SV_CLEAR                   @17
+    SV_LINE                    @18
+    SV_BEGINLINE               @19
+    SV_LINEFAST                @20
+    SV_ENDLINE                 @21
+    SV_SETACTIVEPAGE           @22
+    SV_SETVISUALPAGE           @23
+    SV_BEGINDIRECTACCESS       @24
+    SV_ENDDIRECTACCESS         @25
+    SV_GETDEFPALETTE           @26
+    SV_SETBANKASM              @27
+	SV_QUERYCPU                @28
+	VBE_INIT                   @100
+	VBE_DETECT                 @101
+	VBE_GETMODEINFO            @102
+    VBE_GETPAGESIZE            @103
+    VBE_SETVIDEOMODE           @104
+    VBE_GETVIDEOMODE           @105
+    VBE_SETBANK                @106
+    VBE_GETBANK                @107
+    VBE_SETPIXELSPERLINE       @108
+    VBE_SETBYTESPERLINE        @109
+    VBE_GETSCANLINELENGTH      @110
+	VBE_GETMAXSCANLINELENGTH   @111
+	VBE_SETDISPLAYSTART        @112
+	VBE_GETDISPLAYSTART        @113
+	VBE_SETDACWIDTH            @114
+	VBE_GETDACWIDTH            @115
+	VBE_SETPALETTE             @116
+	VBE_GETBANKEDPOINTER       @117
+   	VBE_GETLINEARSELECTOR      @118
+    VBE_GETLINEARPOINTER       @119
+    VBE_GETSETBANK             @120
+	VBE_GETSETDISPLAYSTART     @121
+    VBE_GETSETPALETTE          @122
+    VBE_FREEPMCODE             @123
+    VBE_GETBANKFUNC32          @124
+

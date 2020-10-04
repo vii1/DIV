@@ -2,25 +2,11 @@
 *
 *						  Protected Mode Library
 *
-*  ========================================================================
+*                   Copyright (C) 1996 SciTech Software.
+*							All rights reserved.
 *
-*    The contents of this file are subject to the SciTech MGL Public
-*    License Version 1.0 (the "License"); you may not use this file
-*    except in compliance with the License. You may obtain a copy of
-*    the License at http://www.scitechsoft.com/mgl-license.txt
-*
-*    Software distributed under the License is distributed on an
-*    "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-*    implied. See the License for the specific language governing
-*    rights and limitations under the License.
-*
-*    The Original Code is Copyright (C) 1991-1998 SciTech Software, Inc.
-*
-*    The Initial Developer of the Original Code is SciTech Software, Inc.
-*    All Rights Reserved.
-*
-*  ========================================================================
-*
+* Filename:		$Workfile:   memtest.c  $
+* Version:		$Revision:   1.1  $
 *
 * Language:		ANSI C
 * Environment:	any
@@ -32,20 +18,21 @@
 *				Functions tested:	malloc()
 *									PM_availableMemory()
 *
+* $Date:   10 Feb 1996 14:49:08  $ $Author:   KendallB  $
 *
 ****************************************************************************/
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <conio.h>
 #include <math.h>
 #include "pmode.h"
-#include <conio.h>
 
 #ifdef	__16BIT__
 #define	MAXALLOC	64
 #else
-#define	MAXALLOC	2000
+#define	MAXALLOC	5000
 #endif
 
 int main(void)

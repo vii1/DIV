@@ -2,48 +2,35 @@
 *
 *			The SuperVGA Kit - UniVBE Software Development Kit
 *
-*  ========================================================================
+*                   Copyright (C) 1996 SciTech Software.
+*                           All rights reserved.
 *
-*    The contents of this file are subject to the SciTech MGL Public
-*    License Version 1.0 (the "License"); you may not use this file
-*    except in compliance with the License. You may obtain a copy of
-*    the License at http://www.scitechsoft.com/mgl-license.txt
-*
-*    Software distributed under the License is distributed on an
-*    "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-*    implied. See the License for the specific language governing
-*    rights and limitations under the License.
-*
-*    The Original Code is Copyright (C) 1991-1998 SciTech Software, Inc.
-*
-*    The Initial Developer of the Original Code is SciTech Software, Inc.
-*    All Rights Reserved.
-*
-*  ========================================================================
-*
+* Filename:     $Workfile:   vesavbe.h  $
+* Version:      $Revision:   1.3  $
 *
 * Language:     ANSI C
 * Environment:  IBM PC (MSDOS) Real Mode and 16/32 bit Protected Mode.
 *
 * Description:  Header file declaring the structures used to communicate
-*               with a VESA VBE 1.x, 2.x or 3.x compliant BIOS.
+*               with a VESA VBE 1.x or 2.x compliant BIOS.
 *
 *				Note that this module does automatic translation of all
 *				information in the VBE_vgaInfo and VBE_modeInfo blocks so
 *				that all pointers are converted to the native format,
 *				insulating the application from dealing with a real
-*				mode VBE 2.0+ implementation.
+*				mode VBE 2.0 implementation.
 *
 *               MUST be compiled in the LARGE or FLAT models.
 *
+* $Date:   17 Feb 1996 21:06:30  $ $Author:   KendallB  $
 *
 ****************************************************************************/
 
 #ifndef __VESAVBE_H
 #define __VESAVBE_H
 
-#ifndef __PMODE_H
-#include "pmode.h"
+#ifndef __DEBUG_H
+#include "debug.h"
 #endif
 
 /*---------------------- Macros and type definitions ----------------------*/
@@ -90,11 +77,9 @@ typedef struct {
 
 /* Flags for the Capabilities field */
 
-#define	vbe8BitDAC			0x0001	/* DAC width is switchable to 8 bit	*/
-#define	vbeNonVGA			0x0002	/* Controller is non-VGA			*/
-#define	vbeBlankRAMDAC		0x0004	/* Programmed DAC with blank bit	*/
-#define vbeHWStereoSync		0x0008	/* Hardware stereo signalling		*/
-#define	vbeEVCStereoSync	0x0010	/* HW stereo sync via EVC connector	*/
+#define	vbe8BitDAC		0x0001		/* DAC width is switchable to 8 bit	*/
+#define	vbeNonVGA		0x0002		/* Controller is non-VGA			*/
+#define	vbeBlankRAMDAC	0x0004		/* Programmed DAC with blank bit	*/
 
 /* SuperVGA mode information block */
 
@@ -117,7 +102,7 @@ typedef struct {
 	char    NumberOfBanks;          /* Number of CGA style banks        */
 	char    MemoryModel;            /* Memory model type                */
 	char    BankSize;               /* Size of CGA style banks          */
-	char    NumberOfImagePages;     /* Number of images pages (Max)     */
+	char    NumberOfImagePages;     /* Number of images pages           */
 	char    res1;                   /* Reserved                         */
 	char    RedMaskSize;            /* Size of direct color red mask    */
 	char    RedFieldPosition;       /* Bit posn of lsb of red mask      */
@@ -129,48 +114,13 @@ typedef struct {
 	char    RsvdFieldPosition;      /* Bit posn of lsb of res mask      */
 	char    DirectColorModeInfo;    /* Direct color mode attributes     */
 
-	/* VBE 2.0 extension information */
+	/* VBE 2.0 extensions information */
+
 	ulong	PhysBasePtr;			/* Physical address for linear buf	*/
-	ulong	res2;					/* Reserved							*/
-	short   res3;					/* Reserved							*/
-
-	/* VBE 3.0 extension information */
-	short   LinBytesPerScanLine;    /* Bytes per scanline               */
-	char    BnkNumberOfImagePages;  /* Number of images pages (banked)  */
-	char    LinNumberOfImagePages;  /* Number of images pages (linear)  */
-	char    LinRedMaskSize;         /* Size of direct color red mask    */
-	char    LinRedFieldPosition;    /* Bit posn of lsb of red mask      */
-	char    LinGreenMaskSize;       /* Size of direct color green mask  */
-	char    LinGreenFieldPosition;  /* Bit posn of lsb of green mask    */
-	char    LinBlueMaskSize;        /* Size of direct color blue mask   */
-	char    LinBlueFieldPosition;   /* Bit posn of lsb of blue mask     */
-	char    LinRsvdMaskSize;        /* Size of direct color res mask    */
-	char    LinRsvdFieldPosition; 	/* Bit posn of lsb of res mask      */
-	ulong	MaxPixelClock;			/* Maximum pixel clock				*/
-
-	char    res4[190];        		/* Pad to 256 byte block size       */
+	ulong	OffScreenMemOffset;		/* Pointer to start of offscreen mem*/
+	short   OffScreenMemSize;		/* Amount of offscreen mem in 1K's	*/
+	char    res2[206];        		/* Pad to 256 byte block size       */
 	} VBE_modeInfo;
-
-/* CRTC information block for refresh rate control */
-
-typedef struct {
-	ushort	HorizontalTotal;		/* Horizontal total (pixels)		*/
-	ushort	HorizontalSyncStart;	/* Horizontal sync start position	*/
-	ushort	HorizontalSyncEnd;		/* Horizontal sync end position		*/
-	ushort	VerticalTotal;			/* Vertical Total (lines)			*/
-	ushort	VerticalSyncStart;		/* Vertical sync start position		*/
-	ushort	VerticalSyncEnd;		/* Vertical sync end position		*/
-	uchar	Flags;					/* Initialisation flags for mode	*/
-	ulong	PixelClock;				/* Pixel clock in units of Hz		*/
-	ushort	RefreshRate;			/* Refresh rate in units of 0.01 Hz	*/
-	} VBE_CRTCInfo;
-
-/* Definitions for CRTC information block flags */
-
-#define	vbeDoubleScan		0x0001	/* Enable double scanned mode		*/
-#define	vbeInterlaced		0x0002	/* Enable interlaced mode			*/
-#define	vbeHSyncNeg			0x0004	/* Horizontal sync is negative		*/
-#define	vbeVSyncNeg			0x0008	/* Vertical sync is negative		*/
 
 /* 32 bit protected mode info block */
 
@@ -179,13 +129,11 @@ typedef struct {
 	short	setDisplayStart;		/* Offset of Set Display Start call	*/
 	short   setPalette;				/* Offset of Set Primary Palette	*/
 	short   IOPrivInfo;				/* Offset of I/O priveledge info	*/
-
-	/* UniVBE extensions */
+	/* UniVBE 5.2 extensions */
 	long	extensionSig;			/* Identify extension (0xFBADFBAD)	*/
 	long	setWindowLen;			/* Used to virtualise framebuffer	*/
 	long	setDisplayStartLen;
 	long	setPaletteLen;
-
 	/* ... code and tables located in here */
 	} VBE_pmInfo;
 
@@ -206,8 +154,6 @@ typedef enum {
 
 #define	vbeDontClear	0x8000		/* Dont clear display memory		*/
 #define	vbeLinearBuffer	0x4000		/* Enable linear framebuffer mode	*/
-#define	vbeRefreshCtrl	0x0800		/* Use refresh rate control			*/
-#define vbeModeMask		0x03FF		/* Mask for VBE mode numbers		*/
 
 /* Flags for the mode attributes returned by VBE_getModeInfo. If
  * vbeMdNonBanked is set to 1 and vbeMdLinear is also set to 1, then only
@@ -221,11 +167,6 @@ typedef enum {
 #define	vbeMdNonVGA		0x0020		/* Mode is not VGA compatible		*/
 #define	vbeMdNonBanked	0x0040		/* Banked mode is not supported		*/
 #define	vbeMdLinear		0x0080		/* Linear mode supported			*/
-#define	vbeMdDoubleScan	0x0100		/* Mode is double scanned			*/
-#define vbeMdInterlaced	0x0200		/* Supports interlaced timings		*/
-#define	vbeMdTripleBuf 	0x0400		/* Mode supports HW triple buffer	*/
-#define vbeMdStereo		0x0800		/* Mode supports hardware stereo	*/
-#define	vbeMdDualDisp	0x1000		/* Mode supports dual display start	*/
 
 /* Flags for save/restore state calls */
 
@@ -255,61 +196,49 @@ typedef struct {
 extern "C" {            			/* Use "C" linkage when in C++ mode */
 #endif
 
-/* VBE_init allocates a real mode memory block for use by the internal VESA
- * VBE functions when calling real mode code. VBE_getRMBuf is used by other
- * libraries and modules to gain access to the same real mode memory block
- * so that we only require one real mode memory block per application.
+/* Initialise the VESAVBE.C module by passing it a real mode memory block.
+ * Note that the length of the memory block must be at least 512 bytes in
+ * size or this function will fail.
  */
 
-void	VBEAPI VBE_init(void);
-void	VBEAPI VBE_getRMBuf(uint *len,uint *sel,uint *off,uint *rseg,uint *roff);
+void	VBEAPI VBE_init(uint VESABuf_len,uint VESABuf_sel,uint VESABuf_off,
+		uint VESABuf_rseg,uint VESABuf_roff);
 
 /* Main VBE API routines */
 
-void 	VBEAPI VBE_callESDI(RMREGS *regs, void *buffer, int size);
 int     VBEAPI VBE_detect(VBE_vgaInfo *vgaInfo);
-ibool    VBEAPI VBE_getModeInfo(int mode,VBE_modeInfo *modeInfo);
+bool    VBEAPI VBE_getModeInfo(int mode,VBE_modeInfo *modeInfo);
 long    VBEAPI VBE_getPageSize(VBE_modeInfo *modeInfo);
-ibool    VBEAPI VBE_setVideoMode(int mode);
+bool    VBEAPI VBE_setVideoMode(int mode);
 int     VBEAPI VBE_getVideoMode(void);
-ibool    VBEAPI VBE_setBank(int window,int bank);
+bool    VBEAPI VBE_setBank(int window,int bank);
 int     VBEAPI VBE_getBank(int window);
-ibool    VBEAPI VBE_setPixelsPerLine(int pixelsPerLine,int *newBytes,int *newPixels,
+bool    VBEAPI VBE_setPixelsPerLine(int pixelsPerLine,int *newBytes,int *newPixels,
 		int *maxScanlines);
-ibool    VBEAPI VBE_setBytesPerLine(int bytesPerLine,int *newBytes,int *newPixels,
+bool    VBEAPI VBE_setBytesPerLine(int bytesPerLine,int *newBytes,int *newPixels,
 		int *maxScanlines);
-ibool    VBEAPI VBE_getScanlineLength(int *bytesPerLine,int *pixelsPerLine,
+bool    VBEAPI VBE_getScanlineLength(int *bytesPerLine,int *pixelsPerLine,
 		int *maxScanlines);
-ibool    VBEAPI VBE_getMaxScanlineLength(int *maxBytes,int *maxPixels);
-ibool    VBEAPI VBE_setDisplayStart(int x,int y,ibool waitVRT);
-ibool    VBEAPI VBE_getDisplayStart(int *x,int *y);
-ibool    VBEAPI VBE_setDACWidth(int width);
+bool    VBEAPI VBE_getMaxScanlineLength(int *maxBytes,int *maxPixels);
+bool    VBEAPI VBE_setDisplayStart(int x,int y,bool waitVRT);
+bool    VBEAPI VBE_getDisplayStart(int *x,int *y);
+bool    VBEAPI VBE_setDACWidth(int width);
 int     VBEAPI VBE_getDACWidth(void);
-ibool    VBEAPI VBE_setPalette(int start,int num,VBE_palette *pal,ibool waitVRT);
+bool    VBEAPI VBE_setPalette(int start,int num,VBE_palette *pal,bool waitVRT);
 void *	VBEAPI VBE_getBankedPointer(VBE_modeInfo *modeInfo);
 
 /* Functions to return the addresses of the VBE 2.0 32 bit code */
 
-#if	!defined(REALMODE) || defined(TESTING_PM)
+#ifndef	REALMODE
 ushort  VBEAPI VBE_getLinearSelector(VBE_modeInfo *modeInfo);
 void * 	VBEAPI VBE_getLinearPointer(VBE_modeInfo *modeInfo);
 void * 	VBEAPI VBE_getSetBank(void);
 void * 	VBEAPI VBE_getSetDisplayStart(void);
 void * 	VBEAPI VBE_getSetPalette(void);
 void    VBEAPI VBE_freePMCode(void);
-ibool	VBEAPI VBE_getBankFunc32(int *codeLen,void **bankFunc,
+bool	VBEAPI VBE_getBankFunc32(int *codeLen,void **bankFunc,
 		int dualBanks,int bankAdjust);
 #endif
-
-/* New VBE/Core 3.0 functions */
-
-ibool    VBEAPI VBE_setVideoModeExt(int mode,VBE_CRTCInfo *crtc);
-ibool 	VBEAPI VBE_setDisplayStartAlt(ulong startAddr,ibool waitVRT);
-int		VBEAPI VBE_getDisplayStartStatus(void);
-ibool 	VBEAPI VBE_enableStereoMode(void);
-ibool 	VBEAPI VBE_disableStereoMode(void);
-ibool 	VBEAPI VBE_setStereoDisplayStart(ulong leftAddr,ulong rightAddr,ibool waitVRT);
-ulong	VBEAPI VBE_getClosestClock(ushort mode,ulong pixelClock);
 
 #ifdef  __cplusplus
 }                       			/* End of "C" linkage for C++   	*/

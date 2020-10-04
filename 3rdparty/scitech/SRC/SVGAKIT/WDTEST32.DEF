@@ -1,0 +1,5 @@
+NAME 			WDTEST32
+DESCRIPTION 	'WinDirect 32 bit SuperVGA test'
+CODE          	LOADONCALL EXECUTEONLY
+DATA           	SINGLE
+

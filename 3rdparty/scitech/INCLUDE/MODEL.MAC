@@ -1,20 +1,10 @@
-;****************************************************************************f
+;****************************************************************************
 ;*
-;*               Copyright (C) 1991-1997 SciTech Software, Inc.
-;*                            All rights reserved.
-;*
-;*  ======================================================================
-;*       This library is free software; you can use it and/or
-;*       modify it under the terms of the SciTech MGL Software License.
-;*
-;*       This library is distributed in the hope that it will be useful,
-;*       but WITHOUT ANY WARRANTY; without even the implied warranty of
-;*       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;*       SciTech MGL Software License for more details.
-;*  ======================================================================
+;*                  Copyright (C) 1996 SciTech Software.
+;*                          All rights reserved.
 ;*
 ;* Filename:    $Workfile:   model.mac  $
-;* Version:     $Revision:   1.7  $
+;* Version:     $Revision:   1.1  $
 ;*
 ;* Language:    Turbo Assembler 3.0
 ;* Environment: IBM PC (MS DOS)
@@ -31,13 +21,11 @@
 ;*                  __WINDOWS16__ Assemble for Hybrid 16/32 bit PM large model
 ;*                  __X386__    Assemble for 386 extended memory model
 ;*                  __FLAT__    Assemble for 386 FLAT memory model
-;*					__VXD__		Assemble for 32-bit VxD memory model
 ;*                  __8086__	Assemble for 8086 real mode code
 ;*					__80286__	Assemble for 80286 real mode code
 ;*					__COMM__	Declare global variables as COMMunal
 ;*                  ES_NOT_DS   Assemble assuming ES != DS for 32 bit code
 ;*                  BUILD_DLL   Assembler for use in a DLL
-;*                  DJGPP       Assembler for use with DJGPP V2
 ;*
 ;*				By default the real mode LARGE memory model targeted for the
 ;*				80386 processor is selected.
@@ -67,7 +55,7 @@
 ;*          are all contained in the same segments. Of course the maximum
 ;*          size of data and code must be less than 64k respectively.
 ;*
-;* $Date:   25 Dec 1997 13:55:16  $ $Author:   KendallB  $
+;* $Date:   27 Mar 1996 19:35:26  $ $Author:   KendallB  $
 ;*
 ;****************************************************************************
 
@@ -81,22 +69,6 @@ __WINDOWS__ = 1
 endif
 ifdef	__WINDOWS32__
 __WINDOWS__ = 1
-__WINDOWS32_386__ = 1
-endif
-ifdef	__WIN386__
-__WINDOWS__ = 1
-__WINDOWS32_386__ = 1
-endif
-ifdef	__VXD__
-__WINDOWS__ = 1
-__WINDOWS32_386__ = 1
-__X386__ = 1
-		MASM
-		.386
-		NO_SEGMENTS	= 1
-		include	vmm.inc
-		include vsegment.inc
-		IDEAL
 endif
 
 ; Define symbols codesize and datasize depending on the requested memory
@@ -170,11 +142,6 @@ ifdef   __X386__
 		_SP			EQU	ESP		; ESP is used for stack pointer register
 		_ES			EQU			; ES and DS are the same in 32 bit PM
 		P386                    ; Turn on 386 code generation
-ifdef   __VXD__
-		S_UCHAR		EQU	UCHAR
-		S_USHORT	EQU	USHORT
-		S_BOOL 		EQU	BOOL
-else
 ifdef   __FLAT__
 		MODEL       FLAT        ; Set up for 32 bit simplified FLAT model
 		S_UCHAR		EQU	UCHAR
@@ -189,7 +156,6 @@ else
 		S_UCHAR		EQU	BYTE:4
 		S_USHORT	EQU	WORD:2
         S_BOOL      EQU BOOL
-endif
 endif
 else
 		flatmodel	EQU	0		; This is a segmented memory model
@@ -246,20 +212,6 @@ else
 		P386					; Turn on 386 code generation
 endif
 endif
-endif
-
-; The EMXAOUT object file converter does not currently support LIDATA
-; object records, which are generated if you use the ALIGN macro with
-; TASM (rather than real nop's). For the moment use the _ALIGN macro
-; for this which will evaluate to nothing when building for DJGPP.
-
-ifdef   DJGPP
-MACRO   _ALIGN  alignment
-ENDM
-else
-MACRO   _ALIGN  alignment
-        ALIGN   alignment
-ENDM
 endif
 
 ; Provide a typedef for real floating point numbers
@@ -416,6 +368,56 @@ else
 		_FS	EQU	fs:
 endif
 
+; Macro to force the value of ES to be the same as DS for 32 bit assembler
+; code. For most compilers this evaluates to nothing, but for Symantec C++
+; we cant assume that DS == ES at all times (since Symantec uses a different
+; selector for SS).
+
+MACRO	force_es_eq_ds
+ifdef   ES_NOT_DS
+		push	ds				; Force ES == DS for following code
+		pop		es
+endif
+ENDM
+
+; Macros for setting the value of the DS,ES,FS,GS registers to the same
+; value. This does nothing in 32 bit protected mode, except for compilers
+; that assume that DS != ES (Symantec C++ is one) and hence ES is always
+; available to be loaded with any value you desire.
+
+MACRO	es_eq_ds
+ife flatmodel
+		push	ds
+		pop		es
+endif
+ENDM
+
+MACRO	ds_eq_es
+ife flatmodel
+		push	es
+		pop		ds
+endif
+ENDM
+
+MACRO	ds_eq_ss
+ife flatmodel
+		push	ss
+		pop		ds
+else
+ifdef   ES_NOT_DS
+		push	ss
+		pop		ds
+endif
+endif
+ENDM
+
+MACRO	fs_eq_ds
+ife flatmodel
+		push	ds
+		pop		fs
+endif
+ENDM
+
 ; Macros for adding and subtracting a value from registers. Two value are
 ; provided, one for 16 bit modes and another for 32 bit modes (the extended
 ; register is used in 32 bit modes).
@@ -571,11 +573,6 @@ ENDM
 ; Macros for the _DATA data segment. This segment contains initialised data.
 
 MACRO   begdataseg name
-ifdef	__VXD__
-		MASM
-VXD_LOCKED_DATA_SEG
-		IDEAL
-else
 ifdef   __FLAT__
         DATASEG
 else
@@ -585,18 +582,11 @@ else
 SEGMENT _DATA WORD PUBLIC 'DATA'
 endif
 endif
-endif
 ENDM
 
 MACRO   enddataseg name
-ifdef	__VXD__
-		MASM
-VXD_LOCKED_DATA_ENDS
-		IDEAL
-else
 ifndef  __FLAT__
 ENDS    _DATA
-endif
 endif
 ENDM
 
@@ -648,20 +638,13 @@ ENDM
 MACRO   header name
 begdataseg name
 enddataseg name
-ifndef	__VXD__
 begbssseg  name
 endbssseg  name
-endif
 ENDM
 
 ; Macro for the main code segment.
 
 MACRO   begcodeseg name
-ifdef	__VXD__
-		MASM
-VXD_LOCKED_CODE_SEG
-		IDEAL
-else
 ifdef   __FLAT__
         CODESEG
 		ASSUME  CS:FLAT,DS:FLAT,SS:FLAT
@@ -676,21 +659,14 @@ GROUP   DGROUP _DATA,_BSS
         ASSUME CS:&name&_TEXT,DS:DGROUP
 endif
 endif
-endif
 ENDM
 
 MACRO   endcodeseg name
-ifdef	__VXD__
-		MASM
-VXD_LOCKED_CODE_ENDS
-		IDEAL
-else
 ifndef  __FLAT__
 if flatmodel
 ENDS    _TEXT
 else
 ENDS    &name&_TEXT
-endif
 endif
 endif
 ENDM
@@ -779,10 +755,7 @@ ENDM
 
 ; Boolean truth values (same as those in debug.h)
 
-ifndef	__VXD__
 False		=	0
 True		=	1
 No			=	0
 Yes			=	1
-Yes			=	1
-endif

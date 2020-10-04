@@ -1,0 +1,55 @@
+
+              Log of changes for the PM/Lite and PM/Pro Libraries
+              ---------------------------------------------------
+
+Version 2.3 (April 1996)
+
+    - Improved performance of the Virtual Flat Linear Framebuffer exception
+      handler.
+
+	- Updated to support the CauseWay DOS extender including virtual
+	  linear framebuffer support.
+
+Version 2.2 (September 1995)
+
+    - First release of PM/Pro interrupt handling code.
+
+    - Added support for virtual linear framebuffer emulation routines
+      for DOS4GW, PMODE/W and FlashTek X32.
+
+    - Added support for creating near pointers to physical memory that
+      is fully DPMI compliant.
+
+    - Added support for obtaining physical and virtual memory information
+      at program startup.
+
+Version 2.1 (March 1995)
+
+    - Fixed bug in PM_int386() introduced into version 2.0
+
+    - Added support for mapping VGA framebuffer and linear framebuffer's
+      into near address space for maximum performance.
+
+Version 2.0 (6 February 1995)
+
+    - Added support for X-32VM with Symantec C++ and Watcom C++.
+
+    - Added support for Visual C++ with Phar Lap TNT.
+
+    - Added PM_int386(), PM_int386x() and PM_segread() routines for
+      generating protected mode interrupts that are compiler portable
+      (all compilers tend to implement this slightly different in 32 bit PM).
+
+    - Built generic set of 32 bit DPMI routines that work across all DPMI
+      compatible DOS extenders, significantly simplifying the underlying
+      code (PM_int386() makes this possible).
+
+    - Added support for mapping physical memory locations above 1Mb
+      (SuperVGA linear framebuffers).
+
+    - Added support for Windows DPMI programming for real Windows apps.
+
+Version 1.0 (22 August 1994)
+
+    - First release of PM/Lite library
+
