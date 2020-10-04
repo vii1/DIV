@@ -67,6 +67,7 @@ $(EXE): $(OUTDIR)\$(EXE) .SYMBOLIC
 
 !include 3rdparty.mif
 LIBS = $(JUDAS_LIB) $(JPEG_LIB) $(ZLIB_LIB) $(SVGA_LIB) $(PMODE_LIB)
+%OPTIONS += $(INCLUDE)
 
 $(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
 	*wlink &

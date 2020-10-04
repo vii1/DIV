@@ -300,10 +300,12 @@ extern main();
 
 #ifndef __GENDEFS
 #define __GENDEFS
+#ifndef __DIVTYPES		// Para evitar colisi¢n con global.h
 typedef unsigned char   uchar;
 typedef unsigned short  ushort;
-typedef unsigned int    uint;
 typedef unsigned long   ulong;
+#endif
+typedef unsigned int    uint;
 typedef int             ibool;		/* Integer boolean type			*/
 #ifdef	USE_BOOL					/* Only for older code			*/
 #ifndef	__cplusplus

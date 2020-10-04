@@ -32,7 +32,7 @@
 
 #include "divkeybo.h"
 #include "divfli.h"
-#include "zlib.h"
+#include <zlib.h>
 
 #include "..\judas\judas.h"
 #include "..\judas\timer.h"

@@ -4,8 +4,8 @@
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #include "global.h"
-#include "inc\svga.h"
-#include "inc\vesa.h"
+#include <svga.h>
+#include "vesa.h"
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //	Declaraciones y datos a nivel de mขdulo
@@ -17,6 +17,8 @@
 #define MISC_OUTPUT     0x3c2   //Miscellaneous Output register
 
 byte * vga = (byte *) 0xA0000; // Pantalla fisica
+
+SV_devCtx* dc = NULL;         // SVGA Device Context
 
 #define MAX_YRES 2048
 
@@ -90,55 +92,59 @@ void svmode(void) {
   int mode=0;
   int error=0,n;
 
+  if(!dc) {
+    // Inicializamos SVGA
+    dc = SV_init(1);
+  }
   LinealMode=0;
   modovesa=0;
 
   // Comprueba primero si es un modo vesa
-
-  for (n=0;n<num_modos;n++) {
-    if (vga_an==modos[n].ancho && vga_al==modos[n].alto) {
-      if (modos[n].modo) { mode=modos[n].modo; break; }
-    }
-  }
-
-  if (n<num_modos) {
-    modovesa=1;
-    if(VersionVesa<0x102) {
-      if (!VBE_setVideoMode(mode)) error=1;
-      else vga=(char *)0x0A0000;
-    } else {
-      if(VersionVesa<0x200) {
-        if(!SV_setMode(mode)) error=1;
-        else vga=(char *)0x0A0000;
-      } else {
-       	if (vbeSetMode (vga_an, vga_al, 8, &Screen) == 4) {
-          LinealMode=1;
-          mode|=vbeLinearBuffer;
-          if(!SV_setMode(mode)) {
-            LinealMode=0;
-            mode^=vbeLinearBuffer;
-            if(!SV_setMode(mode)) error=1;
-            else vga=(char *)videoMem;
-          } else vga=(char *)videoMem;
-        } else {
-          LinealMode=1;
-          vga=Screen.adr;
-        }
+  if(dc) {
+    for (n=0;n<num_modos;n++) {
+      if (vga_an==modos[n].ancho && vga_al==modos[n].alto) {
+        if (modos[n].modo) { mode=modos[n].modo; break; }
       }
     }
-  } else switch(vga_an*1000+vga_al) {
-    case 320200: _setvideomode(_MRES256COLOR); break;
-    case 320240: svmodex(0); break;
-    case 320400: svmodex(1); break;
-    case 360240: svmodex(2); break;
-    case 360360: svmodex(3); break;
-    case 376282: svmodex(4); break;
-    default: error=1; break;
-  }
 
+    if (n<num_modos) {
+      modovesa=1;
+      if(VersionVesa<0x102) {
+        if (!VBE_setVideoMode(mode)) error=1;
+        else vga=(char *)0x0A0000;
+      } else {
+        if(VersionVesa<0x200) {
+          if(!SV_setMode(mode, 0, 0, 1)) error=1;
+          else vga=(char *)0x0A0000;
+        } else {
+          if (vbeSetMode (vga_an, vga_al, 8, &Screen) == 4) {
+            LinealMode=1;
+            mode|=vbeLinearBuffer;
+            if(!SV_setMode(mode, 0, 0, 1)) {
+              LinealMode=0;
+              mode^=vbeLinearBuffer;
+              if(!SV_setMode(mode, 0, 0, 1)) error=1;
+              else vga=(char *)dc->videoMem;
+            } else vga=(char *)dc->videoMem;
+          } else {
+            LinealMode=1;
+            vga=Screen.adr;
+          }
+        }
+      }
+    } else switch(vga_an*1000+vga_al) {
+      case 320200: _setvideomode(_MRES256COLOR); break;
+      case 320240: svmodex(0); break;
+      case 320400: svmodex(1); break;
+      case 360240: svmodex(2); break;
+      case 360360: svmodex(3); break;
+      case 376282: svmodex(4); break;
+      default: error=1; break;
+    }
+  }
   // OJO!, esto provoca que, en equipos sin VESA, se vea en "320x200 BIG"
 
-  if (error) {
+  if (error || !dc) {
     modovesa=0;
     vga_an=320; vga_al=200; _setvideomode(_MRES256COLOR);
   }

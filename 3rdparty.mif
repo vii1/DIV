@@ -1,7 +1,6 @@
 # include de variables y targets de las librer¡as 3rd party
 
 SCITECH = 3rdparty\scitech
-%INCLUDE += $(SCITECH)\include
 
 JUDAS_LIB = 3rdparty\lib\judas.lib
 JPEG_LIB = 3rdparty\lib\libjpeg.lib
@@ -17,36 +16,49 @@ SVGA_DIR = $(SCITECH)\src\svgakit
 PMODE_DIR = $(SCITECH)\src\pmode
 TFLC_DIR = 3rdparty\topflc
 
+INCLUDE += -i=$(SCITECH)\include
+INCLUDE += -i=$(ZLIB_DIR)
+INCLUDE += -i=$(TFLC_DIR)
+
 !ifndef COPY
-COPY = copy /y
+COPY = xcopy /y
+!endif
+!ifndef TOUCH
+TOUCH = wtouch -c
 !endif
 
 lib3p_dir: .SYMBOLIC
 	@if not exist 3rdparty\lib mkdir 3rdparty_lib
 
-$(JUDAS_LIB): lib3p_dir
+$(JUDAS_LIB): lib3p_dir .EXISTSONLY
 	! pushd $(JUDAS_DIR) && $(MAKE) $^. && popd
 	$(COPY) $(JUDAS_DIR)\$^. $^:
+	$(TOUCH) $@
 
-$(JPEG_LIB): lib3p_dir
+$(JPEG_LIB): lib3p_dir .EXISTSONLY
 	! pushd $(JPEG_DIR) && $(MAKE) $^. && popd
 	$(COPY) $(JPEG_DIR)\$^. $^:
+	$(TOUCH) $@
 
-$(ZLIB_LIB): lib3p_dir
+$(ZLIB_LIB): lib3p_dir .EXISTSONLY
 	! pushd $(ZLIB_DIR) && $(MAKE) -f watcom\watcom_f.mak $^. && popd
 	$(COPY) $(ZLIB_DIR)\$^. $^:
+	$(TOUCH) $@
 
-$(SVGA_LIB): lib3p_dir
+$(SVGA_LIB): lib3p_dir .EXISTSONLY
 	! pushd $(SVGA_DIR) && $(MAKE) -f makefile.wat $^. SCITECH=..\.. && popd
 	$(COPY) $(SVGA_DIR)\$^. $^:
+	$(TOUCH) $@
 
-$(PMODE_LIB): lib3p_dir
+$(PMODE_LIB): lib3p_dir .EXISTSONLY
 	! pushd $(PMODE_DIR) && $(MAKE) -f makefile.wat $^. SCITECH=..\.. && popd
 	$(COPY) $(PMODE_DIR)\$^. $^:
+	$(TOUCH) $@
 
-$(TFLC_LIB): lib3p_dir
+$(TFLC_LIB): lib3p_dir .EXISTSONLY
 	! pushd $(TFLC_DIR) && $(MAKE) -f makefile.w32 $^. && popd
 	$(COPY) $(TFLC_DIR)\$^. $^:
+	$(TOUCH) $@
 
 clean_judas: .SYMBOLIC
 	! pushd $(JUDAS_DIR) && $(MAKE) clean && popd

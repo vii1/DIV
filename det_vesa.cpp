@@ -4,7 +4,7 @@
 #include <string.h>
 */
 #include "global.h"
-#include "inc\vesa.h"
+#include "vesa.h"
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //  Detecciขn de los modos vesa

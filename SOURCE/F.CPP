@@ -12,6 +12,7 @@ void readmouse(void);
 #include "cdrom.h"
 #include "divmixer.hpp"
 #include "divsound.h"
+#include "source\divdll.h"
 
 extern int max_reloj;
 
@@ -1070,7 +1071,7 @@ void adaptar(byte * ptr, int len, byte * pal, byte * xlat) {
 //      Write(font,x,y,centro,ptr)
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
-void _write(void) {
+void div_write(void) {
   int f=pila[sp-4];
   if (f<0 || f>=max_fonts) { e(116); f=0; }
   if (fonts[f]==0) { e(116); f=0; }
@@ -4229,7 +4230,7 @@ void function(void) {
     case 13: get_dist(); break;
     case 14: fade(); break;
     case 15: load_fnt(); break;
-    case 16: _write(); break;
+    case 16: div_write(); break;
     case 17: write_int(); break;
     case 18: delete_text(); break;
     case 19: move_text(); break;

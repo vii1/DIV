@@ -57,6 +57,8 @@ OBJS = $(SOURCES:.cpp=.obj)
 OBJS = $(OBJS:.c=.obj)
 OBJS = $(OBJS:.asm=.obj)
 
+%OPTIONS += -i=source
+
 .BEFORE
 	@if not exist $(%OUTDIR).$(CPU) mkdir $(%OUTDIR).$(CPU)
 	@if not exist $(OUTDIR) mkdir $(OUTDIR)
@@ -67,6 +69,7 @@ $(EXE): $(OUTDIR)\$(EXE) .SYMBOLIC
 
 !include 3rdparty.mif
 LIBS = $(JUDAS_LIB) $(JPEG_LIB) $(ZLIB_LIB) $(SVGA_LIB) $(PMODE_LIB) $(TFLC_LIB)
+%OPTIONS += $(INCLUDE)
 
 $(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
 	*wlink &

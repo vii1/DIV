@@ -35,13 +35,23 @@
 //      Constantes definidas a nivel de aplicaci줻
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
-#define uchar unsigned char
-//#define uchar char
-#define byte unsigned char
-#define ushort unsigned short
-#define word unsigned short
-#define ulong unsigned int
-#define dword unsigned int
+//#define uchar unsigned char
+////#define uchar char
+//#define byte unsigned char
+//#define ushort unsigned short
+//#define word unsigned short
+//#define ulong unsigned int
+//#define dword unsigned int
+
+#ifndef __GENDEFS       // Para evitar colisi줻 con scitech.h
+typedef unsigned char   uchar;
+typedef unsigned short  ushort;
+typedef unsigned int    ulong;
+#endif
+typedef unsigned char   byte;
+typedef unsigned short  word;
+typedef unsigned int    dword;
+#define __DIVTYPES
 
 #define swap(a,b) {(a)^=(b);(b)^=(a);(a)^=(b);}
 

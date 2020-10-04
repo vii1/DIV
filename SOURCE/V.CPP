@@ -4,8 +4,8 @@
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #include "inter.h"
-#include "..\inc\svga.h"
-#include "..\inc\vesa.h"
+#include <svga.h>
+#include "vesa.h"
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //	Declaraciones y datos a nivel de mขdulo

@@ -264,9 +264,9 @@ int 	PMAPI PM_getModeType(void);
 uchar 	PMAPI PM_getByte(uint s, uint o);
 ushort 	PMAPI PM_getWord(uint s, uint o);
 ulong 	PMAPI PM_getLong(uint s, uint o);
-void 	PMAPI PM_setByte(uint s, uint o, uchar v);
-void 	PMAPI PM_setWord(uint s, uint o, ushort v);
-void 	PMAPI PM_setLong(uint s, uint o, ulong v);
+void 	PMAPI PM_setByte(uint s, uint o, uchar v_);
+void 	PMAPI PM_setWord(uint s, uint o, ushort v_);
+void 	PMAPI PM_setLong(uint s, uint o, ulong v_);
 
 /* Routines for copying data between the applications data space and
  * memory accessible through a selector and offset.
@@ -292,7 +292,7 @@ uint 	PMAPI PM_getVGAColorTextSelector(void);
 uint 	PMAPI PM_getVGAMonoTextSelector(void);
 uint 	PMAPI PM_getVGAGraphSelector(void);
 
-/* Routine to return a linear pointer to the VGA frame buffer memory */ 
+/* Routine to return a linear pointer to the VGA frame buffer memory */
 
 void * 	PMAPI PM_getA0000Pointer(void);
 
