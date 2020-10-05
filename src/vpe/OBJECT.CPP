@@ -4,7 +4,7 @@
 
 #define GLOBALS
 
-#include "..\source\inter.h"
+#include "div32run\inter.h"
 #include "vpe.h"
 
 #define MAX_COLREGS 4   // Max number of regions to process

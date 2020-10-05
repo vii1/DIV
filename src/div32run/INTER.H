@@ -34,8 +34,8 @@
 #include "divfli.h"
 #include <zlib.h>
 
-#include "..\judas\judas.h"
-#include "..\judas\timer.h"
+#include "judas\judas.h"
+#include "judas\timer.h"
 #include "divsound.h"
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

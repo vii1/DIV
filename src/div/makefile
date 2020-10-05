@@ -2,9 +2,15 @@
 # CPU=586 genera D.EXE
 # CPU=386 genera D.386
 
+!ifndef ROOT
+ROOT=..\..
+!endif
+!ifndef %OUTDIR
+%OUTDIR = $(ROOT)\build.dos\$(CONFIG)
+!endif
 OUTDIR = $(%OUTDIR).$(CPU)
 
-MAKE=$(MAKE) -h
+MAKE=$+ $(MAKE) -h $-
 WASM=$(%WASM_EXE)
 TASM=$(%TASM_EXE)
 WASM_OPTIONS=$(%WASM_OPTIONS)
@@ -26,6 +32,10 @@ EXE = d.386
 OP_STUB = option nostub
 !endif
 
+INC_NOTARGETS=1
+!include $(ROOT)\3rdparty.mif
+!undef INC_NOTARGETS
+
 SOURCES = cdrom.cpp det_vesa.cpp div.cpp divasm.cpp divbasic.cpp divbin.cpp &
 	divbrow.cpp divc.cpp divcalc.cpp divcdrom.cpp divcolor.cpp divdsktp.cpp &
 	divedit.cpp diveffec.cpp divfont.cpp divforma.cpp divfpg.cpp divgama.cpp &
@@ -34,7 +44,8 @@ SOURCES = cdrom.cpp det_vesa.cpp div.cpp divasm.cpp divbasic.cpp divbin.cpp &
 	divpalet.cpp divpcm.cpp divsb.cpp divsetup.cpp divsound.cpp divspr.cpp &
 	divsprit.cpp divtimer.cpp divvideo.cpp divwindo.cpp fpgfile.cpp &
 	grabador.cpp ifs.cpp divdll1.c divdll2.c a.asm
-SOURCES += vesa.asm timer.asm
+SOURCES += timer.asm
+SOURCES += vesa.asm
 
 #	divfrm.cpp mem.cpp
 # VPE (modo-8) esto es para el int‚rprete!
@@ -56,6 +67,10 @@ OBJS = $(SOURCES:.cpp=.obj)
 OBJS = $(OBJS:.c=.obj)
 OBJS = $(OBJS:.asm=.obj)
 
+LIBS = $(JUDAS_LIB) $(JPEG_LIB) $(ZLIB_LIB) $(SVGA_LIB) $(PMODE_LIB)
+INCLUDE += -I..
+%OPTIONS += $(INCLUDE)
+
 .BEFORE
 	@if not exist $(OUTDIR) mkdir $(OUTDIR)
 !ifeq CPU 586
@@ -64,10 +79,6 @@ OBJS = $(OBJS:.asm=.obj)
 #	@if not exist $(OUTDIR)\vpe mkdir $(OUTDIR)\vpe
 
 $(EXE): $(OUTDIR)\$(EXE) .SYMBOLIC
-
-!include 3rdparty.mif
-LIBS = $(JUDAS_LIB) $(JPEG_LIB) $(ZLIB_LIB) $(SVGA_LIB) $(PMODE_LIB)
-%OPTIONS += $(INCLUDE)
 
 $(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
 	*wlink &
@@ -82,11 +93,11 @@ $(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
 		file { $(OBJS) } &
 		libfile { $(LIBS) }
 
-.c: .;vbe
-
-.cpp: .;visor;vpe;source
-
-.asm: .;source;visor
+.asm: .;..;visor
+.cpp: .;visor
+#.c: .;vbe
+#.cpp: .;visor;vpe;source
+#.asm: .;source;visor
 
 .obj: $(OUTDIR);$(OUTDIR)\visor
 
@@ -122,8 +133,13 @@ $(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
 #visor\t.obj: visor\t.asm
 #	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
 
+!ifdef %STUB
 $(%STUB):
-	! pushd wstub && $(MAKE) CONFIG=$(%CONFIG) && popd
+	@%make savedir
+	cd $(ROOT)\src\wstub
+	! $(MAKE) ROOT=$(ROOT) CONFIG=$(%CONFIG)
+	@%make loaddir
+!endif
 
 clean: .SYMBOLIC
 	@if exist $(OUTDIR)\*.err del $(OUTDIR)\*.err
@@ -135,4 +151,13 @@ clean: .SYMBOLIC
 	@if exist $(OUTDIR)\visor\*.err del $(OUTDIR)\visor\*.err
 	@if exist $(OUTDIR)\visor\*.obj del $(OUTDIR)\visor\*.obj
 !endif
-	! pushd wstub && $(MAKE) CONFIG=$(%CONFIG) clean && popd
+	@%make savedir
+	cd $(ROOT)\src\wstub
+	! $(MAKE) CONFIG=$(%CONFIG) clean
+	@%make loaddir
+
+INC_NOVARS=1
+!include $(ROOT)\3rdparty.mif
+!undef INC_NOVARS
+
+!include $(ROOT)\common.mif

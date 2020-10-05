@@ -1,0 +1,15 @@
+
+!ifndef INC_NOTARGETS
+
+!ifndef COMMON_MIF_TARGETS
+COMMON_MIF_TARGETS=1
+
+savedir: .SYMBOLIC .MULTIPLE
+	@set _dir=$(%cwd)
+
+loaddir: .SYMBOLIC .MULTIPLE
+	@cd $(%_dir)
+
+!endif # COMMON_MIF_TARGETS
+
+!endif # INC_NOTARGETS

@@ -33,12 +33,14 @@ $(OUTDIR)\$(EXE): $(OBJS)
 .obj: $(OUTDIR)
 
 wstub.obj: wstub.c
-	*$(CC) $(OPTIONS) -fo=$(OUTDIR)\$^@ -fr=$(OUTDIR)\$^* $<
+	*$(CC) $(OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
 
-cpuid.obj: ..\source\cpuid.asm
-	*$(ASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^@ -fr=$(OUTDIR)\$^* $<
+cpuid.obj: ..\cpuid.asm
+	*$(ASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
 
 clean: .SYMBOLIC
 	@if exist $(OUTDIR)\*.err del $(OUTDIR)\*.err
 	@if exist $(OUTDIR)\*.obj del $(OUTDIR)\*.obj
 	@if exist $(OUTDIR)\*.exe del $(OUTDIR)\*.exe
+	@if exist $(OUTDIR)\*.map del $(OUTDIR)\*.map
+	@if exist $(OUTDIR)\*.sym del $(OUTDIR)\*.sym

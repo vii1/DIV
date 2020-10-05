@@ -67,7 +67,7 @@
 #include "comm.h"                                /* comm prototypes */
 
 #define TCICOMM                                  /* avoid extern declaration in... */
-				 
+
 #define MDMDAT1 0x03F8                           /* Address of modem port 1 data */
 #define MDMSTS1 0x03FD                           /* Address of modem port 1 status  */
 #define MDMCOM1 0x03FB                           /* Address of modem port 1 command */
@@ -116,20 +116,20 @@ int xonxoff = 0;                                 /* auto xon/xoff support flag *
 int xofsnt  = 0;                                 /* XOFF transmitted flag */
 int xofrcv  = 0;                                 /* XOFF received flag */
 
-void _interrupt _far serint ( void ) 
+void _interrupt _far serint ( void )
 {                                                /* ISR to receive character */
    *inptr++ = (char) inp ( dat8250 );            /* Store character in buffer */
    c_in_buf++;                                   /* and increment count */
-   if ( xonxoff ) 
+   if ( xonxoff )
    {                                             /* if xon/xoff auto-support is on */
-      if ( c_in_buf > xoffpt && ! xofsnt ) 
+      if ( c_in_buf > xoffpt && ! xofsnt )
       {                                          /* then if buf nearly full */
 	 comm_putc ( XOFF );                     /* send an XOFF */
 	 xofsnt = 1;                             /* and say so */
       }
    }
    _disable ( );                                 /* ints off for ptr change */
-   if ( inptr == &buffer[CBS] )            
+   if ( inptr == &buffer[CBS] )
    {                                             /* Set buffer input pointer */
       inptr = buffer;
    }
@@ -138,12 +138,12 @@ void _interrupt _far serint ( void )
 }
 
 
-void comm_close ( void ) 
+void comm_close ( void )
 {                                                // restore previous settings of 8259
     outp ( com8250 + 1, 0x08 );                  // Drop OUT2
     outp ( com8250 + 1, 0x00 );                  // Drop DTR and RTS
     outp ( INTCONT, dis8259 | inp ( INTCONT ) ); // Disable com interrupt at 8259
-             
+
     _dos_setvect ( intv, oldvec );               // Reset original interrupt vector
 }
 
@@ -184,9 +184,9 @@ int comm_open ( int portid, unsigned speed )
    int be = _bios_equiplist ( );                 /* to get # installed serial ports */
    be <<= 4;                                     /* shift-wrap high bits off */
    be >>= 13;                                    /* shift down to low bits */
-   if ( be >= portid || portid >= 3) 
+   if ( be >= portid || portid >= 3)
    {
-      if ( portid == 1 ) 
+      if ( portid == 1 )
       {
 	  dat8250  = MDMDAT1;
 	  stat8250 = MDMSTS1;
@@ -195,7 +195,7 @@ int comm_open ( int portid, unsigned speed )
 	  en8259   = MDMINTO;
 	  intv = MDMINTV;
       }
-      if ( portid == 2 ) 
+      if ( portid == 2 )
       {
 	  dat8250  = MDMDAT2;
 	  stat8250 = MDMSTS2;
@@ -206,14 +206,14 @@ int comm_open ( int portid, unsigned speed )
       }
       if ( portid == 3 )                         /* Ports 3 & 4 cannot be checked */
       {                                          /* with biosquip( ) */
-	  dat8250  = MDMDAT3;                        
+	  dat8250  = MDMDAT3;
 	  stat8250 = MDMSTS3;
 	  com8250  = MDMCOM3;
 	  dis8259  = MDMINTC;
 	  en8259   = MDMINTO;
 	  intv = MDMINTV;
       }
-      if ( portid == 4 ) 
+      if ( portid == 4 )
       {
 	  dat8250  = MDMDAT4;
 	  stat8250 = MDMSTS4;
@@ -278,9 +278,9 @@ register char * ptr;
     _bios_timeofday(_TIME_GETCLOCK,&get_tm);     // If character not ready
     end_tm = get_tm + (18 * seconds);            // then wait til one is
                                                  // or return TIMEOUT
-    do 
+    do
     {
-	if(kbhit()) 
+	if(kbhit())
     {                                        // If key pressed, Timeout
       getch();                               // is returned
       comm_putc('\20');                      // send 'space' to modem to
@@ -322,7 +322,7 @@ void comm_flush ( )                             /* flushes all chars out of buff
 void flsh_dtr ( )                                /* Drop DTR for 1/2 second */
 {
     outp( com8250 + 1, 0xa);                     /* Un-set DTR (set RTS, OUT2) */
-    delay(500);                                  /* Wait for 1/2 second */
+    comm_delay(500);                                  /* Wait for 1/2 second */
     outp( com8250 + 1, 0xb);                     /* Set DTR, RTS, OUT2 */
 
 }
@@ -331,7 +331,7 @@ void flsh_dtr ( )                                /* Drop DTR for 1/2 second */
 int carrier( )                                   /* TEST FOR CARRIER DETECT */
 {
 
-  delay(200);                                    /* Short pause */
+  comm_delay(200);                                    /* Short pause */
   if((inp( MODEM_STAT ) & CARRIER_ON ) == CARRIER_ON)
   {
     return(1);                                   /* Check MSR for DCD */
@@ -339,7 +339,7 @@ int carrier( )                                   /* TEST FOR CARRIER DETECT */
   return(0);
 }
 
-void delay( int msecs)
+void comm_delay( int msecs)
 {
  clock_t imsecs,goal;
  imsecs=(clock_t)msecs*(CLOCKS_PER_SEC/1000);
@@ -350,7 +350,7 @@ void delay( int msecs)
 
 /****************************************************************************/
 
-#ifdef DEBUG
+#ifdef _DEBUG
 
 #include <string.h>
 
@@ -371,29 +371,29 @@ main( int argc, char *argv[] )
        "Serial port %d open at %d baud\r\n"
        "test terminal for C comm isr's in power 1.X, turbo 1.X\r\n"
 	   "hit \"ESC\" to exit\r\n\n", port, speed );
-   if ( comm_open ( port, speed ) ) 
+   if ( comm_open ( port, speed ) )
    {
-      while ( result != 27 && c != TIMEOUT) 
+      while ( result != 27 && c != TIMEOUT)
       {
 	 if ( kbhit() )                          /* Check for keyboard press */
-	 {               
+	 {
 	    result = (char) getch();
-	    if( result != 27 )  
+	    if( result != 27 )
 	    {
 	      comm_putc ( result );              /* If ! Escape */
 	    }                                    /* Output the char */
-	 }                                           
-	 if(comm_avail()) 
+	 }
+	 if(comm_avail())
 	 {                                       /* Is a char waiting? */
 	   c = (char) comm_getc(3);
-	   switch ( c ) 
+	   switch ( c )
 	   {
 	     case '\t' :                         /* convert tabs */
 		for ( c = 0; c < 8; c++ )
 		putch ( ' ' );
 		break;
 	     case TIMEOUT :                      /* check for timeout */
-		cprintf("\r\nPort Timed Out\r\n");  
+		cprintf("\r\nPort Timed Out\r\n");
 		break;                           /* error */
 	     case '\r':
 		cprintf("%c%c",'\015','\012');

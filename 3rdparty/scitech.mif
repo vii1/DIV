@@ -1,0 +1,44 @@
+!ifndef ROOT
+!error Se requiere la macro ROOT
+!endif
+
+!ifndef INC_NOVARS
+
+SCITECH = $(ROOT)\3rdparty\scitech
+SVGA_LIB = $(ROOT)\3rdparty\lib\svga.lib
+PMODE_LIB = $(ROOT)\3rdparty\lib\pmode.lib
+SVGA_DIR = $(SCITECH)\src\svgakit
+PMODE_DIR = $(SCITECH)\src\pmode
+INCLUDE += -I$(SCITECH)\include
+
+!endif #INC_NOVARS
+
+!ifndef INC_NOTARGETS
+
+$(SVGA_LIB): lib3p_dir .EXISTSONLY
+	@%make savedir
+	cd $(SVGA_DIR)
+	! $(MAKE) -f makefile.wat $^. SCITECH=$(SCITECH)
+	$(COPY) $^. $^:
+	@%make loaddir
+
+$(PMODE_LIB): lib3p_dir .EXISTSONLY
+	@%make savedir
+	cd $(PMODE_DIR)
+	! $(MAKE) -f makefile.wat $^. SCITECH=$(SCITECH)
+	$(COPY) $^. $^:
+	@%make loaddir
+
+clean_svga: .SYMBOLIC
+	@%make savedir
+	cd $(SVGA_DIR)
+	! $(MAKE) -f makefile.wat clean
+	@%make loaddir
+
+clean_pmode: .SYMBOLIC
+	@%make savedir
+	cd $(SVGA_DIR)
+	! $(MAKE) -f makefile.wat clean
+	@%make loaddir
+
+!endif #INC_NOTARGETS

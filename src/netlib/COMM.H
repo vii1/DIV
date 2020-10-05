@@ -27,4 +27,4 @@ void comm_putc  ( unsigned char c );
 int  comm_getc  ( unsigned seconds );
 void flsh_dtr   ( void );
 int  carrier    ( void );
-void delay      (int msecs);
+void comm_delay (int msecs);

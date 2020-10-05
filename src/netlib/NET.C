@@ -10,7 +10,7 @@
 #include <time.h>
 
 #include "net.h"
-#include "..\source\inter.h"
+#include "div32run\inter.h"
 
 #define NET_TIMEOUT 1
 #define NET_NOTINIT -1
@@ -423,7 +423,7 @@ int valor_retorno;
   //---------------------------------------------------------------------------
 // FER_AQUI
   longitud*=4;
-//  longitud/=net->num_players;  
+//  longitud/=net->num_players;
   if (longitud>=200)
   {
     e(163);

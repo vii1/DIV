@@ -1,0 +1,28 @@
+!ifndef ROOT
+!error Se requiere la macro ROOT
+!endif
+
+!ifndef INC_NOVARS
+
+JPEG_LIB = $(ROOT)\3rdparty\lib\libjpeg.lib
+JPEG_DIR = $(ROOT)\3rdparty\jpeglib
+INCLUDE += -I$(JPEG_DIR)
+
+!endif #INC_NOVARS
+
+!ifndef INC_NOTARGETS
+
+$(JPEG_LIB): lib3p_dir .EXISTSONLY
+	@%make savedir
+	cd $(JPEG_DIR)
+	$(MAKE) $^.
+	$(COPY) $^. $^:
+	@%make loaddir
+
+clean_jpeg: .SYMBOLIC
+	@%make savedir
+	cd $(JPEG_DIR)
+	$(MAKE) clean
+	@%make loaddir
+
+!endif #INC_NOTARGETS

@@ -18,6 +18,8 @@
 
 byte * vga = (byte *) 0xA0000; // Pantalla fisica
 
+SV_devCtx* dc = NULL;         // SVGA Device Context
+
 #define MAX_YRES 2048
 
 short scan[MAX_YRES*4]; // Por scan [x,an,x,an] se definen hasta 2 segmentos a volcar
@@ -144,6 +146,10 @@ void svmode(void) {
   int mode=0;
   int error=0,n;
 
+  if(!dc) {
+    // Inicializamos SVGA
+    dc = SV_init(1);
+  }
   LinealMode=0;
   modovesa=0;
 
@@ -162,18 +168,18 @@ void svmode(void) {
       else vga=(char *)0x0A0000;
     } else {
       if(VersionVesa<0x200) {
-        if(!SV_setMode(mode)) error=1;
+        if(!SV_setMode(mode, 0, 0, 1)) error=1;
         else vga=(char *)0x0A0000;
       } else {
        	if (vbeSetMode (vga_an, vga_al, 8, &Screen) == 4) {
           LinealMode=1;
           mode|=vbeLinearBuffer;
-          if(!SV_setMode(mode)) {
+          if(!SV_setMode(mode, 0, 0, 1)) {
             LinealMode=0;
             mode^=vbeLinearBuffer;
-            if(!SV_setMode(mode)) error=1;
-            else vga=(char *)videoMem;
-          } else vga=(char *)videoMem;
+            if(!SV_setMode(mode, 0, 0, 1)) error=1;
+            else vga=(char *)dc->videoMem;
+          } else vga=(char *)dc->videoMem;
         } else {
           LinealMode=1;
           vga=Screen.adr;

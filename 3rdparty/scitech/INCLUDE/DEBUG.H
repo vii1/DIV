@@ -121,7 +121,7 @@ extern main();
  *  _EXPORT - Expands to _export when compiling a DLL
  */
 
-#define _PUBAPI	
+#define _PUBAPI
 #define _ASMAPI __cdecl
 
 #if defined(_MSC_VER) && defined(_WIN32) && !defined(__SC__)
@@ -190,10 +190,12 @@ extern main();
 
 #ifndef __GENDEFS
 #define __GENDEFS
-typedef unsigned char   uchar;
-typedef unsigned short  ushort;
+//#ifndef __DIVTYPES      // Para evitar colisi¢n con global.h
+//typedef unsigned char   uchar;
+//typedef unsigned short  ushort;
+//typedef unsigned long   ulong;
+//#endif
 typedef unsigned int    uint;
-typedef unsigned long   ulong;
 #ifndef	CLASSLIB_DEFS_H
 typedef int             bool;
 #endif

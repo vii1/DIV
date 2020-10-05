@@ -1,0 +1,28 @@
+!ifndef ROOT
+!error Se requiere la macro ROOT
+!endif
+
+!ifndef INC_NOVARS
+
+JUDAS_LIB = $(ROOT)\3rdparty\lib\judas.lib
+JUDAS_DIR = $(ROOT)\3rdparty\judas
+#INCLUDE += -I$(JUDAS_DIR)
+
+!endif #INC_NOVARS
+
+!ifndef INC_NOTARGETS
+
+$(JUDAS_LIB): lib3p_dir .EXISTSONLY
+	@%make savedir
+	cd $(JUDAS_DIR)
+	! $(MAKE) $^.
+	$(COPY) $^. $^:
+	@%make loaddir
+
+clean_judas: .SYMBOLIC
+	@%make savedir
+	cd $(JUDAS_DIR)
+	! $(MAKE) clean
+	@%make loaddir
+
+!endif #INC_NOTARGETS

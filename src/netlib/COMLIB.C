@@ -46,7 +46,7 @@ void SendCommandToModem(char *cad) {
     for (; *cad; cad++)
         comm_putc(*cad);
     comm_putc('\r');
-    delay(1000);
+    comm_delay(1000);
 }
 
 void EndCOM()
@@ -98,7 +98,7 @@ BYTE WaitModem()
 //                default : return ('!');
             }
         }
-        delay(200);
+        comm_delay(200);
 //    }
     return ('*');
 }
@@ -123,7 +123,7 @@ BYTE DialModem(char *DialString)
 //                default : return ('!');
             }
         }
-        delay(200);
+        comm_delay(200);
     }
    return ('*');  // se puls¢ una tecla
 }
@@ -248,7 +248,7 @@ WORD COM_CheckPacket()
     }
     else {
 //      sound(500);
-//      delay(50);
+//      comm_delay(50);
 //      nosound();
       comm_flush();
     }

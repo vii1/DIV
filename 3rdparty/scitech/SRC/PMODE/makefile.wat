@@ -16,6 +16,7 @@ LIBCMD = -+$(OBJS: = -+)
 all: pmode.lib .SYMBOLIC
 
 pmode.lib: $(OBJS)
+	-@if exist $^ del $^
 	*wlib -q $@ $(LIBCMD)
 
 .c.obj:
@@ -30,7 +31,7 @@ pmode.lib: $(OBJS)
 !endif
 
 clean: .SYMBOLIC
-	-del *.obj
-	-del *.lib
-	-del *.err
-	-del *.pch
+	-@if exist *.obj del *.obj
+	-@if exist *.lib del *.lib
+	-@if exist *.err del *.err
+	-@if exist *.pch del *.pch

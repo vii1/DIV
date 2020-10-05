@@ -18,7 +18,7 @@
 *.bac
 
 # ficheros temporales de programas externos
-/3rdparty/scitech/doc/MGL/*.[Gg][Ii][Dd]
+/3rdparty/scitech/doc/*/*.[Gg][Ii][Dd]
 
 # carpetas
 /bin

@@ -11,11 +11,11 @@ MAKEFILE = makefile.w32
 all: $(TF_LIB) .SYMBOLIC
 
 clean: .SYMBOLIC
-   -del *.obj
-   -del $(TF_LIB)
+   -@if exist *.obj del *.obj
+   -@if exist $(TF_LIB) del $(TF_LIB)
 
 $(TF_LIB): tflib.obj tfanimat.obj tfframe.obj tfbuffer.obj
-   -del $(TF_LIB)
+   -@if exist $(TF_LIB) del $(TF_LIB)
    wlib $(TF_LIB) +tflib.obj +tfanimat.obj +tfframe.obj +tfbuffer.obj
 
 tflib.obj: tflib.c .AUTODEPEND

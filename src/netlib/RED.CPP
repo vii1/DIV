@@ -4,7 +4,7 @@
 #include <mem.h>
 
 #include "net.h"
-#include "..\source\inter.h"
+#include "div32run\inter.h"
 
 int _net_get_games(int game_id);
 int _net_join_game(int game_id,char *nombre,void *datos, int longitud);

@@ -7,12 +7,12 @@
 
 #include <conio.h>
 #include <dos.h>
-#include "..\judas\judasmem.h"
+#include "judas\judasmem.h"
 
 int timer_init(unsigned short frequency, void (*function)());
 void timer_uninit(void);
 static int timer_lock(void);
-static int timer_unlock(void);
+static void timer_unlock(void);
 void timer_handler(void);
 unsigned short timer_get_ds(void);
 

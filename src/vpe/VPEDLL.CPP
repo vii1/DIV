@@ -10,7 +10,7 @@
 #define FIN_GRID (32768-2560)
 
 FILE * open_file(char * file);
-#include "..\source\inter.h"
+#include "div32run\inter.h"
 #include "vpe.h"
 
 void DoObjectUpdate(struct Object *po);

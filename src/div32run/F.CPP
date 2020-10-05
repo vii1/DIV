@@ -12,7 +12,8 @@ void readmouse(void);
 #include "cdrom.h"
 #include "divmixer.hpp"
 #include "divsound.h"
-#include "source\divdll.h"
+#include "divdll.h"
+#include "zlib.h"
 
 extern int max_reloj;
 
@@ -2673,7 +2674,7 @@ void _strstr(void) {
   sp--;
 }
 
-void _strset(void) {
+void div_strset(void) {
   int n;
   if ((mem[pila[sp-1]-1]&0xFFF00000)!=0xDAD00000) {
     sp--; e(164); return;
@@ -3014,7 +3015,7 @@ void _ftell(void) {
 //      filelength(handle)
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-void _filelength(void) {
+void div_filelength(void) {
   int pos,len;
 
   if (unit_size<1) unit_size=1;
@@ -3144,7 +3145,7 @@ void setdrive(void) {
 //      chdir(directorio) 1 - exito, 0 - error
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-void _chdir(void) {
+void div_chdir(void) {
   if (chdir((char *)&mem[pila[sp]])) pila[sp]=0; else pila[sp]=1;
 }
 
@@ -3152,7 +3153,7 @@ void _chdir(void) {
 //      mkdir(directorio)
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-void _mkdir(void) {
+void div_mkdir(void) {
   char * buffer;
   char cwork[256];
   int x;
@@ -4057,8 +4058,9 @@ void _encriptar(int encode, char * fichero, char * clave) {
 //      compress(fichero) Devuelve 0 ข 1
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-int compress    (unsigned char *dest,   unsigned long *destLen,
-                 unsigned char *source, unsigned long sourceLen);
+// de zlib.h
+//int compress    (unsigned char *dest,   unsigned long *destLen,
+//                 unsigned char *source, unsigned long sourceLen);
 
 void _compress(int encode) {
   unsigned rc;
@@ -4322,7 +4324,7 @@ void function(void) {
     case 104: _strcmp(); break;
     case 105: _strchr(); break;
     case 106: _strstr(); break;
-    case 107: _strset(); break;
+    case 107: div_strset(); break;
     case 108: __strupr(); break;
     case 109: __strlwr(); break;
     case 110: _strdel(); break;
@@ -4343,14 +4345,14 @@ void function(void) {
     case 125: _fwrite(); break;
     case 126: _fseek(); break;
     case 127: _ftell(); break;
-    case 128: _filelength(); break;
+    case 128: div_filelength(); break;
     case 129: flush(); break;
     case 130: get_dirinfo(); break;
     case 131: get_fileinfo(); break;
     case 132: getdrive(); break;
     case 133: setdrive(); break;
-    case 134: _chdir(); break;
-    case 135: _mkdir(); break;
+    case 134: div_chdir(); break;
+    case 135: div_mkdir(); break;
     case 136: remove_file(); break;
     case 137: disk_free(); break;
     case 138: memory_free(); break;

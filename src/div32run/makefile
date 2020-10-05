@@ -1,186 +1,157 @@
-#ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-#       Interprete DIV
-#ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+# Makefile para la DIV32RUN.DLL en todas sus variantes.
+# SESSION=1 genera el int‚rprete que incorpora el trazador. Es el int‚rprete
+# que se ejecuta desde el IDE cuando arrancamos un programa.
+# SESSION=0 genera la DIV32RUN.DLL que se incluir  con el instalador de nuestro
+# juego. Pero a£n no es la versi¢n redistribuible, ya que al generar el
+# instalador se le agrega la tabla de textos traducidos.
 
-# i - Int‚rprete
-# f - Funciones internas
-# c - Detecci¢n de colisiones
-# s - Sprites, textos y scrolles
-# v - Video, paleta
-# m - Mouse
-# d - Debugger
+!ifndef ROOT
+ROOT=..\..
+!endif
 
+#%OPTIONS += -fti
+
+!ifeq SESSION 1
+%OPTIONS += -DDEBUG
+SYSTEM=dos4g
+OUTDIR = $(%OUTDIR).$(CPU)\session
+!ifeq CPU 586
 EXE=session.div
-#EXE=div32run.ins
+!else
+EXE=session.386
+!endif
+!else
+SYSTEM=pmodew
+OUTDIR = $(%OUTDIR).$(CPU)\div32run
+!ifeq CPU 586
+EXE=div32run.ins
+!else
+EXE=div32run.386
+!endif
+!endif
 
-OPTIONS=/oneatx /wx /mf /zp4 /bt=dos /5r /fp5
-OPTIONS2=/oneatx /wx /mf /zp4 /bt=dos /5r /fp5
+MAKE=$(MAKE) -h
+WASM=$(%WASM_EXE)
+TASM=$(%TASM_EXE)
+WASM_OPTIONS=$(%WASM_OPTIONS)
+TASM_OPTIONS=$(%TASM_OPTIONS)
 
-$(EXE): i.obj f.obj c.obj s.obj v.obj a.obj
-$(EXE): divfli.obj cdrom.obj divkeybo.obj mouse.obj
-$(EXE): divdll1.obj divdll2.obj ia.obj
-$(EXE): divsound.obj divmixer.obj divtimer.obj timer.obj
+!ifeq CPU 586
+%OPTIONS += -5r -fp5
+WASM_OPTIONS = -5r -fp5 -mf
+!else
+%OPTIONS += -3r -fpc
+WASM_OPTIONS = -3r -fpc -mf
+!endif
 
-$(EXE): d.obj
+INC_NOTARGETS=1
+!include $(ROOT)\3rdparty.mif
+!undef INC_NOTARGETS
 
-$(EXE): divlengu.obj vesa.obj det_vesa.obj
+SOURCES = i.cpp f.cpp c.cpp s.cpp v.cpp a.asm divfli.cpp cdrom.cpp &
+	divkeybo.cpp mouse.cpp divdll1.c divdll2.c ia.cpp divsound.cpp &
+	divmixer.cpp divtimer.cpp timer.asm divlengu.cpp vesa.asm &
+	det_vesa.cpp
 
-$(EXE): draw_cw.obj draw_f.obj draw_o.obj draw_sw.obj
-$(EXE): fixed.obj gfx.obj globals.obj hard.obj
-$(EXE): load.obj mem.obj object.obj scan.obj
-$(EXE): update.obj view.obj vpe.obj zone.obj
-$(EXE): draw_fa.obj draw_oa.obj draw_wa.obj vpedll.obj
+!ifeq SESSION 1
+SOURCES += d.cpp
+!endif
 
-$(EXE): red.obj net.obj comlib.obj comm.obj ipxlib.obj dpmi_net.obj
+# VPE (modo-8)
+SOURCES += vpe\draw_cw.cpp vpe\draw_f.cpp vpe\draw_o.cpp vpe\draw_sw.cpp &
+	vpe\fixed.cpp vpe\gfx.cpp vpe\globals.cpp vpe\hard.cpp vpe\load.cpp &
+	vpe\mem.cpp vpe\object.cpp vpe\scan.cpp vpe\update.cpp vpe\view.cpp &
+	vpe\vpe.cpp vpe\zone.cpp vpe\draw_fa.asm vpe\draw_oa.asm vpe\draw_wa.asm &
+	vpe\vpedll.cpp
 
-  wlink @i.lnk
+# NETLIB (red)
+SOURCES += netlib\red.cpp netlib\net.c netlib\comlib.c netlib\comm.c &
+	netlib\ipxlib.c netlib\dpmi_net.c
 
-i.obj: i.cpp kernel.cpp
-  wcc386 $(OPTIONS) i.cpp
+OBJS = $(SOURCES:.cpp=.obj)
+OBJS = $(OBJS:.c=.obj)
+OBJS = $(OBJS:.asm=.obj)
 
-f.obj: f.cpp
-  wcc386 $(OPTIONS) f.cpp
+LIBS = $(JUDAS_LIB) $(JPEG_LIB) $(ZLIB_LIB) $(SVGA_LIB) $(PMODE_LIB) $(TFLC_LIB)
+INCLUDE += -I..
+%OPTIONS += $(INCLUDE)
 
-c.obj: c.cpp
-  wcc386 $(OPTIONS) c.cpp
+.BEFORE
+	@if not exist $(%OUTDIR).$(CPU) mkdir $(%OUTDIR).$(CPU)
+	@if not exist $(OUTDIR) mkdir $(OUTDIR)
+	@if not exist $(OUTDIR)\netlib mkdir $(OUTDIR)\netlib
+	@if not exist $(OUTDIR)\vpe mkdir $(OUTDIR)\vpe
 
-s.obj: s.cpp
-  wcc386 $(OPTIONS) s.cpp
+$(EXE): $(OUTDIR)\$(EXE) .SYMBOLIC
+	@%null
 
-v.obj: v.cpp
-  wcc386 $(OPTIONS) v.cpp
+$(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
+	*wlink &
+		system $(SYSTEM) &
+		name $(OUTDIR)\$^. &
+!ifeqi %CONFIG debug
+		debug all &
+!endif
+		option stack=64k &
+		option map=$(OUTDIR)\$^& &
+		path $(OUTDIR) &
+		file { $(OBJS) } &
+		libfile { $(LIBS) }
 
-divkeybo.obj: divkeybo.cpp
-  wcc386 $(OPTIONS) divkeybo.cpp
+$(%STUB): ..\wstub\makefile ..\wstub\wstub.c ..\cpuid.asm
+	cd ..\wstub
+	$(MAKE) CONFIG=$(%CONFIG)
+	cd ..\div32run
 
-mouse.obj: mouse.cpp
-  wcc386 $(OPTIONS) mouse.cpp
+.asm: .;..;..\vpe
+.c: .;..\netlib
+.cpp: .;..\vpe;..\netlib
+#.c: source;vbe
+#.cpp: source;vbe;netlib
+#.asm: source
 
-divfli.obj: divfli.cpp
-  wcc386 $(OPTIONS) divfli.cpp
+.obj: $(OUTDIR)
+#.obj: $(OUTDIR);$(OUTDIR)\netlib;$(OUTDIR)\vpe
 
-cdrom.obj: cdrom.cpp
-  wcc386 /oneatx /wx /mf /bt=dos /3r /fpc cdrom.cpp
+.c.obj:
+	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)\$^@ -fr=$(OUTDIR)\$^* $<
 
-divdll1.obj: divdll1.c
-  wcc386 $(OPTIONS) divdll1.c
+.cpp.obj:
+	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)\$^@ -fr=$(OUTDIR)\$^* $<
 
-divdll2.obj: divdll2.c
-  wcc386 $(OPTIONS) divdll2.c
+.asm.obj:
+!ifeqi %ASM WASM
+	*$(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^@ -fr=$(OUTDIR)\$^* $<
+!else
+	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^@
+!endif
+#vesa.obj: vesa.asm
+#!ifeqi %ASM WASM
+#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#!else
+#	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^.
+#!endif
+#
+#timer.obj: timer.asm
+#!ifeqi %ASM WASM
+#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#!else
+#	$(TASM) $(TASM_OPTIONS) /m $<,$(OUTDIR)\$^.
+#!endif
+#
+#a.obj: a.asm
+#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#
+#visor\t.obj: visor\t.asm
+#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
 
-ia.obj: ia.cpp
-  wcc386 $(OPTIONS) ia.cpp
+clean: .SYMBOLIC
+	@if exist $(OUTDIR)\*.err del $(OUTDIR)\*.err
+	@if exist $(OUTDIR)\*.obj del $(OUTDIR)\*.obj
+	@if exist $(OUTDIR)\*.exe del $(OUTDIR)\*.exe
+	@if exist $(OUTDIR)\vpe\*.err del $(OUTDIR)\vpe\*.err
+	@if exist $(OUTDIR)\vpe\*.obj del $(OUTDIR)\vpe\*.obj
 
-divsound.obj: divsound.cpp
-  wcc386 $(OPTIONS) divsound.cpp
-
-divmixer.obj: divmixer.cpp
-  wcc386 $(OPTIONS) divmixer.cpp
-
-divtimer.obj: divtimer.cpp
-  wcc386 $(OPTIONS) divtimer.cpp
-
-timer.obj: timer.asm
-        a /m /ml timer.asm
-
-a.obj: a.asm
-  wasm a.asm
-
-d.obj: d.cpp
-  wcc386 $(OPTIONS) d.cpp
-
-divlengu.obj: divlengu.cpp
-  wcc386 $(OPTIONS) divlengu.cpp
-
-vesa.obj: vesa.asm
-  a vesa.asm /ml /m2 /w2 /z /zn
-
-det_vesa.obj: det_vesa.cpp
-  wcc386 $(OPTIONS) det_vesa.cpp
-
-#ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-#   VPE
-#ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-
-vpedll.obj: ..\vpe\vpedll.cpp
-  wcc386 $(OPTIONS2) ..\vpe\vpedll.cpp
-
-draw_cw.obj: ..\vpe\draw_cw.cpp
-  wcc386 $(OPTIONS2) ..\vpe\draw_cw.cpp
-
-draw_f.obj: ..\vpe\draw_f.cpp
-  wcc386 $(OPTIONS2) ..\vpe\draw_f.cpp
-
-draw_o.obj: ..\vpe\draw_o.cpp
-  wcc386 $(OPTIONS2) ..\vpe\draw_o.cpp
-
-draw_sw.obj: ..\vpe\draw_sw.cpp
-  wcc386 $(OPTIONS2) ..\vpe\draw_sw.cpp
-
-fixed.obj: ..\vpe\fixed.cpp
-  wcc386 $(OPTIONS2) ..\vpe\fixed.cpp
-
-gfx.obj: ..\vpe\gfx.cpp
-  wcc386 $(OPTIONS2) ..\vpe\gfx.cpp
-
-globals.obj: ..\vpe\globals.cpp
-  wcc386 $(OPTIONS2) ..\vpe\globals.cpp
-
-hard.obj: ..\vpe\hard.cpp
-  wcc386 $(OPTIONS2) ..\vpe\hard.cpp
-
-load.obj: ..\vpe\load.cpp
-  wcc386 $(OPTIONS2) ..\vpe\load.cpp
-
-mem.obj: ..\vpe\mem.cpp
-  wcc386 $(OPTIONS2) ..\vpe\mem.cpp
-
-object.obj: ..\vpe\object.cpp
-  wcc386 $(OPTIONS2) ..\vpe\object.cpp
-
-scan.obj: ..\vpe\scan.cpp
-  wcc386 $(OPTIONS2) ..\vpe\scan.cpp
-
-update.obj: ..\vpe\update.cpp
-  wcc386 $(OPTIONS2) ..\vpe\update.cpp
-
-view.obj: ..\vpe\view.cpp
-  wcc386 $(OPTIONS2) ..\vpe\view.cpp
-
-vpe.obj: ..\vpe\vpe.cpp
-  wcc386 $(OPTIONS2) ..\vpe\vpe.cpp
-
-zone.obj: ..\vpe\zone.cpp
-  wcc386 $(OPTIONS2) ..\vpe\zone.cpp
-
-draw_fa.obj: ..\vpe\draw_fa.asm
-  wasm /mf ..\vpe\draw_fa
-
-draw_oa.obj: ..\vpe\draw_oa.asm
-  wasm /mf ..\vpe\draw_oa
-
-draw_wa.obj: ..\vpe\draw_wa.asm
-  wasm /mf ..\vpe\draw_wa
-
-#ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-#   RED
-#ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-
-red.obj: ..\netlib\red.cpp
-  wcc386 $(OPTIONS2) ..\netlib\red.cpp
-
-net.obj: ..\netlib\net.c
-  wcc386 $(OPTIONS2) ..\netlib\net.c
-
-comlib.obj: ..\netlib\comlib.c
-  wcc386 $(OPTIONS2) ..\netlib\comlib.c
-
-comm.obj: ..\netlib\comm.c
-  wcc386 $(OPTIONS2) ..\netlib\comm.c
-
-ipxlib.obj: ..\netlib\ipxlib.c
-  wcc386 $(OPTIONS2) ..\netlib\ipxlib.c
-
-dpmi_net.obj: ..\netlib\dpmi_net.c
-  wcc386 $(OPTIONS2) ..\netlib\dpmi_net.c
-
+INC_NOVARS=1
+!include $(ROOT)\3rdparty.mif
+!undef INC_NOVARS

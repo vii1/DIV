@@ -1,24 +1,8 @@
 # include de variables y targets de las librer¡as 3rd party
 
-SCITECH = 3rdparty\scitech
-
-JUDAS_LIB = 3rdparty\lib\judas.lib
-JPEG_LIB = 3rdparty\lib\libjpeg.lib
-ZLIB_LIB = 3rdparty\lib\zlib_f.lib
-SVGA_LIB = 3rdparty\lib\svga.lib
-PMODE_LIB = 3rdparty\lib\pmode.lib
-TFLC_LIB = 3rdparty\lib\tflc_w32.lib
-
-JUDAS_DIR = judas
-JPEG_DIR = jpeglib
-ZLIB_DIR = 3rdparty\zlib
-SVGA_DIR = $(SCITECH)\src\svgakit
-PMODE_DIR = $(SCITECH)\src\pmode
-TFLC_DIR = 3rdparty\topflc
-
-INCLUDE += -i=$(SCITECH)\include
-INCLUDE += -i=$(ZLIB_DIR)
-INCLUDE += -i=$(TFLC_DIR)
+!ifndef ROOT
+!error Se requiere la macro ROOT
+!endif
 
 !ifndef COPY
 COPY = xcopy /y
@@ -27,48 +11,23 @@ COPY = xcopy /y
 TOUCH = wtouch -c
 !endif
 
+!include $(ROOT)\3rdparty\jpeglib.mif
+!include $(ROOT)\3rdparty\judas.mif
+!include $(ROOT)\3rdparty\scitech.mif
+!include $(ROOT)\3rdparty\topflc.mif
+!include $(ROOT)\3rdparty\zlib.mif
+
+!ifndef INC_NOVARS
+INCLUDE += -I$(ROOT)\3rdparty
+!endif
+
+!ifndef INC_NOTARGETS
 lib3p_dir: .SYMBOLIC
-	@if not exist 3rdparty\lib mkdir 3rdparty_lib
+	@if not exist $(ROOT)\3rdparty\lib mkdir $(ROOT)\3rdparty\lib
 
-$(JUDAS_LIB): lib3p_dir .EXISTSONLY
-	! pushd $(JUDAS_DIR) && $(MAKE) $^. && popd
-	$(COPY) $(JUDAS_DIR)\$^. $^:
-	$(TOUCH) $@
+clean_lib3p: clean_judas clean_jpeg clean_tflc clean_zlib clean_svga clean_pmode .SYMBOLIC
+	@%null
 
-$(JPEG_LIB): lib3p_dir .EXISTSONLY
-	! pushd $(JPEG_DIR) && $(MAKE) $^. && popd
-	$(COPY) $(JPEG_DIR)\$^. $^:
-	$(TOUCH) $@
+!endif
 
-$(ZLIB_LIB): lib3p_dir .EXISTSONLY
-	! pushd $(ZLIB_DIR) && $(MAKE) -f watcom\watcom_f.mak $^. && popd
-	$(COPY) $(ZLIB_DIR)\$^. $^:
-	$(TOUCH) $@
-
-$(SVGA_LIB): lib3p_dir .EXISTSONLY
-	! pushd $(SVGA_DIR) && $(MAKE) -f makefile.wat $^. SCITECH=..\.. && popd
-	$(COPY) $(SVGA_DIR)\$^. $^:
-	$(TOUCH) $@
-
-$(PMODE_LIB): lib3p_dir .EXISTSONLY
-	! pushd $(PMODE_DIR) && $(MAKE) -f makefile.wat $^. SCITECH=..\.. && popd
-	$(COPY) $(PMODE_DIR)\$^. $^:
-	$(TOUCH) $@
-
-$(TFLC_LIB): lib3p_dir .EXISTSONLY
-	! pushd $(TFLC_DIR) && $(MAKE) -f makefile.w32 $^. && popd
-	$(COPY) $(TFLC_DIR)\$^. $^:
-	$(TOUCH) $@
-
-clean_judas: .SYMBOLIC
-	! pushd $(JUDAS_DIR) && $(MAKE) clean && popd
-clean_jpeg: .SYMBOLIC
-	! pushd $(JPEG_DIR) && $(MAKE) clean && popd
-clean_tflc: .SYMBOLIC
-	! pushd $(TFLC_DIR) && $(MAKE) -f makefile.w32 clean && popd
-clean_zlib: .SYMBOLIC
-	! pushd $(ZLIB_DIR) && $(MAKE) -f watcom\watcom_f.mak clean && popd
-clean_svga: .SYMBOLIC
-	! pushd $(SVGA_DIR) && $(MAKE) -f makefile.wat clean && popd
-clean_pmode: .SYMBOLIC
-	! pushd $(PMODE_DIR) && $(MAKE) -f makefile.wat clean && popd
+!include $(ROOT)\common.mif

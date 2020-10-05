@@ -136,14 +136,14 @@ jconfig.h: jconfig.txt
 	exit 1
 
 clean: .SYMBOLIC
-	- del *.obj
-	- del libjpeg.lib
-	- del cjpeg.exe
-	- del djpeg.exe
-	- del jpegtran.exe
-	- del rdjpgcom.exe
-	- del wrjpgcom.exe
-	- del testout*.*
+	- @if exist *.obj del *.obj
+	- @if exist libjpeg.lib del libjpeg.lib
+	- @if exist cjpeg.exe del cjpeg.exe
+	- @if exist djpeg.exe del djpeg.exe
+	- @if exist jpegtran.exe del jpegtran.exe
+	- @if exist rdjpgcom.exe del rdjpgcom.exe
+	- @if exist wrjpgcom.exe del wrjpgcom.exe
+	- @if exist testout*.* del testout*.*
 
 test: cjpeg.exe djpeg.exe jpegtran.exe  .SYMBOLIC
 	- del testout*.*

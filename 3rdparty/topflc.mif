@@ -1,0 +1,28 @@
+!ifndef ROOT
+!error Se requiere la macro ROOT
+!endif
+
+!ifndef INC_NOVARS
+
+TFLC_LIB = $(ROOT)\3rdparty\lib\tflc_w32.lib
+TFLC_DIR = $(ROOT)\3rdparty\topflc
+INCLUDE += -I$(TFLC_DIR)
+
+!endif #INC_NOVARS
+
+!ifndef INC_NOTARGETS
+
+$(TFLC_LIB): lib3p_dir .EXISTSONLY
+	@%make savedir
+	cd $(TFLC_DIR)
+	! $(MAKE) -f makefile.w32 $^.
+	$(COPY) $^. $^:
+	@%make loaddir
+
+clean_tflc: .SYMBOLIC
+	@%make savedir
+	cd $(TFLC_DIR)
+	! $(MAKE) -f makefile.w32 clean
+	@%make loaddir
+
+!endif #INC_NOTARGETS

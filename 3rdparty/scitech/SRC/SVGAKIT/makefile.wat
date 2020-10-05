@@ -16,6 +16,7 @@ LIBCMD = -+$(OBJS: = -+)
 all: svga.lib .SYMBOLIC
 
 svga.lib: $(OBJS)
+	-@if exist $^ del $^
 	*wlib -q $^ $(LIBCMD)
 
 .c.obj:
@@ -30,6 +31,6 @@ svga.lib: $(OBJS)
 !endif
 
 clean: .SYMBOLIC
-	-del *.obj
-	-del *.lib
-	-del *.err
+	-@if exist *.obj del *.obj
+	-@if exist *.lib del *.lib
+	-@if exist *.err del *.err

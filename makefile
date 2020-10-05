@@ -17,12 +17,13 @@ CONFIG = release
 #INSTALL_DIR = C:\DIV2
 INSTALL_DIR = $(%USERPROFILE)\dosbox\DIV
 
-# Siempre que se pueda, se usar  WASM, pero originalmente DIV se compilaba
-# usando Turbo Assembler (TASM). Esto podr¡a, potencialmente, originar bugs
-# debido a diferencias entre ambos ensambladores. El problema es que TASM es
-# privativo, por lo que damos preferencia a WASM. Pero si esto diera problemas,
-# quiz  prefieras conseguir una copia de TASM y usarlo en su lugar.
-ASM = TASM
+# Originalmente DIV usaba Turbo Assembler (TASM) para compilar su c¢digo en
+# ensamblador. En este fork preferimos usar WASM, ya que TASM es privativo y
+# no es f cil de conseguir. Ten en cuenta que si usas WASM podr¡as encontrarte
+# potencialmente con alg£n bug debido a diferencias entre ensambladores.
+# Para compilar las librer¡as de terceros s¡ necesitas TASM. Pero te las damos
+# ya compiladas, por lo que no te har  falta a menos que quieras modificarlas.
+ASM = WASM
 
 # Si usas TASM y tu versi¢n no dispone de TASM32.EXE, quiz  quieras cambiar
 # esta opci¢n.
@@ -39,9 +40,10 @@ COPY = xcopy /Y
 # FIN DE COSAS CONFIGURABLES
 ############################
 
-MAKE=$(MAKE) -h
+ROOT=$+ $(%cdrive):$(%cwd) $-
+MAKE=$+ $(MAKE) -h $-
 %CONFIG=$(CONFIG)
-%OUTDIR = build.dos\$(%CONFIG)
+%OUTDIR = $(ROOT)\build.dos\$(CONFIG)
 
 %ASM=$(ASM)
 %TASM_EXE = $(TASM_EXE)
@@ -62,37 +64,57 @@ MAKE=$(MAKE) -h
 %TASM_OPTIONS += /zn
 !endif
 
-%STUB = wstub\$(%CONFIG)\wstub.exe
+%STUB = $(ROOT)\src\wstub\$(%CONFIG)\wstub.exe
 
 all: d.exe d.386 session.div session.386 div32run.ins div32run.386 .SYMBOLIC
 
-d.exe: wstub d.mif .SYMBOLIC
-	$(MAKE) -f d.mif CPU=586 d.exe
+d.exe: wstub .SYMBOLIC
+	cd src\div
+	$(MAKE) ROOT=$(ROOT) CPU=586 d.exe
+	cd ..\..
 
-d.386: wstub d.mif .SYMBOLIC
-	$(MAKE) -f d.mif CPU=386 d.386
+d.386: wstub .SYMBOLIC
+	cd src\div
+	$(MAKE) ROOT=$(ROOT) CPU=386 d.386
+	cd ..\..
 
-session.div: div32run.mif .SYMBOLIC
-	$(MAKE) -f div32run.mif CPU=586 SESSION=1 session.div
+session.div: .SYMBOLIC
+	cd src\div32run
+	$(MAKE) ROOT=$(ROOT) CPU=586 SESSION=1 session.div
+	cd ..\..
 
-session.386: div32run.mif .SYMBOLIC
-	$(MAKE) -f div32run.mif CPU=386 SESSION=1 session.386
+session.386: .SYMBOLIC
+	cd src\div32run
+	$(MAKE) ROOT=$(ROOT) CPU=386 SESSION=1 session.386
+	cd ..\..
 
-div32run.ins: div32run.mif .SYMBOLIC
-	$(MAKE) -f div32run.mif CPU=586 SESSION=0 div32run.ins
+div32run.ins: .SYMBOLIC
+	cd src\div32run
+	$(MAKE) ROOT=$(ROOT) CPU=586 SESSION=0 div32run.ins
+	cd ..\..
 
-div32run.386: div32run.mif .SYMBOLIC
-	$(MAKE) -f div32run.mif CPU=586 SESSION=0 div32run.386
+div32run.386: .SYMBOLIC
+	cd src\div32run
+	$(MAKE) ROOT=$(ROOT) CPU=386 SESSION=0 div32run.386
+	cd ..\..
 
 wstub: $(%STUB) .SYMBOLIC
+	@%null
 
-$(%STUB): wstub\makefile wstub\wstub.c source\cpuid.asm
-	! pushd wstub && $(MAKE) CONFIG=$(%CONFIG) && popd
+$(%STUB): src\wstub\makefile src\wstub\wstub.c src\cpuid.asm
+	cd src\wstub
+	$(MAKE) CONFIG=$(%CONFIG)
+	cd ..\..
 
-clean: clean_judas clean_jpeg clean_tflc clean_zlib clean_svga clean_pmode .SYMBOLIC
-	@for %i in (586 386) do $(MAKE) -f d.mif CPU=%i clean
-	@for %i in (586 386) do $(MAKE) -f div32run.mif CPU=%i SESSION=1 clean
-	@for %i in (586 386) do $(MAKE) -f div32run.mif CPU=%i SESSION=0 clean
+clean: clean_lib3p .SYMBOLIC
+	cd src\div
+	@for %i in (586 386) do $(MAKE) ROOT=$(ROOT) CPU=%i clean
+	cd ..\div32run
+	@for %i in (586 386) do $(MAKE) ROOT=$(ROOT) CPU=%i SESSION=1 clean
+	@for %i in (586 386) do $(MAKE) ROOT=$(ROOT) CPU=%i SESSION=0 clean
+	cd ..\wstub
+	$(MAKE) CONFIG=$(%CONFIG) clean
+	@cd ..\..
 
 .SILENT
 install: all .SYMBOLIC

@@ -1,0 +1,28 @@
+!ifndef ROOT
+!error Se requiere la macro ROOT
+!endif
+
+!ifndef INC_NOVARS
+
+ZLIB_LIB = $(ROOT)\3rdparty\lib\zlib_f.lib
+ZLIB_DIR = $(ROOT)\3rdparty\zlib
+INCLUDE += -I$(ZLIB_DIR)
+
+!endif #INC_NOVARS
+
+!ifndef INC_NOTARGETS
+
+$(ZLIB_LIB): lib3p_dir .EXISTSONLY
+	@%make savedir
+	cd $(ZLIB_DIR)
+	! $(MAKE) -f watcom\watcom_f.mak $^.
+	$(COPY) $^. $^:
+	@%make loaddir
+
+clean_zlib: .SYMBOLIC
+	@%make savedir
+	cd $(ZLIB_DIR)
+	! $(MAKE) -f watcom\watcom_f.mak clean
+	@%make loaddir
+
+!endif #INC_NOTARGETS

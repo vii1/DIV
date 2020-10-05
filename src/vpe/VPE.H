@@ -283,7 +283,7 @@ WORD GetPickWatch(void *,FIXED *);   // Get result of pick watching
 //  Funciones de movimiento
 //==================
 
-_object_avance(int num_object,int angulo,int velocidad);
+void _object_avance(int num_object,int angulo,int velocidad);
 void _vpe_inicio(char *fichero,char *buffer,int ancho,int alto);
 void _vpe_fin();
 void InitGraph(char *buffer,int ancho,int alto);

@@ -38,6 +38,6 @@ minigzip.exe: $(ZLIB_LIB) minigzip.obj
 	$(LINKER) -ldos32a -fe=minigzip.exe minigzip.obj $(ZLIB_LIB)
 
 clean: .SYMBOLIC
-          del *.obj
-          del $(ZLIB_LIB)
-          @echo Cleaning done
+        -@if exist *.obj del *.obj
+        -@if exist $(ZLIB_LIB) del $(ZLIB_LIB)
+#          @echo Cleaning done
