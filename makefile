@@ -43,7 +43,8 @@ COPY = xcopy /Y
 ROOT=$+ $(%cdrive):$(%cwd) $-
 MAKE=$+ $(MAKE) -h $-
 %CONFIG=$(CONFIG)
-%OUTDIR = $(ROOT)\build.dos\$(CONFIG)
+OUTDIR_BASE = build.dos
+%OUTDIR = $(ROOT)\$(OUTDIR_BASE)\$(CONFIG)
 
 %ASM=$(ASM)
 %TASM_EXE = $(TASM_EXE)
@@ -67,7 +68,7 @@ MAKE=$+ $(MAKE) -h $-
 %STUB = $(ROOT)\src\wstub\$(%CONFIG)\wstub.exe
 
 .BEFORE
-	@if not exist build.dos mkdir build.dos
+	@if not exist $(OUTDIR_BASE) mkdir $(OUTDIR_BASE)
 
 all: d.exe d.386 session.div session.386 div32run.ins div32run.386 .SYMBOLIC
 
