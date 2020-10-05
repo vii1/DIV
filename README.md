@@ -3,10 +3,10 @@ Reconstrucción y posible fork de DIV Games Studio 2.0
 
 Repositorio original: https://github.com/DIVGAMES/DIV-Games-Studio
 
-[¿Qué es esto?](#qué-es-esto)  
-[¿Qué es DIV Games Studio?](#qué-es-div-games-studio)  
-[Cómo compilar](#cómo-compilar)  
-[Problemas conocidos](#problemas-conocidos)  
+[¿Qué es esto?](#qué-es-esto)
+[¿Qué es DIV Games Studio?](#qué-es-div-games-studio)
+[Cómo compilar DIV](#cómo-compilar-div)
+[Problemas conocidos](#problemas-conocidos)
 [Descripción de archivos y carpetas](#descripción-de-archivos-y-carpetas)
 
 ## ¿Qué es esto?
@@ -29,42 +29,57 @@ En 2015, MikeDX, antiguo miembro de FastTrak, anunció que había retomado el c�
 
 [Saber más (Wikipedia)](https://es.wikipedia.org/wiki/DIV_Games_Studio)
 
-## Cómo compilar
-* Clona el repositorio con `git clone https://github.com/vii1/DIV.git`
-* Descarga e instala [OpenWatcom](http://www.openwatcom.org/) (de momento los makefiles son sólo para la versión DOS/Windows, aunque en teoría Watcom permite la compilación cruzada desde otros sistemas operativos. Si lo intentas, házmelo saber).
-* Inicia una consola con el Build Environment de Watcom (lo encontrarás en la carpeta Open Watcom del menú de Windows).
-* Desde el directorio raíz del proyecto, ejecuta `wmake`. De momento sólo se compila el IDE (ficheros `D.EXE` y `D.386`), aún estoy en el proceso de escribir los makefiles para crear el resto de archivos esenciales (`DIV32RUN.DLL`, `SESSION.*`, etc).
+## Cómo compilar DIV
 
-Para ejecutar tu DIV recién compilado, necesitarás crear el árbol de directorios y ficheros necesario. Puedes basarte en una instalación de DIV 2 que ya tengas (haz copias de seguridad), o bien puedes dejar que `wmake` haga el trabajo por ti:
-* Desde el directorio raíz del proyecto, ejecuta `wmake INSTALL_DIR=<ruta> install`, donde _\<ruta\>_ es la ruta donde quieres instalar DIV 2. Puede ser un directorio ya existente o no, por ejemplo `C:\DIV2`. Te recomiendo que lo instales directamente en una carpeta que posteriormente puedas montar desde **DOSBox**.
-* Arranca [DOSBox](http://www.dosbox.com/) y entra en la carpeta donde acabas de instalar DIV 2 (usa el comando `MOUNT` para mapear una letra de unidad a su carpeta superior).
-* Ejecuta `D.EXE`.
+### Requisitos previos
+* Sistema operativo **MS-DOS** o **Windows** (cualquier versión, nueva o antigua).
+* [OpenWatcom](http://www.openwatcom.org/) instalado y funcionando. Posiblemente también funcione Watcom 10 o superior, pero no lo hemos probado. OJO: necesitas instalar los compiladores para *DOS 16 bits* y *DOS 32 bits*.
+* Si usas Windows NT o cualquier versión moderna de Windows, para ejecutar DIV necesitarás un emulador de DOS como [DOSBox](https://dosbox.com) o [DOSBox-X](https://dosbox-x.com/).
+* **OPCIONAL**: Instala **Turbo Assembler**. Sólo es necesario si quieres recompilar las librerías de terceros (se encuentran ya compiladas en este repositorio). Consulta [la wiki](https://github.com/vii1/DIV/wiki/Acerca-de-Turbo-Assembler) para más información.
+
+### Compilación
+* Clona el repositorio con `git clone https://github.com/vii1/DIV.git`
+* En DOS:
+  * Asegúrate de haber inicializado el entorno de Watcom ejecutando `OWSETENV.BAT`.
+* En Windows:
+  * Abre una consola usando el icono **Build Environment** que encontrarás en el grupo de programas de Open Watcom en el menú de Windows.
+* Desde el directorio raíz del proyecto, ejecuta `wmake`. El proceso puede durar varios minutos, especialmente en DOS. Verás muchísimos warnings. No tengas miedo.
+
+### Instalación
+* Para instalar tu DIV recién compilado, ejecuta `wmake install INSTALL_DIR=<ruta>`, donde _\<ruta\>_ es la ruta donde quieres instalar DIV 2. Si vas a usar DOSBox, puedes instalarlo directamente en una subcarpeta que vayas a montar desde el emulador.
+* Para arrancar DIV, desde DOS (o DOSBox) ve a la carpeta donde lo has instalado y ejecuta `D.EXE`.
 
 ## Problemas conocidos
 Unos cuantos. Mira en la sección de [issues](https://github.com/vii1/DIV/issues) para verlos.
 
 ## Descripción de archivos y carpetas
-* En el directorio raíz está el código fuente del IDE (D.EXE). Archivos destacables:
-  * **div.cpp**: fichero principal del Sistema Operativo DIV™.
-  * **global.h**: cabecera principal
-  * **divc.cpp**: el compilador de lenguaje DIV. Con unas pocas modificaciones se puede convertir en un EXE independiente ;)
-  * **diveffec.cpp**: el generador de explosiones :D
-  * **divpaint.cpp**: ¡el programa de dibujo! :D :D
-  * **divwindo.cpp**: todas las funciones de la GUI
-* **SOURCE**: Código fuente del intérprete (DIV32RUN.DLL). Archivos destacables:
-  * **inter.h**: cabecera principal
-  * **i.cpp**: código principal del intérprete
-  * **kernel.cpp**: se incluye dentro de i.cpp y es el cuerpo de un gigantesco `switch`, con un `case` por cada bytecode, que conforma la máquina virtual de DIV.
-  * **f.cpp**: muchas de las funciones accesibles desde DIV.
-  * **s.cpp**: gráficos, sprites, scroll, modo-7...
-  * **v.cpp**: funciones de vídeo de bajo nivel
-  * **d.cpp**: el debugger de DIV2, incluyendo toda la GUI (!)
-* **INC**: Cabeceras varias de terceras partes
-* **JUDAS**: Librería de sonido
-* **NETLIB**: Rutinas de red (originalmente era una DLL)
-* **VPE**: Librería de Modo-8 (una versión modificada de [Virtual Presence Engine](http://www.ii.uib.no/~alexey/vpe/index.html))
-* **div_stub**: El programa que hacía de "cabecera" para los EXE de DIV2. A éste se le concatenaba el bytecode del programa compilado y algunos datos para el intérprete. Lo único que hacía el EXE en sí era ejecutar DIV32RUN.DLL, pasándose a sí mismo como parámetro.
+* **3rdparty**: Librerías de terceros y su código fuente
+  * **lib**: En esta subcarpeta encontrarás las librerías de terceros ya compiladas.
+  * **jpeglib**: La librería [JPEG](https://ijg.org/).
+  * **JUDAS**: La librería de sonido: [JUDAS Apocalyptic Softwaremixing Sound System](https://github.com/volkertb/JUDAS).
+  * **SCITECH**: [SuperVGA Kit](https://web.archive.org/web/19961114153004/http://www.scitechsoft.com/devprod.html).
+  * **topflc**: TopFLC, librería para reproducir archivos FLI/FLC.
+  * **zlib**: Librería de compresión [zlib](https://zlib.net).
 * **dll**: El SDK y los ejemplos
-* **jpeglib**: Librería de [JPEG](http://ijg.org/).
-* **pmwlite**: Extensor de 32 bits para DOS alternativo a DOS/4GW, que se usaba para algunos ejecutables, o todos, no sé
-* **visor**: Código del generador de sprites.
+* **formats**: Descripción de los formatos de archivo propios de DIV, en formato [Kaitai Struct](http://kaitai.io/). Más información en la [wiki](https://github.com/vii1/DIV/wiki/Formatos-de-archivo).
+* **pmwlite**: Extensor de 32 bits para DOS alternativo a DOS/4GW, que se usaba para la DIV32RUN.DLL.
+* **src**: Carpeta principal de código fuente. Aquí hay algunos archivos compartidos entre módulos.
+  * **div**: Código fuente del IDE (D.EXE). Algunos archivos destacables:
+    * **div.cpp**: fichero principal del Sistema Operativo DIV™.
+    * **global.h**: cabecera principal
+    * **divc.cpp**: el compilador de lenguaje DIV. Con unas pocas modificaciones se puede convertir en un EXE independiente ;)
+    * **diveffec.cpp**: el generador de explosiones :D
+    * **divpaint.cpp**: ¡el programa de dibujo! :D :D
+    * **divwindo.cpp**: todas las funciones de la GUI
+    * **visor**: Código del generador de sprites.
+  * **div32run**: Código fuente del intérprete (DIV32RUN.DLL). Algunos archivos destacables:
+    * **inter.h**: cabecera principal
+    * **i.cpp**: código principal del intérprete
+    * **kernel.cpp**: se incluye dentro de i.cpp y es el cuerpo de un gigantesco `switch`, con un `case` por cada bytecode, que conforma la máquina virtual de DIV.
+    * **f.cpp**: muchas de las funciones accesibles desde DIV.
+    * **s.cpp**: gráficos, sprites, scroll, modo-7...
+    * **v.cpp**: funciones de vídeo de bajo nivel
+    * **d.cpp**: el debugger de DIV2, incluyendo toda la GUI (!)
+  * **div_stub**: El programa que hacía de "cabecera" para los EXE de DIV2. A éste se le concatenaba el bytecode del programa compilado y algunos datos para el intérprete. Lo único que hacía el EXE en sí era ejecutar DIV32RUN.DLL, pasándose a sí mismo como parámetro.
+  * **netlib**: Rutinas de red (originalmente era una DLL)
+  * **vpe**: Librería de Modo-8 (una versión modificada de [Virtual Presence Engine](http://www.ii.uib.no/~alexey/vpe/index.html))

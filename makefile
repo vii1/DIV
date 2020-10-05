@@ -66,6 +66,9 @@ MAKE=$+ $(MAKE) -h $-
 
 %STUB = $(ROOT)\src\wstub\$(%CONFIG)\wstub.exe
 
+.BEFORE
+	@if not exist build.dos mkdir build.dos
+
 all: d.exe d.386 session.div session.386 div32run.ins div32run.386 .SYMBOLIC
 
 d.exe: wstub .SYMBOLIC

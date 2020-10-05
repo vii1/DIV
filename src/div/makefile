@@ -60,7 +60,7 @@ SOURCES += visor\animated.cpp visor\complex.cpp visor\fileanim.cpp &
 	visor\sprite3d.cpp visor\visor.cpp t.asm
 #	visor\main.cpp
 !else
-SOURCES += nopentium.c
+SOURCES += div386.c
 !endif
 
 OBJS = $(SOURCES:.cpp=.obj)
