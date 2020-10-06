@@ -3,11 +3,11 @@ Reconstrucción y posible fork de DIV Games Studio 2.0
 
 Repositorio original: https://github.com/DIVGAMES/DIV-Games-Studio
 
-[¿Qué es esto?](#qué-es-esto)
-[¿Qué es DIV Games Studio?](#qué-es-div-games-studio)
-[Cómo compilar DIV](#cómo-compilar-div)
-[Problemas conocidos](#problemas-conocidos)
-[Descripción de archivos y carpetas](#descripción-de-archivos-y-carpetas)
+[¿Qué es esto?](#qué-es-esto)  
+[¿Qué es DIV Games Studio?](#qué-es-div-games-studio)  
+[Cómo compilar DIV](#cómo-compilar-div)  
+[Problemas conocidos](#problemas-conocidos)  
+[Descripción de archivos y carpetas](#descripción-de-archivos-y-carpetas)  
 
 ## ¿Qué es esto?
 Este proyecto pretende recuperar el código fuente del DIV Games Studio 2.0 original para MS-DOS, quizá aplicarle algún parche y mejora, y limpiarlo y ordenarlo un poco para que sea más fácil su estudio y aprender de él.
