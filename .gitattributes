@@ -1,20 +1,6 @@
-*.asm eol=crlf
-*.ASM eol=crlf
-*.c eol=crlf
-*.C eol=crlf
-*.cpp eol=crlf
-*.CPP eol=crlf
-*.h eol=crlf
-*.H eol=crlf
-*.hpp eol=crlf
-*.HPP eol=crlf
-*.div eol=crlf
-*.DIV eol=crlf
-*.mif eol=crlf
-*.MIF eol=crlf
-makefile eol=crlf
-MAKEFILE eol=crlf
-
+system/*.def eol=crlf
+system/lenguaje.* eol=crlf
+system/LENGUAJE.* eol=crlf
 
 # Don't mess with binary files
 *.lib binary
