@@ -44,7 +44,7 @@ ROOT=$+ $(%cdrive):$(%cwd) $-
 MAKE=$+ $(MAKE) -h $-
 %CONFIG=$(CONFIG)
 OUTDIR_BASE = build.dos
-%OUTDIR = $(ROOT)\$(OUTDIR_BASE)\$(CONFIG)
+%OUTDIR = $+ $(ROOT)\$(OUTDIR_BASE)\$(CONFIG) $-
 
 %ASM=$(ASM)
 %TASM_EXE = $(TASM_EXE)
@@ -130,6 +130,8 @@ install: all .SYMBOLIC
 	if not exist $(INSTALL_DIR)\fnt mkdir $(INSTALL_DIR)\fnt
 	if not exist $(INSTALL_DIR)\fpg mkdir $(INSTALL_DIR)\fpg
 	if not exist $(INSTALL_DIR)\genspr mkdir $(INSTALL_DIR)\genspr
+	for %i in (enano enano_a hombre hombre_a mujer mujer_a) do &
+		if not exist $(INSTALL_DIR)\genspr\%i mkdir $(INSTALL_DIR)\genspr\%i
 	if not exist $(INSTALL_DIR)\help mkdir $(INSTALL_DIR)\help
 	if not exist $(INSTALL_DIR)\ifs mkdir $(INSTALL_DIR)\ifs
 	if not exist $(INSTALL_DIR)\install mkdir $(INSTALL_DIR)\install
@@ -144,8 +146,18 @@ install: all .SYMBOLIC
 	$(COPY) $(%OUTDIR).586\d.exe $(INSTALL_DIR)
 	$(COPY) system\*.* $(INSTALL_DIR)\system
 	$(COPY) $(%OUTDIR).386\d.386 $(INSTALL_DIR)\system
+	$(COPY) $(%OUTDIR).586\session\session.div $(INSTALL_DIR)\system
+	$(COPY) $(%OUTDIR).386\session\session.386 $(INSTALL_DIR)\system
 	$(COPY) help\*.* $(INSTALL_DIR)\help
-	$(COPY) /S genspr\*.* $(INSTALL_DIR)\genspr
+	$(COPY) genspr\*.* $(INSTALL_DIR)\genspr
+	for %i in (enano enano_a hombre hombre_a mujer mujer_a) do &
+		$(COPY) genspr\%i\*.* $(INSTALL_DIR)\genspr\%i
+	$(COPY) dll\*.* $(INSTALL_DIR)\dll
+	$(COPY) install\*.* $(INSTALL_DIR)\install
+	$(COPY) $(%OUTDIR).586\div32run\div32run.ins $(INSTALL_DIR)\install
+	$(COPY) $(%OUTDIR).386\div32run\div32run.386 $(INSTALL_DIR)\install
+	$(COPY) setup\*.* $(INSTALL_DIR)\setup
+	for %i in (LICENSE README.md) do $(COPY) %i $(INSTALL_DIR)
 	if exist $(INSTALL_DIR)\system\setup.bin del $(INSTALL_DIR)\system\setup.bin
 	if exist $(INSTALL_DIR)\system\session.dtf del $(INSTALL_DIR)\system\session.dtf
 	if exist $(INSTALL_DIR)\system\user.nfo del $(INSTALL_DIR)\system\user.nfo

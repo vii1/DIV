@@ -110,20 +110,20 @@ $(%STUB): ..\wstub\makefile ..\wstub\wstub.c ..\cpuid.asm
 #.cpp: source;vbe;netlib
 #.asm: source
 
-.obj: $(OUTDIR)
-#.obj: $(OUTDIR);$(OUTDIR)\netlib;$(OUTDIR)\vpe
+#.obj: $(OUTDIR)
+.obj: $(OUTDIR);$(OUTDIR)\netlib;$(OUTDIR)\vpe
 
 .c.obj:
-	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)\$^@ -fr=$(OUTDIR)\$^* $<
+	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)\$^:$^. -fr=$(OUTDIR)\$^:$^& $<
 
 .cpp.obj:
-	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)\$^@ -fr=$(OUTDIR)\$^* $<
+	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)\$^:$^. -fr=$(OUTDIR)\$^:$^& $<
 
 .asm.obj:
 !ifeqi %ASM WASM
-	*$(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^@ -fr=$(OUTDIR)\$^* $<
+	*$(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^:$^. -fr=$(OUTDIR)\$^:$^& $<
 !else
-	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^@
+	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^:$^.
 !endif
 #vesa.obj: vesa.asm
 #!ifeqi %ASM WASM
