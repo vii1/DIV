@@ -1,10 +1,12 @@
 # ¿Qué hay en esta carpeta?
 
-Entre las dependencias de DIV se encuentran varias que, deduzco, salieron de un conjunto de librerías de SciTech llamado MGL, un kit pensado para el desarrollo de aplicaciones gráficas profesionales.
+Entre las dependencias de DIV se encuentran varias que al principio pensé que salieron de un conjunto de librerías de SciTech llamado MGL, un enorme kit para crear aplicaciones gráficas. Ahora creo que usaron otro más pequeño, el SVGA Kit, de la misma compañía, que fue incorporado a MGL posteriormente.
 
-Buscando en Internet pude descargar la versión 4.05 (aunque probablemente Hammer Technologies usó la 3.0). Me decidí por esta versión porque parece ser que en la versión 5 quitaron cosas que requiere DIV, como el SVGAKIT. Como MGL es un kit muy grande y complejo, en esta carpeta pretendo incluir únicamente lo esencial para compilar y mejorar DIV.
+DIV originalmente usaba una versión de SVGA Kit de 1995, pero la versión más antigua que pude encontrar en Internet fue la 6.0, de 1996. Parece ser que esta versión introducía cambios importantes que la hacían incompatible a nivel de código, pero con unos pocos cambios pude adaptar DIV para que funcionara con ella. SVGA Kit incluía diversos programas, utilidades y demos, pero creo que no son necesarios para desarrollar DIV así que no los he incluido en este repositorio.
 
-La forma oficial de compilar MGL es mediante un programa llamado DMAKE, que es un "meta-make" pensado para funcionar con diversos compiladores. DMAKE lee el makefile original y lo traduce al make del compilador destino. Sin embargo no he encontrado por ninguna parte el código fuente de DMAKE, por lo que prefiero prescindir de él y traducir los makefiles necesarios al formato de Watcom.
+La forma oficial de compilar SVGA Kit es mediante un programa llamado DMAKE, una versión mejorada de MAKE. SVGA Kit incorporaba una serie de scripts que permitían compilar las librerías con diversos compiladores. Para simplificar el proceso, he prescindido de esos scripts y directamente he incluido makefiles para Watcom adaptados al proceso de compilación de DIV, con el nombre `makefile.wat`.
+
+**Nota:** Al igual que con las demás librerías de terceros, SVGA Kit se proporciona ya compilada en este repositorio. Para recompilarla se requiere [Turbo Assembler](https://github.com/vii1/DIV/wiki/Acerca-de-Turbo-Assembler).
 
 ## Acerca de SciTech Software
 
