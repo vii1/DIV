@@ -32,9 +32,9 @@ ASM = WASM
 TASM_EXE = tasm32.exe
 
 # El comando que se usar  para copiar cosas con ``wmake install``.
-# Quiz  no te guste xcopy o quieras cambiar las opciones
 # (/Y sirve para sobreescribir archivos sin pedir confirmaci¢n).
-COPY = xcopy /Y
+#COPY = xcopy /Y
+COPY = copy /Y
 
 ############################
 # FIN DE COSAS CONFIGURABLES

@@ -5,7 +5,7 @@
 !endif
 
 !ifndef COPY
-COPY = xcopy /y
+COPY = copy /y
 !endif
 !ifndef TOUCH
 TOUCH = wtouch -c
