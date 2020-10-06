@@ -5,3 +5,7 @@ system/LENGUAJE.* eol=crlf
 # Don't mess with binary files
 *.lib binary
 *.LIB binary
+*.exe binary
+*.EXE binary
+*.com binary
+*.COM binary
