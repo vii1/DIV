@@ -9,7 +9,7 @@
 #include <string.h>
 #include <mem.h>
 #include <conio.h>
-#include "judas\judas.h"
+#include "judas/judas.h"
 
 void dspwrite ( unsigned char );
 unsigned char dspread ( void );

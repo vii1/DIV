@@ -157,7 +157,7 @@ install: all .SYMBOLIC
 	if not exist $(INSTALL_DIR)$(SEP)wav mkdir $(INSTALL_DIR)$(SEP)wav
 	if not exist $(INSTALL_DIR)$(SEP)wld mkdir $(INSTALL_DIR)$(SEP)wld
 	$(COPY) $(%OUTDIR).586$(SEP)d.exe $(INSTALL_DIR)
-	$(COPY) system$(SEP)*.* $(INSTALL_DIR$(SEP)system
+	$(COPY) system$(SEP)*.* $(INSTALL_DIR)$(SEP)system
 	$(COPY) $(%OUTDIR).386$(SEP)d.386 $(INSTALL_DIR)$(SEP)system
 	$(COPY) $(%OUTDIR).586$(SEP)session$(SEP)session.div $(INSTALL_DIR)$(SEP)system
 	$(COPY) $(%OUTDIR).386$(SEP)session$(SEP)session.386 $(INSTALL_DIR)$(SEP)system

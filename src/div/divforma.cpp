@@ -8,8 +8,8 @@
 #ifdef  __cplusplus
 extern "C" {
 #endif
-  #include "jpeglib\jpeglib.h"
-  #include "jpeglib\cdjpeg.h"
+  #include "jpeglib/jpeglib.h"
+  #include "jpeglib/cdjpeg.h"
 #ifdef  __cplusplus
 }
 #endif

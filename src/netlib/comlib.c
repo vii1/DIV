@@ -4,8 +4,8 @@
 #include <conio.h>
 #include <string.h>
 #include "net.h"
-#include "COMlib.H"
-#include "COMM.H"
+#include "comlib.h"
+#include "comm.h"
 
 Paquete paquete_in, paquete_out;        /* Paquetes emisi¢n-recepci¢n */
 

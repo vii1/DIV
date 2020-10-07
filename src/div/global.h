@@ -28,8 +28,8 @@
 #include "divmap3d.hpp"
 
   // OJO !!! JUDAS !!!
-#include "judas\judas.h"
-#include "judas\timer.h"
+#include "judas/judas.h"
+#include "judas/timer.h"
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 //      Constantes definidas a nivel de aplicaci줻

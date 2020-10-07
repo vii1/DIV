@@ -10,7 +10,7 @@
 #include <time.h>
 
 #include "net.h"
-#include "div32run\inter.h"
+#include "div32run/inter.h"
 
 #define NET_TIMEOUT 1
 #define NET_NOTINIT -1

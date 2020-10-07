@@ -6,7 +6,7 @@
 !ifdef __UNIX__
 SEP = /
 !else
-SEP = '\\'
+SEP = '$(SEP)$(SEP)'
 !endif
 !endif
 
@@ -64,16 +64,16 @@ SOURCES += vesa.asm
 
 #	divfrm.cpp mem.cpp
 # VPE (modo-8) esto es para el int‚rprete!
-#SOURCES += vpe\draw_cw.cpp vpe\draw_f.cpp vpe\draw_o.cpp vpe\draw_sw.cpp vpe\fixed.cpp vpe\gfx.cpp vpe\globals.cpp &
-#	vpe\hard.cpp vpe\load.cpp vpe\mem.cpp vpe\object.cpp vpe\scan.cpp vpe\update.cpp vpe\view.cpp vpe\vpe.cpp &
-#	vpe\vpedll.cpp vpe\zone.cpp
+#SOURCES += vpe$(SEP)draw_cw.cpp vpe$(SEP)draw_f.cpp vpe$(SEP)draw_o.cpp vpe$(SEP)draw_sw.cpp vpe$(SEP)fixed.cpp vpe$(SEP)gfx.cpp vpe$(SEP)globals.cpp &
+#	vpe$(SEP)hard.cpp vpe$(SEP)load.cpp vpe$(SEP)mem.cpp vpe$(SEP)object.cpp vpe$(SEP)scan.cpp vpe$(SEP)update.cpp vpe$(SEP)view.cpp vpe$(SEP)vpe.cpp &
+#	vpe$(SEP)vpedll.cpp vpe$(SEP)zone.cpp
 
 !ifeq CPU 586
 # VISOR (generador de sprites) s¢lo para pentium
-SOURCES += visor\animated.cpp visor\complex.cpp visor\fileanim.cpp &
-	visor\global.cpp visor\hlrender.cpp visor\llrender.cpp visor\resource.cpp &
-	visor\sprite3d.cpp visor\visor.cpp t.asm
-#	visor\main.cpp
+SOURCES += visor$(SEP)animated.cpp visor$(SEP)complex.cpp visor$(SEP)fileanim.cpp &
+	visor$(SEP)global.cpp visor$(SEP)hlrender.cpp visor$(SEP)llrender.cpp visor$(SEP)resource.cpp &
+	visor$(SEP)sprite3d.cpp visor$(SEP)visor.cpp t.asm
+#	visor$(SEP)main.cpp
 !else
 SOURCES += div386.c
 !endif
@@ -95,7 +95,7 @@ INCLUDE += -I..
 
 $(EXE): $(OUTDIR)$(SEP)$(EXE) .SYMBOLIC
 
-$(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
+$(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) $(%STUB)
 	*wlink &
 		system dos4g &
 		name $(OUTDIR)$(SEP)$^. &
@@ -130,23 +130,23 @@ $(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
 !endif
 #vesa.obj: vesa.asm
 #!ifeqi %ASM WASM
-#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 #!else
-#	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^.
+#	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)$(SEP)$^.
 #!endif
 #
 #timer.obj: timer.asm
 #!ifeqi %ASM WASM
-#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 #!else
-#	$(TASM) $(TASM_OPTIONS) /m $<,$(OUTDIR)\$^.
+#	$(TASM) $(TASM_OPTIONS) /m $<,$(OUTDIR)$(SEP)$^.
 #!endif
 #
 #a.obj: a.asm
-#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 #
-#visor\t.obj: visor\t.asm
-#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#visor$(SEP)t.obj: visor$(SEP)t.asm
+#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 
 # TODO ESTO HACE FALTA REALMENTE
 !ifdef %STUB
@@ -161,8 +161,8 @@ clean: .SYMBOLIC
 	@if exist $(OUTDIR)$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)*.err
 	@if exist $(OUTDIR)$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)*.obj
 	@if exist $(OUTDIR)$(SEP)*.exe $(DELETE) $(OUTDIR)$(SEP)*.exe
-#	@if exist $(OUTDIR)\vpe\*.err $(DELETE) $(OUTDIR)\vpe\*.err
-#	@if exist $(OUTDIR)\vpe\*.obj $(DELETE) $(OUTDIR)\vpe\*.obj
+#	@if exist $(OUTDIR)$(SEP)vpe$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)vpe$(SEP)*.err
+#	@if exist $(OUTDIR)$(SEP)vpe$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)vpe$(SEP)*.obj
 !ifeq CPU 586
 	@if exist $(OUTDIR)$(SEP)visor$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)visor$(SEP)*.err
 	@if exist $(OUTDIR)$(SEP)visor$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)visor$(SEP)*.obj

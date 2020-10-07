@@ -1,7 +1,7 @@
 #ifndef __IPXLIB_H
 #define __IPXLIB_H
 
-#include "DPMI_NET.H"
+#include "dpmi_net.h"
 
 #ifdef __cplusplus
 extern "C" {

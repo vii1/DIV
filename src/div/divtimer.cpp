@@ -8,7 +8,7 @@
 #include <conio.h>
 #include <dos.h>
 #include <mem.h>
-#include "judas\judasmem.h"
+#include "judas/judasmem.h"
 
 int timer_init(unsigned short frequency, void (*function)());
 void timer_uninit(void);

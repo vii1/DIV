@@ -1,5 +1,5 @@
 #include "global.h"
-#include "FPGFILE.HPP"
+#include "fpgfile.hpp"
 
 HeadFPG HeadFPGArrastre;
 int RetValue=0;

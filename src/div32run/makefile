@@ -9,7 +9,7 @@
 !ifdef __UNIX__
 SEP = /
 !else
-SEP = '\\'
+SEP = '$(SEP)$(SEP)'
 !endif
 !endif
 
@@ -44,7 +44,7 @@ MAKE=$(MAKE) -h
 WASM=$(%WASM_EXE)
 TASM=$(%TASM_EXE)
 WASM_OPTIONS=$(%WASM_OPTIONS)
-TASM_OPTIONS=$(%TASM_OPTIONS) /i..\vpe /jMASM
+TASM_OPTIONS=$(%TASM_OPTIONS)
 
 !ifeq CPU 586
 %OPTIONS += -5r -fp5
@@ -68,15 +68,15 @@ SOURCES += d.cpp
 !endif
 
 # VPE (modo-8)
-SOURCES += vpe\draw_cw.cpp vpe\draw_f.cpp vpe\draw_o.cpp vpe\draw_sw.cpp &
-	vpe\fixed.cpp vpe\gfx.cpp vpe\globals.cpp vpe\hard.cpp vpe\load.cpp &
-	vpe\mem.cpp vpe\object.cpp vpe\scan.cpp vpe\update.cpp vpe\view.cpp &
-	vpe\vpe.cpp vpe\zone.cpp vpe\draw_fa.asm vpe\draw_oa.asm vpe\draw_wa.asm &
-	vpe\vpedll.cpp
+SOURCES += vpe$(SEP)draw_cw.cpp vpe$(SEP)draw_f.cpp vpe$(SEP)draw_o.cpp vpe$(SEP)draw_sw.cpp &
+	vpe$(SEP)fixed.cpp vpe$(SEP)gfx.cpp vpe$(SEP)globals.cpp vpe$(SEP)hard.cpp vpe$(SEP)load.cpp &
+	vpe$(SEP)mem.cpp vpe$(SEP)object.cpp vpe$(SEP)scan.cpp vpe$(SEP)update.cpp vpe$(SEP)view.cpp &
+	vpe$(SEP)vpe.cpp vpe$(SEP)zone.cpp vpe$(SEP)draw_fa.asm vpe$(SEP)draw_oa.asm vpe$(SEP)draw_wa.asm &
+	vpe$(SEP)vpedll.cpp
 
 # NETLIB (red)
-SOURCES += netlib\red.cpp netlib\net.c netlib\comlib.c netlib\comm.c &
-	netlib\ipxlib.c netlib\dpmi_net.c
+SOURCES += netlib$(SEP)red.cpp netlib$(SEP)net.c netlib$(SEP)comlib.c netlib$(SEP)comm.c &
+	netlib$(SEP)ipxlib.c netlib$(SEP)dpmi_net.c
 
 OBJS = $(SOURCES:.cpp=.obj)
 OBJS = $(OBJS:.c=.obj)
@@ -92,10 +92,10 @@ INCLUDE += -I..
 	@if not exist $(OUTDIR)$(SEP)netlib mkdir $(OUTDIR)$(SEP)netlib
 	@if not exist $(OUTDIR)$(SEP)vpe mkdir $(OUTDIR)$(SEP)vpe
 
-$(EXE): $(OUTDIR)\$(EXE) .SYMBOLIC
+$(EXE): $(OUTDIR)$(SEP)$(EXE) .SYMBOLIC
 	@%null
 
-$(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
+$(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) $(%STUB)
 	*wlink &
 		system $(SYSTEM) &
 		name $(OUTDIR)$(SEP)$^. &
@@ -114,9 +114,9 @@ $(%STUB): ..$(SEP)wstub$(SEP)makefile ..$(SEP)wstub$(SEP)wstub.c ..$(SEP)cpuid.a
 	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CONFIG=$(%CONFIG)
 	cd ..$(SEP)div32run
 
-.asm: .;..;..\vpe
-.c: .;..\netlib
-.cpp: .;..\vpe;..\netlib
+.asm: .;..;..$(SEP)vpe
+.c: .;..$(SEP)netlib
+.cpp: .;..$(SEP)vpe;..$(SEP)netlib
 #.c: source;vbe
 #.cpp: source;vbe;netlib
 #.asm: source
@@ -138,23 +138,23 @@ $(%STUB): ..$(SEP)wstub$(SEP)makefile ..$(SEP)wstub$(SEP)wstub.c ..$(SEP)cpuid.a
 !endif
 #vesa.obj: vesa.asm
 #!ifeqi %ASM WASM
-#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 #!else
-#	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^.
+#	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)$(SEP)$^.
 #!endif
 #
 #timer.obj: timer.asm
 #!ifeqi %ASM WASM
-#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 #!else
-#	$(TASM) $(TASM_OPTIONS) /m $<,$(OUTDIR)\$^.
+#	$(TASM) $(TASM_OPTIONS) /m $<,$(OUTDIR)$(SEP)$^.
 #!endif
 #
 #a.obj: a.asm
-#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 #
-#visor\t.obj: visor\t.asm
-#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#visor$(SEP)t.obj: visor$(SEP)t.asm
+#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 
 clean: .SYMBOLIC
 	@if exist $(OUTDIR)$(DEL)*.err $(DELETE) $(OUTDIR)$(DEL)*.err
