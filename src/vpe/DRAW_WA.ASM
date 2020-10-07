@@ -1,4 +1,5 @@
 	.386P
+	.MODEL FLAT
 
 include vpe.inc
 include wloop.inc

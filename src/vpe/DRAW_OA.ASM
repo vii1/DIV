@@ -1,5 +1,6 @@
 	.386P
-
+	.MODEL FLAT
+	
 include vpe.inc
 include oloop.inc
 include omloop.inc
