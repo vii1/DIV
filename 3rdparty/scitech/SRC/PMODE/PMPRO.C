@@ -1479,7 +1479,7 @@ static void restoreISR(int intno, PMFARPTR pmisr, long realisr)
 	PM_restorePMvect(intno,pmisr);
 }
 
-static void setISR(int intno, void (* PMAPI pmisr)())
+static void setISR(int intno, PM_intHandler pmisr)
 {
 	lockPMHandlers();			/* Ensure our handlers are locked	*/
 	PM_setPMvect(intno,pmisr);

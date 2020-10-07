@@ -3,9 +3,8 @@ CC = $(%CC)
 TASM=$(%TASM_EXE)
 ASM=$(%ASM)
 %INCLUDE += INCLUDE;$(SCITECH)\INCLUDE
-C_FLAGS = -zq-j-w2-s -fh -fhq -onaslmr-5r -DDOS4GW
-TASM_FLAGS = /t /mx /m /D__FLAT__ /DSTDCALL_MANGLE /iINCLUDE &
-	/i$(SCITECH)\INCLUDE /q -DDOS4GW -I$(SCITECH)\include\pmode
+C_FLAGS = -zq-w2-s-fh -fhq -DDOS4GW -D_SVGAKIT -D_SVGAKIT
+TASM_FLAGS = /t /mx /m /D__FLAT__ /i$(SCITECH)\INCLUDE /q -DDOS4GW
 SOURCES = pmlite.c pmpro.c vflat.c _pmlite.asm _pmpro.asm _vflat.asm
 OBJS = $(SOURCES:.c=.obj)
 OBJS = $(OBJS:.asm=.obj)

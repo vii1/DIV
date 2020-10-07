@@ -3,11 +3,10 @@ CC = $(%CC)
 TASM=$(%TASM_EXE)
 ASM=$(%ASM)
 %INCLUDE += INCLUDE;$(SCITECH)\INCLUDE
-C_FLAGS = -zq-j-w2-s -fh -fhq -onaslmr-5r -DDOS4GW
-TASM_FLAGS = /t /mx /m /D__FLAT__ /DSTDCALL_MANGLE /iINCLUDE &
-	/i$(SCITECH)\INCLUDE /q -DDOS4GW -I$(SCITECH)\include\svgakit
-SOURCES = vesavbe.c svgasdk.c vbeaf.c font8x16.c vgapal.c gtfcalc.c event.c &
-	maskcode.c cpu.asm _svgasdk.asm _linsdk.asm _vbeaf.asm _event.asm
+C_FLAGS = -zq-w2-s-fh -fhq -DDOS4GW -D_SVGAKIT
+TASM_FLAGS = /t /mx /m /D__FLAT__ /i$(SCITECH)\INCLUDE /q -DDOS4GW
+SOURCES = vesavbe.c svgasdk.c _svgasdk.asm _linsdk.asm font8x16.asm cpu.asm &
+		  vgapal.c vbeaf.c _vbeaf.asm
 OBJS = $(SOURCES:.c=.obj)
 OBJS = $(OBJS:.asm=.obj)
 

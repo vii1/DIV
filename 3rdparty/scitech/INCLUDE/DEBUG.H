@@ -191,10 +191,11 @@ extern main();
 #ifndef __GENDEFS
 #define __GENDEFS
 //#ifndef __DIVTYPES      // Para evitar colisi¢n con global.h
-//typedef unsigned char   uchar;
-//typedef unsigned short  ushort;
-//typedef unsigned long   ulong;
-//#endif
+#ifdef _SVGAKIT
+typedef unsigned char   uchar;
+typedef unsigned short  ushort;
+typedef unsigned long   ulong;
+#endif
 typedef unsigned int    uint;
 #ifndef	CLASSLIB_DEFS_H
 typedef int             bool;
