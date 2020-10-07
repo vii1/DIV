@@ -5,16 +5,26 @@
 # juego. Pero a£n no es la versi¢n redistribuible, ya que al generar el
 # instalador se le agrega la tabla de textos traducidos.
 
-!ifndef ROOT
-ROOT=..\..
+!ifndef SEP
+!ifdef __UNIX__
+SEP = /
+!else
+SEP = '\\'
 !endif
+!endif
+
+!ifndef ROOT
+ROOT=..$(SEP)..
+!endif
+
+!include $(ROOT)$(SEP)os.mif
 
 #%OPTIONS += -fti
 
 !ifeq SESSION 1
 %OPTIONS += -DDEBUG
 SYSTEM=dos4g
-OUTDIR = $(%OUTDIR).$(CPU)\session
+OUTDIR = $(%OUTDIR).$(CPU)$(SEP)session
 !ifeq CPU 586
 EXE=session.div
 !else
@@ -22,7 +32,7 @@ EXE=session.386
 !endif
 !else
 SYSTEM=pmodew
-OUTDIR = $(%OUTDIR).$(CPU)\div32run
+OUTDIR = $(%OUTDIR).$(CPU)$(SEP)div32run
 !ifeq CPU 586
 EXE=div32run.ins
 !else
@@ -45,7 +55,7 @@ WASM_OPTIONS = -3r -fpc -mf
 !endif
 
 INC_NOTARGETS=1
-!include $(ROOT)\3rdparty.mif
+!include $(ROOT)$(SEP)3rdparty.mif
 !undef INC_NOTARGETS
 
 SOURCES = i.cpp f.cpp c.cpp s.cpp v.cpp a.asm divfli.cpp cdrom.cpp &
@@ -79,8 +89,8 @@ INCLUDE += -I..
 .BEFORE
 	@if not exist $(%OUTDIR).$(CPU) mkdir $(%OUTDIR).$(CPU)
 	@if not exist $(OUTDIR) mkdir $(OUTDIR)
-	@if not exist $(OUTDIR)\netlib mkdir $(OUTDIR)\netlib
-	@if not exist $(OUTDIR)\vpe mkdir $(OUTDIR)\vpe
+	@if not exist $(OUTDIR)$(SEP)netlib mkdir $(OUTDIR)$(SEP)netlib
+	@if not exist $(OUTDIR)$(SEP)vpe mkdir $(OUTDIR)$(SEP)vpe
 
 $(EXE): $(OUTDIR)\$(EXE) .SYMBOLIC
 	@%null
@@ -88,20 +98,21 @@ $(EXE): $(OUTDIR)\$(EXE) .SYMBOLIC
 $(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
 	*wlink &
 		system $(SYSTEM) &
-		name $(OUTDIR)\$^. &
+		name $(OUTDIR)$(SEP)$^. &
 !ifeqi %CONFIG debug
 		debug all &
 !endif
 		option stack=64k &
-		option map=$(OUTDIR)\$^& &
+		option map=$(OUTDIR)$(SEP)$^& &
 		path $(OUTDIR) &
 		file { $(OBJS) } &
 		libfile { $(LIBS) }
 
-$(%STUB): ..\wstub\makefile ..\wstub\wstub.c ..\cpuid.asm
-	cd ..\wstub
-	$(MAKE) CONFIG=$(%CONFIG)
-	cd ..\div32run
+# TODO HACE falta esto realmente aqui
+$(%STUB): ..$(SEP)wstub$(SEP)makefile ..$(SEP)wstub$(SEP)wstub.c ..$(SEP)cpuid.asm
+	cd ..$(SEP)wstub
+	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CONFIG=$(%CONFIG)
+	cd ..$(SEP)div32run
 
 .asm: .;..;..\vpe
 .c: .;..\netlib
@@ -111,19 +122,19 @@ $(%STUB): ..\wstub\makefile ..\wstub\wstub.c ..\cpuid.asm
 #.asm: source
 
 #.obj: $(OUTDIR)
-.obj: $(OUTDIR);$(OUTDIR)\netlib;$(OUTDIR)\vpe
+.obj: $(OUTDIR);$(OUTDIR)$(SEP)netlib;$(OUTDIR)$(SEP)vpe
 
 .c.obj:
-	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)\$^:$^. -fr=$(OUTDIR)\$^:$^& $<
+	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)$(SEP)$^:$^. -fr=$(OUTDIR)$(SEP)$^:$^& $<
 
 .cpp.obj:
-	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)\$^:$^. -fr=$(OUTDIR)\$^:$^& $<
+	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)$(SEP)$^:$^. -fr=$(OUTDIR)$(SEP)$^:$^& $<
 
 .asm.obj:
 !ifeqi %ASM WASM
-	*$(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^:$^. -fr=$(OUTDIR)\$^:$^& $<
+	*$(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^:$^. -fr=$(OUTDIR)$(SEP)$^:$^& $<
 !else
-	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^:$^.
+	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)$(SEP)$^:$^.
 !endif
 #vesa.obj: vesa.asm
 #!ifeqi %ASM WASM
@@ -146,12 +157,12 @@ $(%STUB): ..\wstub\makefile ..\wstub\wstub.c ..\cpuid.asm
 #	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
 
 clean: .SYMBOLIC
-	@if exist $(OUTDIR)\*.err del $(OUTDIR)\*.err
-	@if exist $(OUTDIR)\*.obj del $(OUTDIR)\*.obj
-	@if exist $(OUTDIR)\*.exe del $(OUTDIR)\*.exe
-	@if exist $(OUTDIR)\vpe\*.err del $(OUTDIR)\vpe\*.err
-	@if exist $(OUTDIR)\vpe\*.obj del $(OUTDIR)\vpe\*.obj
+	@if exist $(OUTDIR)$(DEL)*.err $(DELETE) $(OUTDIR)$(DEL)*.err
+	@if exist $(OUTDIR)$(DEL)*.obj $(DELETE) $(OUTDIR)$(DEL)*.obj
+	@if exist $(OUTDIR)$(DEL)*.exe $(DELETE) $(OUTDIR)$(DEL)*.exe
+	@if exist $(OUTDIR)$(DEL)vpe$(DEL)*.err $(DELETE) $(OUTDIR)$(DEL)vpe$(DEL)*.err
+	@if exist $(OUTDIR)$(DEL)vpe$(DEL)*.obj $(DELETE) $(OUTDIR)$(DEL)vpe$(DEL)*.obj
 
 INC_NOVARS=1
-!include $(ROOT)\3rdparty.mif
+!include $(ROOT)$(SEP)3rdparty.mif
 !undef INC_NOVARS

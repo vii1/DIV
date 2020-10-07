@@ -2,13 +2,24 @@
 # CPU=586 genera D.EXE
 # CPU=386 genera D.386
 
-!ifndef ROOT
-ROOT=..\..
+!ifndef SEP
+!ifdef __UNIX__
+SEP = /
+!else
+SEP = '\\'
 !endif
+!endif
+
+!ifndef ROOT
+ROOT=..$(SEP)..
+!endif
+
 !ifndef %OUTDIR
-%OUTDIR = $(ROOT)\build.dos\$(CONFIG)
+%OUTDIR = $(ROOT)$(SEP)build.dos$(SEP)$(CONFIG)
 !endif
 OUTDIR = $(%OUTDIR).$(CPU)
+
+!include $(ROOT)$(SEP)os.mif
 
 MAKE=$+ $(MAKE) -h $-
 WASM=$(%WASM_EXE)
@@ -17,6 +28,7 @@ WASM_OPTIONS=$(%WASM_OPTIONS)
 TASM_OPTIONS=$(%TASM_OPTIONS)
 
 !ifeq CPU 586
+
 %OPTIONS += -5r -fp5
 WASM_OPTIONS = -5r -fp5
 EXE = d.exe
@@ -25,15 +37,18 @@ OP_STUB = option nostub
 !else
 OP_STUB = option stub=$(%STUB)
 !endif
+
 !else
+
 %OPTIONS += -3r -fpc
 WASM_OPTIONS = -3r -fpc
 EXE = d.386
 OP_STUB = option nostub
+
 !endif
 
 INC_NOTARGETS=1
-!include $(ROOT)\3rdparty.mif
+!include $(ROOT)$(SEP)3rdparty.mif
 !undef INC_NOTARGETS
 
 SOURCES = cdrom.cpp det_vesa.cpp div.cpp divasm.cpp divbasic.cpp divbin.cpp &
@@ -74,21 +89,21 @@ INCLUDE += -I..
 .BEFORE
 	@if not exist $(OUTDIR) mkdir $(OUTDIR)
 !ifeq CPU 586
-	@if not exist $(OUTDIR)\visor mkdir $(OUTDIR)\visor
+	@if not exist $(OUTDIR)$(SEP)visor mkdir $(OUTDIR)$(SEP)visor
 !endif
-#	@if not exist $(OUTDIR)\vpe mkdir $(OUTDIR)\vpe
+#	@if not exist $(OUTDIR)$(SEP)vpe mkdir $(OUTDIR)$(SEP)vpe
 
-$(EXE): $(OUTDIR)\$(EXE) .SYMBOLIC
+$(EXE): $(OUTDIR)$(SEP)$(EXE) .SYMBOLIC
 
 $(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
 	*wlink &
 		system dos4g &
-		name $(OUTDIR)\$^. &
+		name $(OUTDIR)$(SEP)$^. &
 !ifeqi %CONFIG debug
 		debug all &
 !endif
 		$(OP_STUB) &
-		option map=$(OUTDIR)\$^& &
+		option map=$(OUTDIR)$(SEP)$^& &
 		path $(OUTDIR) &
 		file { $(OBJS) } &
 		libfile { $(LIBS) }
@@ -99,19 +114,19 @@ $(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
 #.cpp: .;visor;vpe;source
 #.asm: .;source;visor
 
-.obj: $(OUTDIR);$(OUTDIR)\visor
+.obj: $(OUTDIR);$(OUTDIR)$(SEP)visor
 
 .c.obj:
-	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)\$[:$^. -fr=$(OUTDIR)\$[:$^& $<
+	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)$(SEP)$[:$^. -fr=$(OUTDIR)$(SEP)$[:$^& $<
 
 .cpp.obj:
-	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)\$[:$^. -fr=$(OUTDIR)\$[:$^& $<
+	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)$(SEP)$[:$^. -fr=$(OUTDIR)$(SEP)$[:$^& $<
 
 .asm.obj:
 !ifeqi %ASM WASM
-	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 !else
-	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^.
+	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)$(SEP)$^.
 !endif
 #vesa.obj: vesa.asm
 #!ifeqi %ASM WASM
@@ -133,31 +148,32 @@ $(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
 #visor\t.obj: visor\t.asm
 #	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
 
+# TODO ESTO HACE FALTA REALMENTE
 !ifdef %STUB
 $(%STUB):
 	@%make savedir
-	cd $(ROOT)\src\wstub
+	cd $(ROOT)$(SEP)src$(SEP)wstub
 	! $(MAKE) ROOT=$(ROOT) CONFIG=$(%CONFIG)
 	@%make loaddir
 !endif
 
 clean: .SYMBOLIC
-	@if exist $(OUTDIR)\*.err del $(OUTDIR)\*.err
-	@if exist $(OUTDIR)\*.obj del $(OUTDIR)\*.obj
-	@if exist $(OUTDIR)\*.exe del $(OUTDIR)\*.exe
-#	@if exist $(OUTDIR)\vpe\*.err del $(OUTDIR)\vpe\*.err
-#	@if exist $(OUTDIR)\vpe\*.obj del $(OUTDIR)\vpe\*.obj
+	@if exist $(OUTDIR)$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)*.err
+	@if exist $(OUTDIR)$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)*.obj
+	@if exist $(OUTDIR)$(SEP)*.exe $(DELETE) $(OUTDIR)$(SEP)*.exe
+#	@if exist $(OUTDIR)\vpe\*.err $(DELETE) $(OUTDIR)\vpe\*.err
+#	@if exist $(OUTDIR)\vpe\*.obj $(DELETE) $(OUTDIR)\vpe\*.obj
 !ifeq CPU 586
-	@if exist $(OUTDIR)\visor\*.err del $(OUTDIR)\visor\*.err
-	@if exist $(OUTDIR)\visor\*.obj del $(OUTDIR)\visor\*.obj
+	@if exist $(OUTDIR)$(SEP)visor$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)visor$(SEP)*.err
+	@if exist $(OUTDIR)$(SEP)visor$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)visor$(SEP)*.obj
 !endif
-	@%make savedir
-	cd $(ROOT)\src\wstub
-	! $(MAKE) CONFIG=$(%CONFIG) clean
-	@%make loaddir
+# 	@%make savedir
+# 	cd $(ROOT)$(SEP)src$(SEP)wstub
+# 	! $(MAKE) CONFIG=$(%CONFIG) clean
+# 	@%make loaddir
 
 INC_NOVARS=1
-!include $(ROOT)\3rdparty.mif
+!include $(ROOT)$(SEP)3rdparty.mif
 !undef INC_NOVARS
 
-!include $(ROOT)\common.mif
+!include $(ROOT)$(SEP)common.mif
