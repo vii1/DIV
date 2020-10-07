@@ -2,10 +2,14 @@
 !error Se requiere la macro ROOT
 !endif
 
+!ifndef SEP
+!error Se requiere la macro SEP
+!endif
+
 !ifndef INC_NOVARS
 
-ZLIB_LIB = $(ROOT)\3rdparty\lib\zlib_f.lib
-ZLIB_DIR = $(ROOT)\3rdparty\zlib
+ZLIB_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)zlib_f.lib
+ZLIB_DIR = $(ROOT)$(SEP)3rdparty$(SEP)zlib
 INCLUDE += -I$(ZLIB_DIR)
 
 !endif #INC_NOVARS
@@ -15,14 +19,14 @@ INCLUDE += -I$(ZLIB_DIR)
 $(ZLIB_LIB): lib3p_dir .EXISTSONLY
 	@%make savedir
 	cd $(ZLIB_DIR)
-	! $(MAKE) -f watcom\watcom_f.mak $^.
+	! $(MAKE) -f watcom$(SEP)watcom_f.mak $^.
 	$(COPY) $^. $^:
 	@%make loaddir
 
 clean_zlib: .SYMBOLIC
 	@%make savedir
 	cd $(ZLIB_DIR)
-	! $(MAKE) -f watcom\watcom_f.mak clean
+	! $(MAKE) -f watcom$(SEP)watcom_f.mak clean
 	@%make loaddir
 
 !endif #INC_NOTARGETS

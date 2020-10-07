@@ -5,7 +5,7 @@
 !ifndef INC_NOVARS
 
 JUDAS_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)judas.lib
-JUDAS_DIR = $(ROOT)$(SEP)3rdparty$(SEP)JUDAS
+JUDAS_DIR = $(ROOT)$(SEP)3rdparty$(SEP)judas
 #INCLUDE += -I$(JUDAS_DIR)
 
 !endif #INC_NOVARS
