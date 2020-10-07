@@ -32,7 +32,7 @@ SEP = /
 COPY = copy /Y
 # (/Y sirve para sobreescribir archivos sin pedir confirmaci¢n).
 DELETE = del
-SEP = '\\'
+SEP = \
 
 !endif
 
