@@ -171,10 +171,10 @@ install: all .SYMBOLIC
 	$(COPY) $(%OUTDIR).386$(SEP)div32run$(SEP)div32run.386 $(INSTALL_DIR)$(SEP)install
 	$(COPY) setup$(SEP)*.* $(INSTALL_DIR)$(SEP)setup
 	for %i in (LICENSE README.md) do $(COPY) %i $(INSTALL_DIR)
-	if exist $(INSTALL_DIR)$(SEP)system$(SEP)setup.bin del $(INSTALL_DIR)$(SEP)system$(SEP)setup.bin
-	if exist $(INSTALL_DIR)$(SEP)system$(SEP)session.dtf del $(INSTALL_DIR)$(SEP)system$(SEP)session.dtf
-	if exist $(INSTALL_DIR)$(SEP)system$(SEP)user.nfo del $(INSTALL_DIR)$(SEP)system$(SEP)user.nfo
-	if exist $(INSTALL_DIR)$(SEP)system$(SEP)exec.* del $(INSTALL_DIR)$(SEP)system$(SEP)exec.*
+	if exist $(INSTALL_DIR)$(SEP)system$(SEP)setup.bin $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)setup.bin
+	if exist $(INSTALL_DIR)$(SEP)system$(SEP)session.dtf $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)session.dtf
+	if exist $(INSTALL_DIR)$(SEP)system$(SEP)user.nfo $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)user.nfo
+	if exist $(INSTALL_DIR)$(SEP)system$(SEP)exec.* $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)exec.*
 
 .SILENT
 testinstall: install .SYMBOLIC
