@@ -2,10 +2,14 @@
 !error Se requiere la macro ROOT
 !endif
 
+!ifndef SEP
+!error Se requiere la macro SEP
+!endif
+
 !ifndef INC_NOVARS
 
-JPEG_LIB = $(ROOT)\3rdparty\lib\libjpeg.lib
-JPEG_DIR = $(ROOT)\3rdparty\jpeglib
+JPEG_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)libjpeg.lib
+JPEG_DIR = $(ROOT)$(SEP)3rdparty$(SEP)jpeglib
 INCLUDE += -I$(JPEG_DIR)
 
 !endif #INC_NOVARS

@@ -4,12 +4,12 @@
 
 !ifndef INC_NOVARS
 
-SCITECH = $(ROOT)\3rdparty\scitech
-SVGA_LIB = $(ROOT)\3rdparty\lib\svga.lib
-PMODE_LIB = $(ROOT)\3rdparty\lib\pmode.lib
-SVGA_DIR = $(SCITECH)\src\svgakit
-PMODE_DIR = $(SCITECH)\src\pmode
-INCLUDE += -I$(SCITECH)\include
+SCITECH = $(ROOT)$(SEP)3rdparty$(SEP)scitech
+SVGA_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)svga.lib
+PMODE_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)pmode.lib
+SVGA_DIR = $(SCITECH)$(SEP)src$(SEP)svgakit
+PMODE_DIR = $(SCITECH)$(SEP)src$(SEP)pmode
+INCLUDE += -I$(SCITECH)$(SEP)include
 
 !endif #INC_NOVARS
 

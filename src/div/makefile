@@ -2,13 +2,24 @@
 # CPU=586 genera D.EXE
 # CPU=386 genera D.386
 
-!ifndef ROOT
-ROOT=..\..
+!ifndef SEP
+!ifdef __UNIX__
+SEP = /
+!else
+SEP = '\\'
 !endif
+!endif
+
+!ifndef ROOT
+ROOT=..$(SEP)..
+!endif
+
 !ifndef %OUTDIR
-%OUTDIR = $(ROOT)\build.dos\$(CONFIG)
+%OUTDIR = $(ROOT)$(SEP)build.dos$(SEP)$(CONFIG)
 !endif
 OUTDIR = $(%OUTDIR).$(CPU)
+
+!include $(ROOT)$(SEP)os.mif
 
 MAKE=$+ $(MAKE) -h $-
 WASM=$(%WASM_EXE)
@@ -17,6 +28,7 @@ WASM_OPTIONS=$(%WASM_OPTIONS)
 TASM_OPTIONS=$(%TASM_OPTIONS)
 
 !ifeq CPU 586
+
 %OPTIONS += -5r -fp5
 WASM_OPTIONS = -5r -fp5
 EXE = d.exe
@@ -25,15 +37,18 @@ OP_STUB = option nostub
 !else
 OP_STUB = option stub=$(%STUB)
 !endif
+
 !else
+
 %OPTIONS += -3r -fpc
 WASM_OPTIONS = -3r -fpc
 EXE = d.386
 OP_STUB = option nostub
+
 !endif
 
 INC_NOTARGETS=1
-!include $(ROOT)\3rdparty.mif
+!include $(ROOT)$(SEP)3rdparty.mif
 !undef INC_NOTARGETS
 
 SOURCES = cdrom.cpp det_vesa.cpp div.cpp divasm.cpp divbasic.cpp divbin.cpp &
@@ -49,16 +64,16 @@ SOURCES += vesa.asm
 
 #	divfrm.cpp mem.cpp
 # VPE (modo-8) esto es para el int‚rprete!
-#SOURCES += vpe\draw_cw.cpp vpe\draw_f.cpp vpe\draw_o.cpp vpe\draw_sw.cpp vpe\fixed.cpp vpe\gfx.cpp vpe\globals.cpp &
-#	vpe\hard.cpp vpe\load.cpp vpe\mem.cpp vpe\object.cpp vpe\scan.cpp vpe\update.cpp vpe\view.cpp vpe\vpe.cpp &
-#	vpe\vpedll.cpp vpe\zone.cpp
+#SOURCES += vpe$(SEP)draw_cw.cpp vpe$(SEP)draw_f.cpp vpe$(SEP)draw_o.cpp vpe$(SEP)draw_sw.cpp vpe$(SEP)fixed.cpp vpe$(SEP)gfx.cpp vpe$(SEP)globals.cpp &
+#	vpe$(SEP)hard.cpp vpe$(SEP)load.cpp vpe$(SEP)mem.cpp vpe$(SEP)object.cpp vpe$(SEP)scan.cpp vpe$(SEP)update.cpp vpe$(SEP)view.cpp vpe$(SEP)vpe.cpp &
+#	vpe$(SEP)vpedll.cpp vpe$(SEP)zone.cpp
 
 !ifeq CPU 586
 # VISOR (generador de sprites) s¢lo para pentium
-SOURCES += visor\animated.cpp visor\complex.cpp visor\fileanim.cpp &
-	visor\global.cpp visor\hlrender.cpp visor\llrender.cpp visor\resource.cpp &
-	visor\sprite3d.cpp visor\visor.cpp t.asm
-#	visor\main.cpp
+SOURCES += visor$(SEP)animated.cpp visor$(SEP)complex.cpp visor$(SEP)fileanim.cpp &
+	visor$(SEP)global.cpp visor$(SEP)hlrender.cpp visor$(SEP)llrender.cpp visor$(SEP)resource.cpp &
+	visor$(SEP)sprite3d.cpp visor$(SEP)visor.cpp t.asm
+#	visor$(SEP)main.cpp
 !else
 SOURCES += div386.c
 !endif
@@ -74,21 +89,21 @@ INCLUDE += -I..
 .BEFORE
 	@if not exist $(OUTDIR) mkdir $(OUTDIR)
 !ifeq CPU 586
-	@if not exist $(OUTDIR)\visor mkdir $(OUTDIR)\visor
+	@if not exist $(OUTDIR)$(SEP)visor mkdir $(OUTDIR)$(SEP)visor
 !endif
-#	@if not exist $(OUTDIR)\vpe mkdir $(OUTDIR)\vpe
+#	@if not exist $(OUTDIR)$(SEP)vpe mkdir $(OUTDIR)$(SEP)vpe
 
-$(EXE): $(OUTDIR)\$(EXE) .SYMBOLIC
+$(EXE): $(OUTDIR)$(SEP)$(EXE) .SYMBOLIC
 
-$(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
+$(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) $(%STUB)
 	*wlink &
 		system dos4g &
-		name $(OUTDIR)\$^. &
+		name $(OUTDIR)$(SEP)$^. &
 !ifeqi %CONFIG debug
 		debug all &
 !endif
 		$(OP_STUB) &
-		option map=$(OUTDIR)\$^& &
+		option map=$(OUTDIR)$(SEP)$^& &
 		path $(OUTDIR) &
 		file { $(OBJS) } &
 		libfile { $(LIBS) }
@@ -99,65 +114,66 @@ $(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
 #.cpp: .;visor;vpe;source
 #.asm: .;source;visor
 
-.obj: $(OUTDIR);$(OUTDIR)\visor
+.obj: $(OUTDIR);$(OUTDIR)$(SEP)visor
 
 .c.obj:
-	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)\$[:$^. -fr=$(OUTDIR)\$[:$^& $<
+	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)$(SEP)$[:$^. -fr=$(OUTDIR)$(SEP)$[:$^& $<
 
 .cpp.obj:
-	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)\$[:$^. -fr=$(OUTDIR)\$[:$^& $<
+	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)$(SEP)$[:$^. -fr=$(OUTDIR)$(SEP)$[:$^& $<
 
 .asm.obj:
 !ifeqi %ASM WASM
-	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 !else
-	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^.
+	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)$(SEP)$^.
 !endif
 #vesa.obj: vesa.asm
 #!ifeqi %ASM WASM
-#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 #!else
-#	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^.
+#	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)$(SEP)$^.
 #!endif
 #
 #timer.obj: timer.asm
 #!ifeqi %ASM WASM
-#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 #!else
-#	$(TASM) $(TASM_OPTIONS) /m $<,$(OUTDIR)\$^.
+#	$(TASM) $(TASM_OPTIONS) /m $<,$(OUTDIR)$(SEP)$^.
 #!endif
 #
 #a.obj: a.asm
-#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 #
-#visor\t.obj: visor\t.asm
-#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#visor$(SEP)t.obj: visor$(SEP)t.asm
+#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 
+# TODO ESTO HACE FALTA REALMENTE
 !ifdef %STUB
 $(%STUB):
 	@%make savedir
-	cd $(ROOT)\src\wstub
+	cd $(ROOT)$(SEP)src$(SEP)wstub
 	! $(MAKE) ROOT=$(ROOT) CONFIG=$(%CONFIG)
 	@%make loaddir
 !endif
 
 clean: .SYMBOLIC
-	@if exist $(OUTDIR)\*.err del $(OUTDIR)\*.err
-	@if exist $(OUTDIR)\*.obj del $(OUTDIR)\*.obj
-	@if exist $(OUTDIR)\*.exe del $(OUTDIR)\*.exe
-#	@if exist $(OUTDIR)\vpe\*.err del $(OUTDIR)\vpe\*.err
-#	@if exist $(OUTDIR)\vpe\*.obj del $(OUTDIR)\vpe\*.obj
+	@if exist $(OUTDIR)$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)*.err
+	@if exist $(OUTDIR)$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)*.obj
+	@if exist $(OUTDIR)$(SEP)*.exe $(DELETE) $(OUTDIR)$(SEP)*.exe
+#	@if exist $(OUTDIR)$(SEP)vpe$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)vpe$(SEP)*.err
+#	@if exist $(OUTDIR)$(SEP)vpe$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)vpe$(SEP)*.obj
 !ifeq CPU 586
-	@if exist $(OUTDIR)\visor\*.err del $(OUTDIR)\visor\*.err
-	@if exist $(OUTDIR)\visor\*.obj del $(OUTDIR)\visor\*.obj
+	@if exist $(OUTDIR)$(SEP)visor$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)visor$(SEP)*.err
+	@if exist $(OUTDIR)$(SEP)visor$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)visor$(SEP)*.obj
 !endif
-	@%make savedir
-	cd $(ROOT)\src\wstub
-	! $(MAKE) CONFIG=$(%CONFIG) clean
-	@%make loaddir
+# 	@%make savedir
+# 	cd $(ROOT)$(SEP)src$(SEP)wstub
+# 	! $(MAKE) CONFIG=$(%CONFIG) clean
+# 	@%make loaddir
 
 INC_NOVARS=1
-!include $(ROOT)\3rdparty.mif
+!include $(ROOT)$(SEP)3rdparty.mif
 !undef INC_NOVARS
 
-!include $(ROOT)\common.mif
+!include $(ROOT)$(SEP)common.mif

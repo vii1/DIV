@@ -1,6 +1,6 @@
 #include "internal.h"
 #include "atan.h"
-#include "div32run\inter.h"
+#include "div32run/inter.h"
 
 void set_fog_table(int intensidad,int r,int g, int b);
 

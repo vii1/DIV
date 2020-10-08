@@ -5,7 +5,7 @@
 
 #include "global.h"
 #include "visor.hpp"
-#include "FPGFILE.HPP"
+#include "fpgfile.hpp"
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //  Constantes

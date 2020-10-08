@@ -4,7 +4,7 @@
 #include <dos.h>
 #include <malloc.h>
 
-#include "div32run\inter.h"
+#include "div32run/inter.h"
 
 // For debug purposes
 int num_blocks;

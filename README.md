@@ -32,9 +32,9 @@ En 2015, MikeDX, antiguo miembro de FastTrak, anunció que había retomado el c�
 ## Cómo compilar DIV
 
 ### Requisitos previos
-* Sistema operativo **MS-DOS** o **Windows** (cualquier versión, nueva o antigua).
-* [OpenWatcom](http://www.openwatcom.org/) instalado y funcionando. Posiblemente también funcione Watcom 10 o superior, pero no lo hemos probado. OJO: necesitas instalar los compiladores para *DOS 16 bits* y *DOS 32 bits*.
-* Si usas Windows NT o cualquier versión moderna de Windows, para ejecutar DIV necesitarás un emulador de DOS como [DOSBox](https://dosbox.com) o [DOSBox-X](https://dosbox-x.com/).
+* Sistema operativo **Linux**, **MS-DOS** o **Windows** (cualquier versión, nueva o antigua).
+* [OpenWatcom 1.9](http://www.openwatcom.org/) instalado y funcionando. Posiblemente también funcione Watcom 10 o superior, pero no lo hemos probado. OJO: necesitas instalar los compiladores para *DOS 16 bits* y *DOS 32 bits*. Actualmente hay incompatibilidades en el código con OpenWatcom 2.
+* Si usas Linux, Windows NT o cualquier versión moderna de Windows, para ejecutar DIV necesitarás un emulador de DOS como [DOSBox](https://dosbox.com) o [DOSBox-X](https://dosbox-x.com/).
 * **OPCIONAL**: Instala **Turbo Assembler**. Sólo es necesario si quieres recompilar las librerías de terceros (se encuentran ya compiladas en este repositorio). Consulta [la wiki](https://github.com/vii1/DIV/wiki/Acerca-de-Turbo-Assembler) para más información.
 
 ### Compilación
@@ -43,6 +43,9 @@ En 2015, MikeDX, antiguo miembro de FastTrak, anunció que había retomado el c�
   * Asegúrate de haber inicializado el entorno de Watcom ejecutando `OWSETENV.BAT`.
 * En Windows:
   * Abre una consola usando el icono **Build Environment** que encontrarás en el grupo de programas de Open Watcom en el menú de Windows.
+* En Linux:
+  * Asegúrate de lanzar `source owsetenv.sh` desde una consola ejecutando bash
+      para inicializar el entorno.
 * Desde el directorio raíz del proyecto, ejecuta `wmake`. El proceso puede durar varios minutos, especialmente en DOS. Verás muchísimos warnings. No tengas miedo.
 
 ### Instalación

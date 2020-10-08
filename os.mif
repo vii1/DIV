@@ -1,0 +1,38 @@
+############################################
+# COSAS DEPENDENDIENTES DEL SITEMA OPERATIVO
+############################################
+!ifndef %OS
+!ifdef __UNIX__
+%OS=UNIX
+!endif
+!ifdef __LINUX__
+%OS=LINUX
+!endif
+!ifdef __MSDOS__
+%OS=DOS
+!endif
+!ifdef __NT__
+%OS=WINDOWS
+!endif
+!endif
+
+# Se definen varias variables que dependen del SO donde se compila
+# COPY -> El comando que se usa para copiar cosas con ``wmake install``
+# DELETE -> El comando que se usa para borrar cuando se hace ``wmake clean``
+# ROOT -> Ruta raiz actual donde se lanza el wmake
+# SEP -> Separador de directorios
+!ifdef __UNIX__
+
+COPY = cp
+DELETE = rm
+SEP = /
+
+!else
+
+COPY = copy /Y
+# (/Y sirve para sobreescribir archivos sin pedir confirmaci¢n).
+DELETE = del
+SEP = \
+
+!endif
+

@@ -4,30 +4,53 @@
 !error Se requiere la macro ROOT
 !endif
 
+!ifdef __UNIX__
+
+!ifndef COPY
+COPY = cp
+!endif
+!ifndef DELETE
+DELETE = rm
+!endif
+!ifndef SEP
+SEP = /
+!endif
+
+!else
+
 !ifndef COPY
 COPY = copy /y
 !endif
+!ifndef DELETE
+DELETE = del
+!endif
+!ifndef SEP
+SEP = '\\'
+!endif
+
+!endif #__UNIX
+
 !ifndef TOUCH
 TOUCH = wtouch -c
 !endif
 
-!include $(ROOT)\3rdparty\jpeglib.mif
-!include $(ROOT)\3rdparty\judas.mif
-!include $(ROOT)\3rdparty\scitech.mif
-!include $(ROOT)\3rdparty\topflc.mif
-!include $(ROOT)\3rdparty\zlib.mif
+!include $(ROOT)$(SEP)3rdparty$(SEP)jpeglib.mif
+!include $(ROOT)$(SEP)3rdparty$(SEP)judas.mif
+!include $(ROOT)$(SEP)3rdparty$(SEP)scitech.mif
+!include $(ROOT)$(SEP)3rdparty$(SEP)topflc.mif
+!include $(ROOT)$(SEP)3rdparty$(SEP)zlib.mif
 
 !ifndef INC_NOVARS
-INCLUDE += -I$(ROOT)\3rdparty
+INCLUDE += -I$(ROOT)$(SEP)3rdparty
 !endif
 
 !ifndef INC_NOTARGETS
 lib3p_dir: .SYMBOLIC
-	@if not exist $(ROOT)\3rdparty\lib mkdir $(ROOT)\3rdparty\lib
+	@if not exist $(ROOT)$(SEP)3rdparty$(SEP)lib mkdir $(ROOT)$(SEP)3rdparty$(SEP)lib
 
 clean_lib3p: clean_judas clean_jpeg clean_tflc clean_zlib clean_svga clean_pmode .SYMBOLIC
 	@%null
 
 !endif
 
-!include $(ROOT)\common.mif
+!include $(ROOT)$(SEP)common.mif

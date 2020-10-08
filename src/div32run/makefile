@@ -5,16 +5,26 @@
 # juego. Pero a£n no es la versi¢n redistribuible, ya que al generar el
 # instalador se le agrega la tabla de textos traducidos.
 
-!ifndef ROOT
-ROOT=..\..
+!ifndef SEP
+!ifdef __UNIX__
+SEP = /
+!else
+SEP = '\\'
 !endif
+!endif
+
+!ifndef ROOT
+ROOT=..$(SEP)..
+!endif
+
+!include $(ROOT)$(SEP)os.mif
 
 #%OPTIONS += -fti
 
 !ifeq SESSION 1
 %OPTIONS += -DDEBUG
 SYSTEM=dos4g
-OUTDIR = $(%OUTDIR).$(CPU)\session
+OUTDIR = $(%OUTDIR).$(CPU)$(SEP)session
 !ifeq CPU 586
 EXE=session.div
 !else
@@ -22,7 +32,7 @@ EXE=session.386
 !endif
 !else
 SYSTEM=pmodew
-OUTDIR = $(%OUTDIR).$(CPU)\div32run
+OUTDIR = $(%OUTDIR).$(CPU)$(SEP)div32run
 !ifeq CPU 586
 EXE=div32run.ins
 !else
@@ -45,7 +55,7 @@ WASM_OPTIONS = -3r -fpc -mf
 !endif
 
 INC_NOTARGETS=1
-!include $(ROOT)\3rdparty.mif
+!include $(ROOT)$(SEP)3rdparty.mif
 !undef INC_NOTARGETS
 
 SOURCES = i.cpp f.cpp c.cpp s.cpp v.cpp a.asm divfli.cpp cdrom.cpp &
@@ -58,15 +68,15 @@ SOURCES += d.cpp
 !endif
 
 # VPE (modo-8)
-SOURCES += vpe\draw_cw.cpp vpe\draw_f.cpp vpe\draw_o.cpp vpe\draw_sw.cpp &
-	vpe\fixed.cpp vpe\gfx.cpp vpe\globals.cpp vpe\hard.cpp vpe\load.cpp &
-	vpe\mem.cpp vpe\object.cpp vpe\scan.cpp vpe\update.cpp vpe\view.cpp &
-	vpe\vpe.cpp vpe\zone.cpp vpe\draw_fa.asm vpe\draw_oa.asm vpe\draw_wa.asm &
-	vpe\vpedll.cpp
+SOURCES += vpe$(SEP)draw_cw.cpp vpe$(SEP)draw_f.cpp vpe$(SEP)draw_o.cpp vpe$(SEP)draw_sw.cpp &
+	vpe$(SEP)fixed.cpp vpe$(SEP)gfx.cpp vpe$(SEP)globals.cpp vpe$(SEP)hard.cpp vpe$(SEP)load.cpp &
+	vpe$(SEP)mem.cpp vpe$(SEP)object.cpp vpe$(SEP)scan.cpp vpe$(SEP)update.cpp vpe$(SEP)view.cpp &
+	vpe$(SEP)vpe.cpp vpe$(SEP)zone.cpp vpe$(SEP)draw_fa.asm vpe$(SEP)draw_oa.asm vpe$(SEP)draw_wa.asm &
+	vpe$(SEP)vpedll.cpp
 
 # NETLIB (red)
-SOURCES += netlib\red.cpp netlib\net.c netlib\comlib.c netlib\comm.c &
-	netlib\ipxlib.c netlib\dpmi_net.c
+SOURCES += netlib$(SEP)red.cpp netlib$(SEP)net.c netlib$(SEP)comlib.c netlib$(SEP)comm.c &
+	netlib$(SEP)ipxlib.c netlib$(SEP)dpmi_net.c
 
 OBJS = $(SOURCES:.cpp=.obj)
 OBJS = $(OBJS:.c=.obj)
@@ -79,79 +89,80 @@ INCLUDE += -I..
 .BEFORE
 	@if not exist $(%OUTDIR).$(CPU) mkdir $(%OUTDIR).$(CPU)
 	@if not exist $(OUTDIR) mkdir $(OUTDIR)
-	@if not exist $(OUTDIR)\netlib mkdir $(OUTDIR)\netlib
-	@if not exist $(OUTDIR)\vpe mkdir $(OUTDIR)\vpe
+	@if not exist $(OUTDIR)$(SEP)netlib mkdir $(OUTDIR)$(SEP)netlib
+	@if not exist $(OUTDIR)$(SEP)vpe mkdir $(OUTDIR)$(SEP)vpe
 
-$(EXE): $(OUTDIR)\$(EXE) .SYMBOLIC
+$(EXE): $(OUTDIR)$(SEP)$(EXE) .SYMBOLIC
 	@%null
 
-$(OUTDIR)\$(EXE): $(OBJS) $(LIBS) $(%STUB)
+$(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) $(%STUB)
 	*wlink &
 		system $(SYSTEM) &
-		name $(OUTDIR)\$^. &
+		name $(OUTDIR)$(SEP)$^. &
 !ifeqi %CONFIG debug
 		debug all &
 !endif
 		option stack=64k &
-		option map=$(OUTDIR)\$^& &
+		option map=$(OUTDIR)$(SEP)$^& &
 		path $(OUTDIR) &
 		file { $(OBJS) } &
 		libfile { $(LIBS) }
 
-$(%STUB): ..\wstub\makefile ..\wstub\wstub.c ..\cpuid.asm
-	cd ..\wstub
-	$(MAKE) CONFIG=$(%CONFIG)
-	cd ..\div32run
+# TODO HACE falta esto realmente aqui
+$(%STUB): ..$(SEP)wstub$(SEP)makefile ..$(SEP)wstub$(SEP)wstub.c ..$(SEP)cpuid.asm
+	cd ..$(SEP)wstub
+	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CONFIG=$(%CONFIG)
+	cd ..$(SEP)div32run
 
-.asm: .;..;..\vpe
-.c: .;..\netlib
-.cpp: .;..\vpe;..\netlib
+.asm: .;..;..$(SEP)vpe
+.c: .;..$(SEP)netlib
+.cpp: .;..$(SEP)vpe;..$(SEP)netlib
 #.c: source;vbe
 #.cpp: source;vbe;netlib
 #.asm: source
 
 #.obj: $(OUTDIR)
-.obj: $(OUTDIR);$(OUTDIR)\netlib;$(OUTDIR)\vpe
+.obj: $(OUTDIR);$(OUTDIR)$(SEP)netlib;$(OUTDIR)$(SEP)vpe
 
 .c.obj:
-	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)\$^:$^. -fr=$(OUTDIR)\$^:$^& $<
+	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)$(SEP)$^:$^. -fr=$(OUTDIR)$(SEP)$^:$^& $<
 
 .cpp.obj:
-	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)\$^:$^. -fr=$(OUTDIR)\$^:$^& $<
+	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)$(SEP)$^:$^. -fr=$(OUTDIR)$(SEP)$^:$^& $<
 
 .asm.obj:
 !ifeqi %ASM WASM
-	*$(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^:$^. -fr=$(OUTDIR)\$^:$^& $<
+	*$(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^:$^. -fr=$(OUTDIR)$(SEP)$^:$^& $<
 !else
-	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^:$^.
+	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)$(SEP)$^:$^.
 !endif
 #vesa.obj: vesa.asm
 #!ifeqi %ASM WASM
-#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 #!else
-#	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)\$^.
+#	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)$(SEP)$^.
 #!endif
 #
 #timer.obj: timer.asm
 #!ifeqi %ASM WASM
-#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#	* $(WASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 #!else
-#	$(TASM) $(TASM_OPTIONS) /m $<,$(OUTDIR)\$^.
+#	$(TASM) $(TASM_OPTIONS) /m $<,$(OUTDIR)$(SEP)$^.
 #!endif
 #
 #a.obj: a.asm
-#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 #
-#visor\t.obj: visor\t.asm
-#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+#visor$(SEP)t.obj: visor$(SEP)t.asm
+#	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 
 clean: .SYMBOLIC
-	@if exist $(OUTDIR)\*.err del $(OUTDIR)\*.err
-	@if exist $(OUTDIR)\*.obj del $(OUTDIR)\*.obj
-	@if exist $(OUTDIR)\*.exe del $(OUTDIR)\*.exe
-	@if exist $(OUTDIR)\vpe\*.err del $(OUTDIR)\vpe\*.err
-	@if exist $(OUTDIR)\vpe\*.obj del $(OUTDIR)\vpe\*.obj
+	@if exist $(OUTDIR)$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)*.err
+	@if exist $(OUTDIR)$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)*.obj
+	@if exist $(OUTDIR)$(SEP)*.exe $(DELETE) $(OUTDIR)$(SEP)*.exe
+	@if exist $(OUTDIR)$(SEP)vpe$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)vpe$(SEP)*.err
+	@if exist $(OUTDIR)$(SEP)vpe$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)vpe$(SEP)*.obj
 
 INC_NOVARS=1
-!include $(ROOT)\3rdparty.mif
+!include $(ROOT)$(SEP)3rdparty.mif
 !undef INC_NOVARS

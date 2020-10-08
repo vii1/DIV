@@ -4,6 +4,16 @@
 
 # Se requiere Watcom 10.0 o superior, o bien OpenWatcom 1.0 o superior.
 
+############################################
+# COSAS DEPENDENDIENTES DEL SITEMA OPERATIVO
+############################################
+!include os.mif
+!ifdef __UNIX__
+ROOT=$+ $(%cwd) $-
+!else
+ROOT=$+ $(%cdrive):$(%cwd) $-
+!endif
+
 #####################
 # COSAS CONFIGURABLES (pueden indicarse en la l¡nea de comando de wmake)
 #####################
@@ -14,8 +24,7 @@ CONFIG = release
 # INSTALL_DIR indica la ruta donde se instalar  DIV con ``wmake install``.
 # Recomiendo usarlo para instalar DIV dentro de una carpeta de DOSBOX.
 # Muy c¢modo para agilizar tu ciclo de modificar-compilar-depurar.
-#INSTALL_DIR = C:\DIV2
-INSTALL_DIR = $(%USERPROFILE)\dosbox\DIV
+INSTALL_DIR = $(%USERPROFILE)$(SEP)dosbox$(SEP)DIV
 
 # Originalmente DIV usaba Turbo Assembler (TASM) para compilar su c¢digo en
 # ensamblador. En este fork preferimos usar WASM, ya que TASM es privativo y
@@ -31,25 +40,18 @@ ASM = WASM
 #TASM_EXE = tasm.exe
 TASM_EXE = tasm32.exe
 
-# El comando que se usar  para copiar cosas con ``wmake install``.
-# (/Y sirve para sobreescribir archivos sin pedir confirmaci¢n).
-#COPY = xcopy /Y
-COPY = copy /Y
-
 ############################
 # FIN DE COSAS CONFIGURABLES
 ############################
 
-ROOT=$+ $(%cdrive):$(%cwd) $-
 MAKE=$+ $(MAKE) -h $-
 %CONFIG=$(CONFIG)
-OUTDIR_BASE = build.dos
-%OUTDIR = $+ $(ROOT)\$(OUTDIR_BASE)\$(CONFIG) $-
 
 %ASM=$(ASM)
+
+%CC = wcc386
 %TASM_EXE = $(TASM_EXE)
-%WASM_EXE = wasm.exe
-%CC = wcc386.exe
+%WASM_EXE = wasm
 
 %OPTIONS = -wx -mf -i=judas -i=netlib -i=vbe -zq
 %TASM_OPTIONS = /w2 /z /ml
@@ -65,103 +67,114 @@ OUTDIR_BASE = build.dos
 %TASM_OPTIONS += /zn
 !endif
 
-%STUB = $(ROOT)\src\wstub\$(%CONFIG)\wstub.exe
+OUTDIR_BASE = build.dos
+%OUTDIR = $+ $(ROOT)$(SEP)$(OUTDIR_BASE)$(SEP)$(CONFIG) $-
+%STUB = $(ROOT)$(SEP)src$(SEP)wstub$(SEP)$(%CONFIG)$(SEP)wstub.exe
+
+SRC_DIV= src$(SEP)div
+SRC_DIV32RUN= src$(SEP)div32run
 
 .BEFORE
+	@echo Host OS: $(%OS)
+	@echo Building on : $(OUTDIR_BASE)
 	@if not exist $(OUTDIR_BASE) mkdir $(OUTDIR_BASE)
 
 all: d.exe d.386 session.div session.386 div32run.ins div32run.386 .SYMBOLIC
 
+
 d.exe: wstub .SYMBOLIC
-	cd src\div
-	$(MAKE) ROOT=$(ROOT) CPU=586 d.exe
-	cd ..\..
+	cd $(SRC_DIV)
+	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=586 d.exe
+	cd ../..
 
 d.386: wstub .SYMBOLIC
-	cd src\div
-	$(MAKE) ROOT=$(ROOT) CPU=386 d.386
-	cd ..\..
+	cd $(SRC_DIV)
+	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=386 d.386
+	cd ../..
 
 session.div: .SYMBOLIC
-	cd src\div32run
-	$(MAKE) ROOT=$(ROOT) CPU=586 SESSION=1 session.div
-	cd ..\..
+	cd $(SRC_DIV32RUN)
+	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=586 SESSION=1 session.div
+	cd ../..
 
 session.386: .SYMBOLIC
-	cd src\div32run
-	$(MAKE) ROOT=$(ROOT) CPU=386 SESSION=1 session.386
-	cd ..\..
+	cd $(SRC_DIV32RUN)
+	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=386 SESSION=1 session.386
+	cd ../..
 
 div32run.ins: .SYMBOLIC
-	cd src\div32run
-	$(MAKE) ROOT=$(ROOT) CPU=586 SESSION=0 div32run.ins
-	cd ..\..
+	cd $(SRC_DIV32RUN)
+	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=586 SESSION=0 div32run.ins
+	cd ../..
 
 div32run.386: .SYMBOLIC
-	cd src\div32run
-	$(MAKE) ROOT=$(ROOT) CPU=386 SESSION=0 div32run.386
-	cd ..\..
+	cd $(SRC_DIV32RUN)
+	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=386 SESSION=0 div32run.386
+	cd ../..
 
 wstub: $(%STUB) .SYMBOLIC
 	@%null
 
-$(%STUB): src\wstub\makefile src\wstub\wstub.c src\cpuid.asm
-	cd src\wstub
-	$(MAKE) CONFIG=$(%CONFIG)
-	cd ..\..
+$(%STUB): src/wstub/makefile src/wstub/wstub.c src/cpuid.asm
+	cd src/wstub
+	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CONFIG=$(%CONFIG)
+	cd ../..
 
-clean: clean_lib3p .SYMBOLIC
-	cd src\div
-	@for %i in (586 386) do $(MAKE) ROOT=$(ROOT) CPU=%i clean
-	cd ..\div32run
-	@for %i in (586 386) do $(MAKE) ROOT=$(ROOT) CPU=%i SESSION=1 clean
-	@for %i in (586 386) do $(MAKE) ROOT=$(ROOT) CPU=%i SESSION=0 clean
-	cd ..\wstub
-	$(MAKE) CONFIG=$(%CONFIG) clean
-	@cd ..\..
+.SILENT
+clean: .SYMBOLIC
+	cd $(SRC_DIV)
+	@for %i in (586 386) do $(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=%i clean
+	cd ../..
+	cd $(SRC_DIV32RUN)
+	@for %i in (586 386) do $(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=%i SESSION=1 clean
+	@for %i in (586 386) do $(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=%i SESSION=0 clean
+	cd ../..
+	cd src/wstub
+	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CONFIG=$(%CONFIG) clean
+	cd ../..
 
 .SILENT
 install: all .SYMBOLIC
 	if not exist $(INSTALL_DIR) mkdir $(INSTALL_DIR)
-	if not exist $(INSTALL_DIR)\system mkdir $(INSTALL_DIR)\system
-	if not exist $(INSTALL_DIR)\dat mkdir $(INSTALL_DIR)\dat
-	if not exist $(INSTALL_DIR)\dll mkdir $(INSTALL_DIR)\dll
-	if not exist $(INSTALL_DIR)\fli mkdir $(INSTALL_DIR)\fli
-	if not exist $(INSTALL_DIR)\fnt mkdir $(INSTALL_DIR)\fnt
-	if not exist $(INSTALL_DIR)\fpg mkdir $(INSTALL_DIR)\fpg
-	if not exist $(INSTALL_DIR)\genspr mkdir $(INSTALL_DIR)\genspr
+	if not exist $(INSTALL_DIR)$(SEP)system mkdir $(INSTALL_DIR)$(SEP)system
+	if not exist $(INSTALL_DIR)$(SEP)dat mkdir $(INSTALL_DIR)$(SEP)dat
+	if not exist $(INSTALL_DIR)$(SEP)dll mkdir $(INSTALL_DIR)$(SEP)dll
+	if not exist $(INSTALL_DIR)$(SEP)fli mkdir $(INSTALL_DIR)$(SEP)fli
+	if not exist $(INSTALL_DIR)$(SEP)fnt mkdir $(INSTALL_DIR)$(SEP)fnt
+	if not exist $(INSTALL_DIR)$(SEP)fpg mkdir $(INSTALL_DIR)$(SEP)fpg
+	if not exist $(INSTALL_DIR)$(SEP)genspr mkdir $(INSTALL_DIR)$(SEP)genspr
 	for %i in (enano enano_a hombre hombre_a mujer mujer_a) do &
-		if not exist $(INSTALL_DIR)\genspr\%i mkdir $(INSTALL_DIR)\genspr\%i
-	if not exist $(INSTALL_DIR)\help mkdir $(INSTALL_DIR)\help
-	if not exist $(INSTALL_DIR)\ifs mkdir $(INSTALL_DIR)\ifs
-	if not exist $(INSTALL_DIR)\install mkdir $(INSTALL_DIR)\install
-	if not exist $(INSTALL_DIR)\map mkdir $(INSTALL_DIR)\map
-	if not exist $(INSTALL_DIR)\mod mkdir $(INSTALL_DIR)\mod
-	if not exist $(INSTALL_DIR)\pal mkdir $(INSTALL_DIR)\pal
-	if not exist $(INSTALL_DIR)\pcm mkdir $(INSTALL_DIR)\pcm
-	if not exist $(INSTALL_DIR)\prg mkdir $(INSTALL_DIR)\prg
-	if not exist $(INSTALL_DIR)\setup mkdir $(INSTALL_DIR)\setup
-	if not exist $(INSTALL_DIR)\wav mkdir $(INSTALL_DIR)\wav
-	if not exist $(INSTALL_DIR)\wld mkdir $(INSTALL_DIR)\wld
-	$(COPY) $(%OUTDIR).586\d.exe $(INSTALL_DIR)
-	$(COPY) system\*.* $(INSTALL_DIR)\system
-	$(COPY) $(%OUTDIR).386\d.386 $(INSTALL_DIR)\system
-	$(COPY) $(%OUTDIR).586\session\session.div $(INSTALL_DIR)\system
-	$(COPY) $(%OUTDIR).386\session\session.386 $(INSTALL_DIR)\system
-	$(COPY) help\*.* $(INSTALL_DIR)\help
-	$(COPY) genspr\*.* $(INSTALL_DIR)\genspr
+		if not exist $(INSTALL_DIR)$(SEP)genspr$(SEP)%i mkdir $(INSTALL_DIR)$(SEP)genspr$(SEP)%i
+	if not exist $(INSTALL_DIR)$(SEP)help mkdir $(INSTALL_DIR)$(SEP)help
+	if not exist $(INSTALL_DIR)$(SEP)ifs mkdir $(INSTALL_DIR)$(SEP)ifs
+	if not exist $(INSTALL_DIR)$(SEP)install mkdir $(INSTALL_DIR)$(SEP)install
+	if not exist $(INSTALL_DIR)$(SEP)map mkdir $(INSTALL_DIR)$(SEP)map
+	if not exist $(INSTALL_DIR)$(SEP)mod mkdir $(INSTALL_DIR)$(SEP)mod
+	if not exist $(INSTALL_DIR)$(SEP)pal mkdir $(INSTALL_DIR)$(SEP)pal
+	if not exist $(INSTALL_DIR)$(SEP)pcm mkdir $(INSTALL_DIR)$(SEP)pcm
+	if not exist $(INSTALL_DIR)$(SEP)prg mkdir $(INSTALL_DIR)$(SEP)prg
+	if not exist $(INSTALL_DIR)$(SEP)setup mkdir $(INSTALL_DIR)$(SEP)setup
+	if not exist $(INSTALL_DIR)$(SEP)wav mkdir $(INSTALL_DIR)$(SEP)wav
+	if not exist $(INSTALL_DIR)$(SEP)wld mkdir $(INSTALL_DIR)$(SEP)wld
+	$(COPY) $(%OUTDIR).586$(SEP)d.exe $(INSTALL_DIR)
+	$(COPY) system$(SEP)*.* $(INSTALL_DIR)$(SEP)system
+	$(COPY) $(%OUTDIR).386$(SEP)d.386 $(INSTALL_DIR)$(SEP)system
+	$(COPY) $(%OUTDIR).586$(SEP)session$(SEP)session.div $(INSTALL_DIR)$(SEP)system
+	$(COPY) $(%OUTDIR).386$(SEP)session$(SEP)session.386 $(INSTALL_DIR)$(SEP)system
+	$(COPY) help$(SEP)*.* $(INSTALL_DIR)$(SEP)help
+	$(COPY) genspr$(SEP)*.* $(INSTALL_DIR)$(SEP)genspr
 	for %i in (enano enano_a hombre hombre_a mujer mujer_a) do &
-		$(COPY) genspr\%i\*.* $(INSTALL_DIR)\genspr\%i
-	$(COPY) dll\*.* $(INSTALL_DIR)\dll
-	$(COPY) install\*.* $(INSTALL_DIR)\install
-	$(COPY) $(%OUTDIR).586\div32run\div32run.ins $(INSTALL_DIR)\install
-	$(COPY) $(%OUTDIR).386\div32run\div32run.386 $(INSTALL_DIR)\install
-	$(COPY) setup\*.* $(INSTALL_DIR)\setup
+		$(COPY) genspr$(SEP)%i$(SEP)*.* $(INSTALL_DIR)$(SEP)genspr$(SEP)%i
+	$(COPY) dll$(SEP)*.* $(INSTALL_DIR)$(SEP)dll
+	$(COPY) install$(SEP)*.* $(INSTALL_DIR)$(SEP)install
+	$(COPY) $(%OUTDIR).586$(SEP)div32run$(SEP)div32run.ins $(INSTALL_DIR)$(SEP)install
+	$(COPY) $(%OUTDIR).386$(SEP)div32run$(SEP)div32run.386 $(INSTALL_DIR)$(SEP)install
+	$(COPY) setup$(SEP)*.* $(INSTALL_DIR)$(SEP)setup
 	for %i in (LICENSE README.md) do $(COPY) %i $(INSTALL_DIR)
-	if exist $(INSTALL_DIR)\system\setup.bin del $(INSTALL_DIR)\system\setup.bin
-	if exist $(INSTALL_DIR)\system\session.dtf del $(INSTALL_DIR)\system\session.dtf
-	if exist $(INSTALL_DIR)\system\user.nfo del $(INSTALL_DIR)\system\user.nfo
-	if exist $(INSTALL_DIR)\system\exec.* del $(INSTALL_DIR)\system\exec.*
+	if exist $(INSTALL_DIR)$(SEP)system$(SEP)setup.bin $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)setup.bin
+	if exist $(INSTALL_DIR)$(SEP)system$(SEP)session.dtf $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)session.dtf
+	if exist $(INSTALL_DIR)$(SEP)system$(SEP)user.nfo $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)user.nfo
+	if exist $(INSTALL_DIR)$(SEP)system$(SEP)exec.* $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)exec.*
 
 .SILENT
 testinstall: install .SYMBOLIC
@@ -176,4 +189,4 @@ libclean: .SYMBOLIC
 	@echo o bien volver a descargarlas.
 	@echo No se recomienda!! LEE EL README PRIMERO!!
 	@%stop
-	-del 3rdparty\lib\*.lib
+	-del 3rdparty/lib/*.lib

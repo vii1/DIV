@@ -10,7 +10,7 @@
 #include "divsound.h"
 #include "divmixer.hpp"
 #include "divsb.h"
-#include "..\sysdac.h"
+#include "../sysdac.h"
 #include "svga.h"
 
 void heap_dump(void );

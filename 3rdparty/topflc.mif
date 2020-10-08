@@ -4,8 +4,8 @@
 
 !ifndef INC_NOVARS
 
-TFLC_LIB = $(ROOT)\3rdparty\lib\tflc_w32.lib
-TFLC_DIR = $(ROOT)\3rdparty\topflc
+TFLC_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)tflc_w32.lib
+TFLC_DIR = $(ROOT)$(SEP)3rdparty$(SEP)topflc
 INCLUDE += -I$(TFLC_DIR)
 
 !endif #INC_NOVARS

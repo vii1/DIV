@@ -1,3 +1,5 @@
+!include $(ROOT)$(SEP)os.mif
+
 CONFIG = release
 OUTDIR = $(CONFIG)
 CC = wcc
@@ -18,7 +20,9 @@ OBJS = wstub.obj cpuid.obj
 .BEFORE
 	@if not exist $(OUTDIR) mkdir $(OUTDIR)
 
-$(OUTDIR)\$(EXE): $(OBJS)
+WSTUB_EXE = $(OUTDIR)$(SEP)$(EXE)
+
+$(WSTUB_EXE): $(OBJS)
 	*wlink &
 		system dos &
 		name $^@ &
@@ -33,14 +37,14 @@ $(OUTDIR)\$(EXE): $(OBJS)
 .obj: $(OUTDIR)
 
 wstub.obj: wstub.c
-	*$(CC) $(OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+	*$(CC) $(OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 
-cpuid.obj: ..\cpuid.asm
-	*$(ASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)\$^. -fr=$(OUTDIR)\$^& $<
+cpuid.obj: ../cpuid.asm
+	*$(ASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 
 clean: .SYMBOLIC
-	@if exist $(OUTDIR)\*.err del $(OUTDIR)\*.err
-	@if exist $(OUTDIR)\*.obj del $(OUTDIR)\*.obj
-	@if exist $(OUTDIR)\*.exe del $(OUTDIR)\*.exe
-	@if exist $(OUTDIR)\*.map del $(OUTDIR)\*.map
-	@if exist $(OUTDIR)\*.sym del $(OUTDIR)\*.sym
+	@if exist $(OUTDIR)$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)*.err
+	@if exist $(OUTDIR)$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)*.obj
+	@if exist $(OUTDIR)$(SEP)*.exe $(DELETE) $(OUTDIR)$(SEP)*.exe
+	@if exist $(OUTDIR)$(SEP)*.map $(DELETE) $(OUTDIR)$(SEP)*.map
+	@if exist $(OUTDIR)$(SEP)*.sym $(DELETE) $(OUTDIR)$(SEP)*.sym

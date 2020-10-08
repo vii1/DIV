@@ -5,7 +5,8 @@
 #include <stdlib.h>
 #include <dos.h>
 #include <string.h>
-#include "DIVDLL.h"
+#include "divdll.h"
+
 #pragma align 1
 typedef struct EXPORTENTRY{
 	struct EXPORTENTRY *next;

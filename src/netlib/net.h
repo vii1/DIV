@@ -1,8 +1,8 @@
 #ifndef __COMUNICA_H_
 #define __COMUNICA_H_
 
-#include "IPXLIB.H"
-#include "COMLIB.H"
+#include "ipxlib.h"
+#include "comlib.h"
 
 // Dispositivos
 #define IPX     1
