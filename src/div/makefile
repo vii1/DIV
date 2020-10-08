@@ -6,7 +6,7 @@
 !ifdef __UNIX__
 SEP = /
 !else
-SEP = '$(SEP)$(SEP)'
+SEP = '\\'
 !endif
 !endif
 

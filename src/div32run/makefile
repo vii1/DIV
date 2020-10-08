@@ -9,7 +9,7 @@
 !ifdef __UNIX__
 SEP = /
 !else
-SEP = '$(SEP)$(SEP)'
+SEP = '\\'
 !endif
 !endif
 
@@ -44,7 +44,7 @@ MAKE=$(MAKE) -h
 WASM=$(%WASM_EXE)
 TASM=$(%TASM_EXE)
 WASM_OPTIONS=$(%WASM_OPTIONS)
-TASM_OPTIONS=$(%TASM_OPTIONS)
+TASM_OPTIONS=$(%TASM_OPTIONS) /i..\vpe /jMASM
 
 !ifeq CPU 586
 %OPTIONS += -5r -fp5
@@ -157,11 +157,11 @@ $(%STUB): ..$(SEP)wstub$(SEP)makefile ..$(SEP)wstub$(SEP)wstub.c ..$(SEP)cpuid.a
 #	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 
 clean: .SYMBOLIC
-	@if exist $(OUTDIR)$(DEL)*.err $(DELETE) $(OUTDIR)$(DEL)*.err
-	@if exist $(OUTDIR)$(DEL)*.obj $(DELETE) $(OUTDIR)$(DEL)*.obj
-	@if exist $(OUTDIR)$(DEL)*.exe $(DELETE) $(OUTDIR)$(DEL)*.exe
-	@if exist $(OUTDIR)$(DEL)vpe$(DEL)*.err $(DELETE) $(OUTDIR)$(DEL)vpe$(DEL)*.err
-	@if exist $(OUTDIR)$(DEL)vpe$(DEL)*.obj $(DELETE) $(OUTDIR)$(DEL)vpe$(DEL)*.obj
+	@if exist $(OUTDIR)$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)*.err
+	@if exist $(OUTDIR)$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)*.obj
+	@if exist $(OUTDIR)$(SEP)*.exe $(DELETE) $(OUTDIR)$(SEP)*.exe
+	@if exist $(OUTDIR)$(SEP)vpe$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)vpe$(SEP)*.err
+	@if exist $(OUTDIR)$(SEP)vpe$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)vpe$(SEP)*.obj
 
 INC_NOVARS=1
 !include $(ROOT)$(SEP)3rdparty.mif
