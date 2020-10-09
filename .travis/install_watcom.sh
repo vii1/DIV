@@ -15,3 +15,4 @@ case $TRAVIS_OS_NAME in
         unzip owatcom.zip -d ~/watcom/
         wcl386 -v
         ;;
+esac
