@@ -12,8 +12,8 @@ int g_NewSound[32];   // 32 = n§ m ximo de canales (definido en judascfg.h)
 int* NewSound = g_NewSound;
 int ticks=0;
 
-int SoundActive=0;
-//int SoundActive=1;
+//int SoundActive=0;
+int SoundActive=1;
 
 void InitSound(void)
 {
@@ -28,8 +28,8 @@ void InitSound(void)
   int mixer         = QUALITYMIXER;
 //int mixer         = FASTMIXER;
   int mixrate       = 44100;
-  int mixmode       = SIXTEENBIT | MONO;
-//int mixmode       = SIXTEENBIT | STEREO;
+//  int mixmode       = SIXTEENBIT | MONO;
+  int mixmode       = SIXTEENBIT | STEREO;
 //int mixmode       = EIGHTBIT | MONO;
   int interpolation = 1;
   int cfg_dev, cfg_port, cfg_irq, cfg_dma1, cfg_dma2;
@@ -82,7 +82,7 @@ void InitSound(void)
     judascfg_device = DEV_NOSOUND;
   }
 
-//  timer_init(1193180 / 100, judas_update);
+  timer_init(1193180 / 100, judas_update);
 
   if (safe==33) { // Modo a prueba de fallos
 
