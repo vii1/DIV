@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ ! -d ~/watcom ]; then
+if [ ! -f ~/watcom/license.txt ]; then
     echo Installing Open Watcom...
     case $TRAVIS_OS_NAME in
         linux)
