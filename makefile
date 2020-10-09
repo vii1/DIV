@@ -134,7 +134,7 @@ clean: .SYMBOLIC
 	cd ../..
 
 .SILENT
-install: all .SYMBOLIC
+update: all .SYMBOLIC
 	if not exist $(INSTALL_DIR) mkdir $(INSTALL_DIR)
 	if not exist $(INSTALL_DIR)$(SEP)system mkdir $(INSTALL_DIR)$(SEP)system
 	if not exist $(INSTALL_DIR)$(SEP)dat mkdir $(INSTALL_DIR)$(SEP)dat
@@ -171,6 +171,9 @@ install: all .SYMBOLIC
 	$(COPY) $(%OUTDIR).386$(SEP)div32run$(SEP)div32run.386 $(INSTALL_DIR)$(SEP)install
 	$(COPY) setup$(SEP)*.* $(INSTALL_DIR)$(SEP)setup
 	for %i in (LICENSE README.md) do $(COPY) %i $(INSTALL_DIR)
+
+.SILENT
+install: update .SYMBOLIC
 	if exist $(INSTALL_DIR)$(SEP)system$(SEP)setup.bin $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)setup.bin
 	if exist $(INSTALL_DIR)$(SEP)system$(SEP)session.dtf $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)session.dtf
 	if exist $(INSTALL_DIR)$(SEP)system$(SEP)user.nfo $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)user.nfo
