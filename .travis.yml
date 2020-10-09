@@ -1,16 +1,28 @@
 language: minimal
 dist: focal
-env:
-  - PATH=/opt/owatcom/binl:$PATH INCLUDE=/opt/owatcom/h:$INCLUDE WATCOM=/opt/owatcom EDPATH=/opt/owatcom/eddat WIPFC=/opt/owatcom/wipfc
+jobs:
+  include:
+    - os: windows
+      env:
+        WATCOM: $HOME/watcom
+        PATH: $WATCOM/binnt:$PATH
+        INCLUDE: $WATCOM/h
+        EDPATH: $WATCOM/eddat
+        WIPFC: $WATCOM/wipfc
+        LIB: $WATCOM/lib286:$WATCOM/lib286/dos:$WATCOM/lib386:$WATCOM/lib386/dos
+    - os: linux
+      env:
+        WATCOM: $HOME/watcom
+        PATH: $WATCOM/binl:$PATH
+        INCLUDE: $WATCOM/h
+        EDPATH: $WATCOM/eddat
+        WIPFC: $WATCOM/wipfc
+        LIB: $WATCOM/lib286:$WATCOM/lib286/dos:$WATCOM/lib386:$WATCOM/lib386/dos
+
 before_install:
-  - wget ftp://ftp.openwatcom.org/install/open-watcom-c-linux-1.9 -O owatcom.zip
-  - sudo mkdir /opt/owatcom/
-  - sudo chmod a+rwx /opt/owatcom
-  - unzip owatcom.zip -d /opt/owatcom/
-  - pushd /opt/owatcom/binl
-  - chmod a+x ctags dmpobj edbind exe2bin fcenable ide2make ms2wlink owcc parserv par.trp std.trp tcpserv tcp.trp vi wasaxp wasm wasppc wbind wcc wcc386 wcl wcl386 wd wdis wdump whelp wlib wlink wmake wpp wpp386 wrc wstrip wtouch
-  - popd
-  - wcl386 -v
+  - source .travis/install_watcom.sh
 script:
   - wmake
-
+cache:
+  directories:
+    - ~/watcom
