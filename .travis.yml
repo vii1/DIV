@@ -23,7 +23,7 @@ jobs:
         LIB: $WATCOM/lib286:$WATCOM/lib286/dos:$WATCOM/lib386:$WATCOM/lib386/dos
 
 before_install:
-  - ./.travis/install_watcom.sh
+  - source .travis/install_watcom.sh
 script:
   - wmake
 
