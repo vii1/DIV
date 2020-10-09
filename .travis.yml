@@ -1,7 +1,4 @@
 language: minimal
-os:
-  - windows
-  - linux
 dist: focal
 jobs:
   include:
