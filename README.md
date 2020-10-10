@@ -33,6 +33,8 @@ En 2015, MikeDX, antiguo miembro de FastTrak, anunció que había retomado el c�
 
 ## Cómo compilar DIV
 
+**Nota**: Alternativamente al proceso explicado a continuación, puedes [compilar DIV usando Vagrant](https://github.com/vii1/DIV/wiki/Compilar-con-Vagrant).
+
 ### Requisitos previos
 * Sistema operativo **Linux**, **MS-DOS** o **Windows** (cualquier versión, nueva o antigua).
 * [OpenWatcom 1.9](http://www.openwatcom.org/) instalado y funcionando. Posiblemente también funcione Watcom 10 o superior, pero no lo hemos probado. OJO: necesitas instalar los compiladores para *DOS 16 bits* y *DOS 32 bits*. Actualmente hay incompatibilidades en el código con OpenWatcom 2.
