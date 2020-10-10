@@ -5,15 +5,15 @@ sudo apt upgrade -y
 sudo apt install dosbox unzip -y
 
 # Creamos la carpeta de Watcom.
-sudo mkdir /usr/bin/watcom
+[ ! -d /usr/bin/watcom ] && sudo mkdir /usr/bin/watcom
 sudo chown vagrant:vagrant /usr/bin/watcom
 
 #---------------------------------------------------------------------------------------------------------------------------------
 # Esto es para Open Watcom 1.9 
 #---------------------------------------------------------------------------------------------------------------------------------
 # Instalamos
-wget 'https://downloads.sourceforge.net/project/openwatcom/open-watcom-1.9/open-watcom-c-linux-1.9' -O 'open-watcom-1.9'
-unzip -o 'open-watcom-1.9' -d /usr/bin/watcom
+wget --show-progress=off 'https://downloads.sourceforge.net/project/openwatcom/open-watcom-1.9/open-watcom-c-linux-1.9' -O 'open-watcom-1.9'
+unzip -q -o 'open-watcom-1.9' -d /usr/bin/watcom
 rm 'open-watcom-1.9'
 
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ rm 'open-watcom-1.9'
 
 echo '#!/bin/sh
 echo Open Watcom Build Environment
-export PATH=/usr/bin/watcom/binl:$PATH
+export PATH=/usr/bin/watcom/binl:/usr/bin/watcom/binw:$PATH
 #export INCLUDE=/usr/bin/watcom/lh:$INCLUDE
 export INCLUDE=/usr/bin/watcom/h:$INCLUDE
 export WATCOM=/usr/bin/watcom
@@ -38,7 +38,7 @@ chmod +x /usr/bin/watcom/binl/*
 chmod +x /usr/bin/watcom/owsetenv.sh
 
 # Register Open Watcom Environment
-echo 'source /usr/bin/watcom/owsetenv.sh' >> .bashrc
+fgrep -q owsetenv .bashrc || ( echo 'source /usr/bin/watcom/owsetenv.sh' >> .bashrc )
 source /usr/bin/watcom/owsetenv.sh
 
 # Creamos la carpeta de DOSBOX que se comenta en el makefile.
