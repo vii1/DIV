@@ -5,7 +5,7 @@ jobs:
     - os: windows
       env:
         WATCOM: $HOME/watcom
-        PATH: $WATCOM/binnt:$PATH
+        PATH: $WATCOM/binnt:$WATCOM/binw:$PATH
         INCLUDE: $WATCOM/h
         EDPATH: $WATCOM/eddat
         WIPFC: $WATCOM/wipfc
@@ -13,7 +13,7 @@ jobs:
     - os: linux
       env:
         WATCOM: $HOME/watcom
-        PATH: $WATCOM/binl:$PATH
+        PATH: $WATCOM/binl:$WATCOM/binw:$PATH
         INCLUDE: $WATCOM/h
         EDPATH: $WATCOM/eddat
         WIPFC: $WATCOM/wipfc
