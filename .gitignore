@@ -12,6 +12,7 @@
 *.map
 *.lst
 *.pch
+*.sym
 
 # copias de seguridad
 *.bak
