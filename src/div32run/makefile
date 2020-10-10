@@ -95,7 +95,7 @@ INCLUDE += -I..
 $(EXE): $(OUTDIR)$(SEP)$(EXE) .SYMBOLIC
 	@%null
 
-$(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) $(%STUB)
+$(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS)
 	*wlink &
 		system $(SYSTEM) &
 		name $(OUTDIR)$(SEP)$^. &
@@ -107,12 +107,6 @@ $(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) $(%STUB)
 		path $(OUTDIR) &
 		file { $(OBJS) } &
 		libfile { $(LIBS) }
-
-# TODO HACE falta esto realmente aqui
-$(%STUB): ..$(SEP)wstub$(SEP)makefile ..$(SEP)wstub$(SEP)wstub.c ..$(SEP)cpuid.asm
-	cd ..$(SEP)wstub
-	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CONFIG=$(%CONFIG)
-	cd ..$(SEP)div32run
 
 .asm: .;..;..$(SEP)vpe
 .c: .;..$(SEP)netlib
