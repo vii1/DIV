@@ -45,6 +45,10 @@ Vagrant.configure("2") do |config|
   # argument is a set of non-required options.
   config.vm.synced_folder ".", "/home/vagrant/DIV"
 
+  if ENV['INSTALL_DIR']
+    config.vm.synced_folder ENV['INSTALL_DIR'], "/home/vagrant/install"
+  end
+
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:

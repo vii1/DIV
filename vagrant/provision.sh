@@ -41,5 +41,9 @@ chmod +x /usr/bin/watcom/owsetenv.sh
 fgrep -q owsetenv .bashrc || ( echo 'source /usr/bin/watcom/owsetenv.sh' >> .bashrc )
 source /usr/bin/watcom/owsetenv.sh
 
-# Creamos la carpeta de DOSBOX que se comenta en el makefile.
-mkdir dosbox
+# Configuramos INSTALL_DIR
+fgrep -q INSTALL_DIR .bashrc || ( echo 'export INSTALL_DIR=$HOME/install' >> .bashrc )
+export INSTALL_DIR=$HOME/install
+
+# Creamos la carpeta de instalación si no existe
+[ ! -d $INSTALL_DIR ] && mkdir $INSTALL_DIR
