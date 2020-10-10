@@ -12,6 +12,11 @@
 ROOT=$+ $(%cwd) $-
 !else
 ROOT=$+ $(%cdrive):$(%cwd) $-
+!ifdef %USERPROFILE
+%HOME=$(%USERPROFILE)
+!else
+%HOME=$(SEP)
+!endif
 !endif
 
 #####################
@@ -24,7 +29,12 @@ CONFIG = release
 # INSTALL_DIR indica la ruta donde se instalar  DIV con ``wmake install``.
 # Recomiendo usarlo para instalar DIV dentro de una carpeta de DOSBOX.
 # Muy c¢modo para agilizar tu ciclo de modificar-compilar-depurar.
-INSTALL_DIR = $(%USERPROFILE)$(SEP)dosbox$(SEP)DIV
+# Se puede configurar con una variable de entorno.
+!ifdef %INSTALL_DIR
+INSTALL_DIR = $(%INSTALL_DIR)
+!else
+INSTALL_DIR = $(%HOME)$(SEP)dosbox$(SEP)DIV
+!endif
 
 # Originalmente DIV usaba Turbo Assembler (TASM) para compilar su c¢digo en
 # ensamblador. En este fork preferimos usar WASM, ya que TASM es privativo y
@@ -43,6 +53,9 @@ TASM_EXE = tasm32.exe
 ############################
 # FIN DE COSAS CONFIGURABLES
 ############################
+
+# Nota: definimos variables de entorno (con prefijo %) para datos que
+# necesitamos pasar a otros makefiles
 
 MAKE=$+ $(MAKE) -h $-
 %CONFIG=$(CONFIG)
