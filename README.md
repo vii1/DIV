@@ -55,7 +55,7 @@ En 2015, MikeDX, antiguo miembro de FastTrak, anunció que había retomado el c�
 * Para arrancar DIV, desde DOS (o DOSBox) ve a la carpeta donde lo has instalado y ejecuta `D.EXE`.
 
 ## Problemas conocidos
-Unos cuantos. Mira en la sección de [issues](https://github.com/vii1/DIV/issues) para verlos.
+Aún existen algunos bugs y diferencias respecto a la versión comercial de DIV 2. Mira en la sección de [issues](https://github.com/vii1/DIV/issues) para verlos.
 
 ## Descripción de archivos y carpetas
 * **3rdparty**: Librerías de terceros y su código fuente

@@ -3332,16 +3332,16 @@ void ignore_error(void) {
 #define radian 57295.77951
 
 void _sin(void) {
-  float angle=(float)pila[sp]/radian;
-  pila[sp]=(int)((float)sin(angle)*1000);
+  double angle=pila[sp]/radian;
+  pila[sp]=(int)(sin(angle)*1000);
 }
 
 void _asin(void) {
-  float seno=(float)pila[sp]/1000.0;
+  double seno=pila[sp]/1000.0;
   if (pila[sp]<-1000 || pila[sp]>1000) {
     pila[sp]=0; e(171); return;
   }
-  pila[sp]=(int)((float)asin(seno)*radian);
+  pila[sp]=(int)(asin(seno)*radian);
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
@@ -3349,16 +3349,16 @@ void _asin(void) {
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 void _cos(void) {
-  float angle=(float)pila[sp]/radian;
-  pila[sp]=(int)((float)cos(angle)*1000);
+  double angle=pila[sp]/radian;
+  pila[sp]=(int)(cos(angle)*1000);
 }
 
 void _acos(void) {
-  float coseno=(float)pila[sp]/1000.0;
+  double coseno=pila[sp]/1000.0;
   if (pila[sp]<-1000 || pila[sp]>1000) {
     pila[sp]=0; e(171); return;
   }
-  pila[sp]=(int)((float)acos(coseno)*radian);
+  pila[sp]=(int)(acos(coseno)*radian);
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
@@ -3366,7 +3366,7 @@ void _acos(void) {
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 void _tan(void) {
-  float angle;
+  double angle;
 
   while (pila[sp]>=180000) pila[sp]-=360000;
   while (pila[sp]<=-180000) pila[sp]+=360000;
@@ -3374,23 +3374,23 @@ void _tan(void) {
   if (pila[sp]==90000) { pila[sp]=0x7FFFFFFF; return; }
   if (pila[sp]==-90000) { pila[sp]=0x80000000; return; }
 
-  angle=(float)pila[sp]/radian;
-  pila[sp]=(int)((float)tan(angle)*1000);
+  angle=pila[sp]/radian;
+  pila[sp]=(int)(tan(angle)*1000);
 }
 
 void _atan(void) {
-  float tangente;
+  double tangente;
 
-  tangente=(float)pila[sp]/1000.0;
-  pila[sp]=(int)((float)atan(tangente)*radian);
+  tangente=pila[sp]/1000.0;
+  pila[sp]=(int)(atan(tangente)*radian);
 }
 
 void _atan2(void) {
-  float x,y;
+  double x,y;
 
-  x=(float)pila[sp--];
-  y=(float)pila[sp];
-  pila[sp]=(int)((float)atan2(y,x)*radian);
+  x=(double)pila[sp--];
+  y=(double)pila[sp];
+  pila[sp]=(int)(atan2(y,x)*radian);
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
