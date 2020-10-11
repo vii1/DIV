@@ -32,7 +32,7 @@ TASM_OPTIONS=$(%TASM_OPTIONS)
 %OPTIONS += -5r -fp5
 WASM_OPTIONS = -5r -fp5
 EXE = d.exe
-!ifeq %STUB
+!ifndef %STUB
 OP_STUB = option nostub
 !else
 OP_STUB = option stub=$(%STUB)
@@ -148,12 +148,11 @@ $(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) $(%STUB)
 #visor$(SEP)t.obj: visor$(SEP)t.asm
 #	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 
-# TODO ESTO HACE FALTA REALMENTE
 !ifdef %STUB
 $(%STUB):
 	@%make savedir
 	cd $(ROOT)$(SEP)src$(SEP)wstub
-	! $(MAKE) ROOT=$(ROOT) CONFIG=$(%CONFIG)
+	! $(MAKE) ROOT=$(ROOT) CONFIG=$(%CONFIG) SEP=$(SEP)
 	@%make loaddir
 !endif
 
@@ -167,10 +166,10 @@ clean: .SYMBOLIC
 	@if exist $(OUTDIR)$(SEP)visor$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)visor$(SEP)*.err
 	@if exist $(OUTDIR)$(SEP)visor$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)visor$(SEP)*.obj
 !endif
-# 	@%make savedir
-# 	cd $(ROOT)$(SEP)src$(SEP)wstub
-# 	! $(MAKE) CONFIG=$(%CONFIG) clean
-# 	@%make loaddir
+ 	@%make savedir
+ 	cd $(ROOT)$(SEP)src$(SEP)wstub
+ 	! $(MAKE) CONFIG=$(%CONFIG) ROOT=$(ROOT) SEP=$(SEP) clean
+ 	@%make loaddir
 
 INC_NOVARS=1
 !include $(ROOT)$(SEP)3rdparty.mif

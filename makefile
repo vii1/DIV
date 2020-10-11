@@ -95,12 +95,12 @@ SRC_DIV32RUN= src$(SEP)div32run
 all: d.exe d.386 session.div session.386 div32run.ins div32run.386 .SYMBOLIC
 
 
-d.exe: wstub .SYMBOLIC
+d.exe: .SYMBOLIC
 	cd $(SRC_DIV)
 	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=586 d.exe
 	cd ../..
 
-d.386: wstub .SYMBOLIC
+d.386: .SYMBOLIC
 	cd $(SRC_DIV)
 	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=386 d.386
 	cd ../..
@@ -125,13 +125,13 @@ div32run.386: .SYMBOLIC
 	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=386 SESSION=0 div32run.386
 	cd ../..
 
-wstub: $(%STUB) .SYMBOLIC
-	@%null
-
-$(%STUB): src/wstub/makefile src/wstub/wstub.c src/cpuid.asm
-	cd src/wstub
-	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CONFIG=$(%CONFIG)
-	cd ../..
+#wstub: $(%STUB) .SYMBOLIC
+#	@%null
+#
+#$(%STUB): src/wstub/makefile src/wstub/wstub.c src/cpuid.asm
+#	cd src/wstub
+#	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CONFIG=$(%CONFIG)
+#	cd ../..
 
 .SILENT
 clean: .SYMBOLIC
@@ -142,8 +142,8 @@ clean: .SYMBOLIC
 	@for %i in (586 386) do $(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=%i SESSION=1 clean
 	@for %i in (586 386) do $(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=%i SESSION=0 clean
 	cd ../..
-	cd src/wstub
-	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CONFIG=$(%CONFIG) clean
+#	cd src/wstub
+#	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CONFIG=$(%CONFIG) clean
 	cd ../..
 
 .SILENT
