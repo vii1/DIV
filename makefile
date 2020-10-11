@@ -125,14 +125,6 @@ div32run.386: .SYMBOLIC
 	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=386 SESSION=0 div32run.386
 	cd ../..
 
-#wstub: $(%STUB) .SYMBOLIC
-#	@%null
-#
-#$(%STUB): src/wstub/makefile src/wstub/wstub.c src/cpuid.asm
-#	cd src/wstub
-#	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CONFIG=$(%CONFIG)
-#	cd ../..
-
 .SILENT
 clean: .SYMBOLIC
 	cd $(SRC_DIV)
@@ -142,8 +134,8 @@ clean: .SYMBOLIC
 	@for %i in (586 386) do $(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=%i SESSION=1 clean
 	@for %i in (586 386) do $(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=%i SESSION=0 clean
 	cd ../..
-#	cd src/wstub
-#	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CONFIG=$(%CONFIG) clean
+	cd src/bin2h
+	$(MAKE) clean
 	cd ../..
 
 .SILENT
