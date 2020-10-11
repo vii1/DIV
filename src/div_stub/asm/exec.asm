@@ -51,7 +51,7 @@ cont0:   	mov	di,es			          ; point es to PSP
          	mov	ch,0
          	cld				              ; set direction forward
          	mov	al,' '
-         	rep	scasb
+         	repe scasb
          	lea	si,-1[di]
 
          	mov	dx,data
@@ -355,7 +355,7 @@ get_cpuid endp
 
 data      segment para 'DATA'     ;definici¢n del segmento de datos
 
-parblock  equ this word           ;bloque de par metros para la funci¢n EXEC
+parblock:  ;equ this word           ;bloque de par metros para la funci¢n EXEC
           dw 0                    ;mismo Environment-Block
           dw offset comline       ;direcci¢n de offset y de segmento
           dw seg data             ;de la l¡nea de comandos modificada

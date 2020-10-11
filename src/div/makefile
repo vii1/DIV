@@ -47,6 +47,11 @@ OP_STUB = option nostub
 
 !endif
 
+# No usar de momento!
+#DIV_STUB_DIR=..$(SEP)div_stub
+#DIV_STUB_H=$(DIV_STUB_DIR)$(SEP)$(CONFIG)$(SEP)div_stub.h
+#INCLUDE += $(DIV_STUB_DIR)$(SEP)$(CONFIG)
+
 INC_NOTARGETS=1
 !include $(ROOT)$(SEP)3rdparty.mif
 !undef INC_NOTARGETS
