@@ -56,7 +56,7 @@ INC_NOTARGETS=1
 !include $(ROOT)$(SEP)3rdparty.mif
 !undef INC_NOTARGETS
 
-SOURCES = cdrom.cpp det_vesa.cpp div.cpp divasm.cpp divbasic.cpp divbin.cpp &
+SOURCES = cdrom.cpp det_vesa.cpp div.cpp divbasic.cpp divbin.cpp &
 	divbrow.cpp divc.cpp divcalc.cpp divcdrom.cpp divcolor.cpp divdsktp.cpp &
 	divedit.cpp diveffec.cpp divfont.cpp divforma.cpp divfpg.cpp divgama.cpp &
 	divhandl.cpp divhelp.cpp divinsta.cpp divkeybo.cpp divlengu.cpp &
