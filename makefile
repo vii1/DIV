@@ -140,6 +140,7 @@ clean: .SYMBOLIC
 
 .SILENT
 update: all .SYMBOLIC
+	echo Instalando en: $(INSTALL_DIR)
 	if not exist $(INSTALL_DIR) mkdir $(INSTALL_DIR)
 	if not exist $(INSTALL_DIR)$(SEP)system mkdir $(INSTALL_DIR)$(SEP)system
 	if not exist $(INSTALL_DIR)$(SEP)dat mkdir $(INSTALL_DIR)$(SEP)dat
