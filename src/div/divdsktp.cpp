@@ -365,12 +365,13 @@ modinfo *mymodinfo;
 
 int VidModeChanged=0;
 
-int modo_anterior;
+unsigned int modo_anterior;
 
 int Can_UpLoad_Desktop()
 {
 char cWork[8];
 int iWork;
+unsigned int uWork;
         VidModeChanged=0;
         desktop=fopen("system\\session.dtf","rb");
         if(desktop==NULL)
@@ -378,9 +379,9 @@ int iWork;
         // lee la cabecera de identificaci¢n
         fread(cWork,8,1,desktop);
         // Mira la antigua resoluci¢n
-        fread(&iWork,1,4,desktop);
-        if(iWork!=Setupfile.Vid_modeAlto+Setupfile.Vid_modeAncho*10000+(Setupfile.Vid_modeBig<<31)) {
-                modo_anterior=iWork;
+        fread(&uWork,1,4,desktop);
+        if(uWork!=(unsigned)Setupfile.Vid_modeAlto+(unsigned)(Setupfile.Vid_modeAncho*10000)+((unsigned)Setupfile.Vid_modeBig<<31)) {
+                modo_anterior=uWork;
                 VidModeChanged=1;
         }
         // se salta el contador de ventanas

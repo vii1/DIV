@@ -94,20 +94,19 @@ void svmode(void) {
 
   if(!dc) {
     // Inicializamos SVGA
-    dc = SV_init(1);
+    dc = SV_init(0);
   }
   LinealMode=0;
   modovesa=0;
 
   // Comprueba primero si es un modo vesa
-  if(dc) {
     for (n=0;n<num_modos;n++) {
       if (vga_an==modos[n].ancho && vga_al==modos[n].alto) {
         if (modos[n].modo) { mode=modos[n].modo; break; }
       }
     }
 
-    if (n<num_modos) {
+    if (dc && n<num_modos) {
       modovesa=1;
       if(VersionVesa<0x102) {
         if (!VBE_setVideoMode(mode)) error=1;
@@ -141,7 +140,7 @@ void svmode(void) {
       case 376282: svmodex(4); break;
       default: error=1; break;
     }
-  }
+  
   // OJO!, esto provoca que, en equipos sin VESA, se vea en "320x200 BIG"
 
   if (error || !dc) {

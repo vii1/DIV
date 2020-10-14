@@ -40,7 +40,6 @@ void detectar_vesa(void) { // Detecta los modos de v¡deo disponibles
   modos[3].ancho=360; modos[3].alto=240; modos[3].modo=0;
   modos[4].ancho=360; modos[4].alto=360; modos[4].modo=0;
   modos[5].ancho=376; modos[5].alto=282; modos[5].modo=0;
-  modos[5].ancho=376; modos[5].alto=282; modos[5].modo=0;
 
 	if (vbeInit() != 0) {
     VersionVesa=0;
