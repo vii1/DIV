@@ -1263,7 +1263,7 @@ void main(int argc,char * argv[]) {
   unsigned long len,len_descomp;
   int mimem[10],n,i;
 
-  remove("C:\\DIV\\DEBUGSRC.TXT");
+  //remove("C:\\DIV\\DEBUGSRC.TXT");
 
   getcwd(divpath,PATH_MAX+1);
 
@@ -1348,7 +1348,7 @@ void main(int argc,char * argv[]) {
 
         free(ptr);
 
-        /*if ((mem[0]&128)==128) {*/ trace_program=1; /*mem[0]-=128; }*/
+        if ((mem[0]&128)==128) { trace_program=1; mem[0]-=128; }
         if ((mem[0]&512)==512) { ignore_errors=1; mem[0]-=512; }
         demo=0;
         if ((mem[0]&1024)==1024) {
