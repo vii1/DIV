@@ -100,7 +100,7 @@ INCLUDE += -I..
 
 $(EXE): $(OUTDIR)$(SEP)$(EXE) .SYMBOLIC
 
-$(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) $(%STUB)
+$(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) wstub
 	*wlink &
 		system dos4g &
 		name $(OUTDIR)$(SEP)$^. &
@@ -153,12 +153,14 @@ $(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) $(%STUB)
 #visor$(SEP)t.obj: visor$(SEP)t.asm
 #	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 
+wstub: .SYMBOLIC
 !ifdef %STUB
-$(%STUB):
 	@%make savedir
 	cd $(ROOT)$(SEP)src$(SEP)wstub
 	! $(MAKE) ROOT=$(ROOT) CONFIG=$(%CONFIG) SEP=$(SEP)
 	@%make loaddir
+!else
+	@%null
 !endif
 
 clean: .SYMBOLIC
