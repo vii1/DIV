@@ -107,7 +107,8 @@ INCLUDE += -I..
 #	@if not exist $(OUTDIR)$(SEP)vpe mkdir $(OUTDIR)$(SEP)vpe
 
 $(EXE): $(OUTDIR)$(SEP)$(EXE) .SYMBOLIC
-
+	@%null
+	
 $(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) wstub
 	*wlink &
 		system dos4g &
