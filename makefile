@@ -138,44 +138,33 @@ clean: .SYMBOLIC
 	$(MAKE) clean
 	cd ../..
 
+DIRS_RAIZ = dll genspr help install setup system
+DIRS_GENSPR = enano enano_a hombre hombre_a mujer mujer_a
+DIRS_VACIOS = dat fli mod pcm wav fnt fpg map prg
+DIRS_RESOURCE = fnt$(SEP)tutorial fpg$(SEP)tutorial ifs map$(SEP)tapices &
+	pal pal$(SEP)libreria prg$(SEP)tutor wld
+
 .SILENT
 update: all .SYMBOLIC
 	echo Instalando en: $(INSTALL_DIR)
 	if not exist $(INSTALL_DIR) mkdir $(INSTALL_DIR)
-	if not exist $(INSTALL_DIR)$(SEP)system mkdir $(INSTALL_DIR)$(SEP)system
-	if not exist $(INSTALL_DIR)$(SEP)dat mkdir $(INSTALL_DIR)$(SEP)dat
-	if not exist $(INSTALL_DIR)$(SEP)dll mkdir $(INSTALL_DIR)$(SEP)dll
-	if not exist $(INSTALL_DIR)$(SEP)fli mkdir $(INSTALL_DIR)$(SEP)fli
-	if not exist $(INSTALL_DIR)$(SEP)fnt mkdir $(INSTALL_DIR)$(SEP)fnt
-	if not exist $(INSTALL_DIR)$(SEP)fpg mkdir $(INSTALL_DIR)$(SEP)fpg
-	if not exist $(INSTALL_DIR)$(SEP)genspr mkdir $(INSTALL_DIR)$(SEP)genspr
-	for %i in (enano enano_a hombre hombre_a mujer mujer_a) do &
+	for %i in ($(DIRS_RAIZ) $(DIRS_VACIOS) $(DIRS_RESOURCE)) do &
+		if not exist $(INSTALL_DIR)$(SEP)%i mkdir $(INSTALL_DIR)$(SEP)%i
+	for %i in ($(DIRS_GENSPR)) do &
 		if not exist $(INSTALL_DIR)$(SEP)genspr$(SEP)%i mkdir $(INSTALL_DIR)$(SEP)genspr$(SEP)%i
-	if not exist $(INSTALL_DIR)$(SEP)help mkdir $(INSTALL_DIR)$(SEP)help
-	if not exist $(INSTALL_DIR)$(SEP)ifs mkdir $(INSTALL_DIR)$(SEP)ifs
-	if not exist $(INSTALL_DIR)$(SEP)install mkdir $(INSTALL_DIR)$(SEP)install
-	if not exist $(INSTALL_DIR)$(SEP)map mkdir $(INSTALL_DIR)$(SEP)map
-	if not exist $(INSTALL_DIR)$(SEP)mod mkdir $(INSTALL_DIR)$(SEP)mod
-	if not exist $(INSTALL_DIR)$(SEP)pal mkdir $(INSTALL_DIR)$(SEP)pal
-	if not exist $(INSTALL_DIR)$(SEP)pcm mkdir $(INSTALL_DIR)$(SEP)pcm
-	if not exist $(INSTALL_DIR)$(SEP)prg mkdir $(INSTALL_DIR)$(SEP)prg
-	if not exist $(INSTALL_DIR)$(SEP)setup mkdir $(INSTALL_DIR)$(SEP)setup
-	if not exist $(INSTALL_DIR)$(SEP)wav mkdir $(INSTALL_DIR)$(SEP)wav
-	if not exist $(INSTALL_DIR)$(SEP)wld mkdir $(INSTALL_DIR)$(SEP)wld
+	for %i in ($(DIRS_RAIZ)) do &
+		$(COPY) %i$(SEP)*.* $(INSTALL_DIR)$(SEP)%i
+	for %i in ($(DIRS_GENSPR)) do &
+		$(COPY) genspr$(SEP)%i$(SEP)*.* $(INSTALL_DIR)$(SEP)genspr$(SEP)%i
+	for %i in ($(DIRS_RESOURCE)) do &
+		if exist resource$(SEP)%i$(SEP)*.* $(COPY) resource$(SEP)%i$(SEP)*.* $(INSTALL_DIR)$(SEP)%i
+
 	$(COPY) $(%OUTDIR).586$(SEP)d.exe $(INSTALL_DIR)
-	$(COPY) system$(SEP)*.* $(INSTALL_DIR)$(SEP)system
 	$(COPY) $(%OUTDIR).386$(SEP)d.386 $(INSTALL_DIR)$(SEP)system
 	$(COPY) $(%OUTDIR).586$(SEP)session$(SEP)session.div $(INSTALL_DIR)$(SEP)system
 	$(COPY) $(%OUTDIR).386$(SEP)session$(SEP)session.386 $(INSTALL_DIR)$(SEP)system
-	$(COPY) help$(SEP)*.* $(INSTALL_DIR)$(SEP)help
-	$(COPY) genspr$(SEP)*.* $(INSTALL_DIR)$(SEP)genspr
-	for %i in (enano enano_a hombre hombre_a mujer mujer_a) do &
-		$(COPY) genspr$(SEP)%i$(SEP)*.* $(INSTALL_DIR)$(SEP)genspr$(SEP)%i
-	$(COPY) dll$(SEP)*.* $(INSTALL_DIR)$(SEP)dll
-	$(COPY) install$(SEP)*.* $(INSTALL_DIR)$(SEP)install
 	$(COPY) $(%OUTDIR).586$(SEP)div32run$(SEP)div32run.ins $(INSTALL_DIR)$(SEP)install
 	$(COPY) $(%OUTDIR).386$(SEP)div32run$(SEP)div32run.386 $(INSTALL_DIR)$(SEP)install
-	$(COPY) setup$(SEP)*.* $(INSTALL_DIR)$(SEP)setup
 	for %i in (LICENSE README.md) do $(COPY) %i $(INSTALL_DIR)
 
 .SILENT
