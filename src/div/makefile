@@ -14,6 +14,10 @@ SEP = '\\'
 ROOT=..$(SEP)..
 !endif
 
+!ifndef CONFIG
+CONFIG=$(%CONFIG)
+!endif
+
 !ifndef %OUTDIR
 %OUTDIR = $(ROOT)$(SEP)build.dos$(SEP)$(CONFIG)
 !endif
@@ -45,6 +49,10 @@ WASM_OPTIONS = -3r -fpc
 EXE = d.386
 OP_STUB = option nostub
 
+!endif
+
+!ifeq CONFIG debug
+%OPTIONS += -D_DEBUG
 !endif
 
 # No usar de momento!

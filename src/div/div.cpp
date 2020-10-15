@@ -287,6 +287,7 @@ int main(int argc, char * argv[]) {
   FILE *f;
   unsigned n;
 
+#ifdef _DEBUG
   if(0) {
     argc = 2;
     argv[0] = "C:\\DIV\\D.EXE";
@@ -302,6 +303,7 @@ int main(int argc, char * argv[]) {
     argv[0] = "C:\\DIV\\D.EXE";
     argv[1] = "NEXT";
   }
+#endif
 
   if (argc<1) return 0;
 
