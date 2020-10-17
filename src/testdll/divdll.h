@@ -14,7 +14,7 @@ extern "C" {
 typedef void PE;
 void  PE_Free(PE *p);
 PE   *PE_ReadFP(FILE *in);
-PE   *PE_ReadFN(char *filename);
+PE   *PE_ReadFN(const char *filename);
 void *PE_ImportFnc(PE *p,char *funcname);
 extern char *dll_error;
 #pragma align 4
