@@ -29,6 +29,7 @@
 #include <graph.h>
 #include "math_.h"
 #include "divdll.h"
+#include "dll.h"
 
 #include "divkeybo.h"
 #include "divfli.h"

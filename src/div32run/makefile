@@ -19,7 +19,7 @@ ROOT=..$(SEP)..
 
 !include $(ROOT)$(SEP)os.mif
 
-#%OPTIONS += -fti
+%OPTIONS += -DDIV32RUN
 
 !ifeq SESSION 1
 %OPTIONS += -DDEBUG
@@ -59,9 +59,9 @@ INC_NOTARGETS=1
 !undef INC_NOTARGETS
 
 SOURCES = i.cpp f.cpp c.cpp s.cpp v.cpp a.asm divfli.cpp cdrom.cpp &
-	divkeybo.cpp mouse.cpp divdll1.c divdll2.c ia.cpp divsound.cpp &
+	divkeybo.cpp mouse.cpp ia.cpp divsound.cpp &
 	divmixer.cpp divtimer.cpp timer.asm divlengu.cpp vesa.asm &
-	det_vesa.cpp
+	det_vesa.cpp dll.c divdll.c pe_loader.c
 
 !ifeq SESSION 1
 SOURCES += d.cpp
@@ -109,7 +109,7 @@ $(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS)
 		libfile { $(LIBS) }
 
 .asm: .;..;..$(SEP)vpe
-.c: .;..$(SEP)netlib
+.c: .;..;..$(SEP)netlib
 .cpp: .;..$(SEP)vpe;..$(SEP)netlib
 #.c: source;vbe
 #.cpp: source;vbe;netlib
@@ -118,13 +118,13 @@ $(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS)
 #.obj: $(OUTDIR)
 .obj: $(OUTDIR);$(OUTDIR)$(SEP)netlib;$(OUTDIR)$(SEP)vpe
 
-.c.obj:
+.c.obj: .AUTODEPEND
 	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)$(SEP)$^:$^. -fr=$(OUTDIR)$(SEP)$^:$^& $<
 
-.cpp.obj:
+.cpp.obj: .AUTODEPEND
 	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)$(SEP)$^:$^. -fr=$(OUTDIR)$(SEP)$^:$^& $<
 
-.asm.obj:
+.asm.obj: .AUTODEPEND
 !ifeqi %ASM WASM
 	*$(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^:$^. -fr=$(OUTDIR)$(SEP)$^:$^& $<
 !else

@@ -71,7 +71,7 @@ SOURCES = cdrom.cpp det_vesa.cpp div.cpp divbasic.cpp divbin.cpp &
 	divmap3d.cpp divmix.cpp divmixer.cpp divmouse.cpp divpaint.cpp &
 	divpalet.cpp divpcm.cpp divsb.cpp divsetup.cpp divsound.cpp divspr.cpp &
 	divsprit.cpp divtimer.cpp divvideo.cpp divwindo.cpp fpgfile.cpp &
-	grabador.cpp ifs.cpp divdll1.c divdll2.c a.asm
+	grabador.cpp ifs.cpp a.asm divdll.c pe_loader.c
 SOURCES += timer.asm
 SOURCES += vesa.asm
 
@@ -124,23 +124,24 @@ $(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) wstub
 
 .asm: .;..;visor
 .cpp: .;visor
+.c: .;..
 #.c: .;vbe
 #.cpp: .;visor;vpe;source
 #.asm: .;source;visor
 
 .obj: $(OUTDIR);$(OUTDIR)$(SEP)visor
 
-.c.obj:
-	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)$(SEP)$[:$^. -fr=$(OUTDIR)$(SEP)$[:$^& $<
+.c.obj: .AUTODEPEND
+	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)$(SEP)$^:$^. -fr=$(OUTDIR)$(SEP)$^:$^& $<
 
-.cpp.obj:
-	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)$(SEP)$[:$^. -fr=$(OUTDIR)$(SEP)$[:$^& $<
+.cpp.obj: .AUTODEPEND
+	*$(%CC) $(%OPTIONS) -fo=$(OUTDIR)$(SEP)$^:$^. -fr=$(OUTDIR)$(SEP)$^:$^& $<
 
-.asm.obj:
+.asm.obj: .AUTODEPEND
 !ifeqi %ASM WASM
-	* $(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
+	*$(WASM) $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^:$^. -fr=$(OUTDIR)$(SEP)$^:$^& $<
 !else
-	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)$(SEP)$^.
+	$(TASM) $(TASM_OPTIONS) /m2 $<,$(OUTDIR)$(SEP)$^:$^.
 !endif
 #vesa.obj: vesa.asm
 #!ifeqi %ASM WASM

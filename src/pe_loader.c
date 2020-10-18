@@ -22,7 +22,9 @@ typedef unsigned long  ULONG;
 #define IMAGE_OS2_SIGNATURE                 0x454E      // NE
 #define IMAGE_OS2_SIGNATURE_LE              0x454C      // LE
 #define IMAGE_NT_SIGNATURE                  0x00004550  // PE00
-#pragma align 1
+
+#pragma pack( push, 1 )
+
 typedef struct _IMAGE_DOS_HEADER {      // DOS .EXE header
 	UWORD   e_magic;                     // Magic number
 	UWORD   e_cblp;                      // Bytes on last page of file
@@ -195,19 +197,17 @@ typedef struct _IMAGE_NT_HEADERS {
 #define IMAGE_SIZEOF_SHORT_NAME              8
 
 typedef struct _IMAGE_SECTION_HEADER {
-	UBYTE    Name[IMAGE_SIZEOF_SHORT_NAME];
-	char   *PhysicalAddress;
-/*      union {
-			void far *PhysicalAddress;
-			ULONG   VirtualSize;
-	} Misc;
-*/
+	UBYTE   Name[IMAGE_SIZEOF_SHORT_NAME];
+	ULONG   VirtualSize;
 	ULONG   VirtualAddress;
 	ULONG   SizeOfRawData;
 	ULONG   PointerToRawData;
 	ULONG   PointerToRelocations;
-	ULONG   PointerToLinenumbers;
-	UWORD    NumberOfRelocations;
+	union {
+		ULONG PointerToLinenumbers;
+		void* PhysicalAddress;
+	};
+	UWORD	 NumberOfRelocations;
 	UWORD    NumberOfLinenumbers;
 	ULONG   Characteristics;
 } IMAGE_SECTION_HEADER, *PIMAGE_SECTION_HEADER;
@@ -272,7 +272,6 @@ typedef struct _IMAGE_EXPORT_DIRECTORY {
 typedef struct _IMAGE_BASE_RELOCATION {
 	ULONG   VirtualAddress;
 	ULONG   SizeOfBlock;
-//  UWORD   TypeOffset[1];
 } IMAGE_BASE_RELOCATION, *PIMAGE_BASE_RELOCATION;
 
 #define IMAGE_SIZEOF_BASE_RELOCATION         8
@@ -290,211 +289,213 @@ typedef struct _IMAGE_BASE_RELOCATION {
 #define IMAGE_REL_BASED_I860_BRADDR           6
 #define IMAGE_REL_BASED_I860_SPLIT            7
 
-typedef struct PE{
-	IMAGE_NT_HEADERS nh;
-	IMAGE_SECTION_HEADER *sh;
+typedef struct PE {
+	IMAGE_NT_HEADERS	  nh;
+	IMAGE_SECTION_HEADER* sh;
 } PE;
 
-char *dll_error="No error";
-#pragma align 4
+#pragma pack( pop )
 
+// Funci¢n aportada por DIV
+FILE* open_file( const char* file );
 
-static void *PE_GetLinearAddress(PE *p,ULONG va)
+void PE_Free( PE* p );
+
+char* dll_error = "No error";
+
 /*
-	Translates a virtual address into the PE file to the normal memory
+	Translates a virtual address in the PE file to the normal memory
 	address.
 */
+static void* PE_GetLinearAddress( PE* p, ULONG va )
 {
 	int t;
-	IMAGE_SECTION_HEADER *s;
+	IMAGE_SECTION_HEADER* s;
 
-	for(t=0,s=p->sh ; t<p->nh.FileHeader.NumberOfSections ; t++,s++){
-
-		if( va >= s->VirtualAddress &&
-			va <  (s->VirtualAddress+s->SizeOfRawData)){
-			return(s->PhysicalAddress + va - s->VirtualAddress);
+	for( t = 0, s = p->sh; t < p->nh.FileHeader.NumberOfSections; t++, s++ ) {
+		if( va >= s->VirtualAddress && va < ( s->VirtualAddress + s->VirtualSize ) ) {
+			return (BYTE*)s->PhysicalAddress + va - s->VirtualAddress;
 		}
 	}
 	return NULL;
 }
 
-
-
-static IMAGE_DATA_DIRECTORY *PE_ImageDirectory(PE *p,int idir)
+static IMAGE_DATA_DIRECTORY* PE_ImageDirectory( PE* p, int idir )
 {
-	if(idir >= p->nh.OptionalHeader.NumberOfRvaAndSizes){
+	if( idir >= p->nh.OptionalHeader.NumberOfRvaAndSizes ) {
 		return NULL;
 	}
-	return(&p->nh.OptionalHeader.DataDirectory[idir]);
+	return &p->nh.OptionalHeader.DataDirectory[idir];
 }
 
-
-
-static void *PE_ImageDirectoryOffset(PE *p,int idir)
+static void* PE_ImageDirectoryOffset( PE* p, int idir )
 {
-IMAGE_DATA_DIRECTORY *dd;
-	if((dd=PE_ImageDirectory(p,idir))==NULL) return NULL;
-	return(PE_GetLinearAddress(p,dd->VirtualAddress));
+	IMAGE_DATA_DIRECTORY* dd = PE_ImageDirectory( p, idir );
+	if( dd == NULL ) return NULL;
+	return PE_GetLinearAddress( p, dd->VirtualAddress );
 }
 
-
-
-static int PE_LoadSection(FILE *in,IMAGE_SECTION_HEADER *h)
+static int PE_LoadSection( FILE* in, PE* p, IMAGE_SECTION_HEADER* h )
 {
+	ULONG realSize;
+	ULONG alignOffset;
+
 	// no data in this section? -> skip
-
-	if(h->SizeOfRawData==0) return 1;
+	if( h->SizeOfRawData == 0 ) {
+		h->PhysicalAddress = NULL;
+		return 1;
+	}
 
 	// allocate enough memory to hold section
-
-	if((h->PhysicalAddress=malloc(h->SizeOfRawData))==0)
-	{
-		dll_error="Error allocating section space";
+	realSize = h->SizeOfRawData;
+	if( h->VirtualSize > realSize ) realSize = h->VirtualSize;
+	// make sure section size is aligned
+	alignOffset = realSize % p->nh.OptionalHeader.SectionAlignment;
+	if(realSize % p->nh.OptionalHeader.SectionAlignment > 0) {
+		realSize += p->nh.OptionalHeader.SectionAlignment - alignOffset;
+	}
+	h->VirtualSize = realSize;
+	h->PhysicalAddress = malloc( realSize );
+	if( h->PhysicalAddress == NULL ) {
+		dll_error = "Error allocating section space";
 		return 0;
 	};
-  if(h->SizeOfRawData)
-    memset(h->PhysicalAddress,0,h->SizeOfRawData);
+
+	// Pad with zeros if required
+	if( realSize > h->SizeOfRawData ) {
+		memset( (BYTE*)h->PhysicalAddress + h->SizeOfRawData, 0, realSize - h->SizeOfRawData );
+	}
 
 	// BSS section ? -> don't try to load it.
-
-	if(h->Characteristics & IMAGE_SCN_CNT_UNINITIALIZED_DATA) return 1;
+	if( h->Characteristics & IMAGE_SCN_CNT_UNINITIALIZED_DATA ) return 1;
 
 	// load every other type of section
-
-	fseek(in,h->PointerToRawData,SEEK_SET);
-	fread(h->PhysicalAddress,h->SizeOfRawData,1,in);
+	fseek( in, h->PointerToRawData, SEEK_SET );
+	fread( h->PhysicalAddress, h->SizeOfRawData, 1, in );
 
 #ifdef PEDEBUG
-	printf("Section             : '%s'\n"
-		     "Charactr            : %lx\n"
-		     "Physical address    : %p\n "
-		     "Virtual address     : %lx\n"
-		     "Size of raw data    : %ld\n"
-		     "pointer to raw data : %ld\n",
-		      h->Name,
-		      h->Characteristics,
-		      h->PhysicalAddress,
-		      h->VirtualAddress,
-		      h->SizeOfRawData,
-		      h->PointerToRawData);
+	printf("Section: '%s'\n"
+		   "Characteristics:     %lx\n"
+		   "Physical address:    %p\n"
+		   "Virtual address:     %lx\n"
+		   "Virtual size:        %lx\n"
+		   "Size of raw data:    %lx\n"
+		   "pointer to raw data: %lx\n",
+		   h->Name,
+		   h->Characteristics,
+		   h->PhysicalAddress,
+		   h->VirtualAddress,
+		   h->VirtualSize,
+		   h->SizeOfRawData,
+		   h->PointerToRawData);
 #endif
 
 	return 1;
 }
 
-
-
-static int PE_ApplyReloc(PE *p,IMAGE_BASE_RELOCATION *br)
 /*
 	Apply the fixups in a single fixup block
 */
+static int PE_ApplyReloc( PE* p, IMAGE_BASE_RELOCATION* br )
 {
-	UWORD *reloc;
-	char *pagebase,*relocadr;
-	int  numrelocs,t;
-	ULONG relocval;
+	UWORD* reloc;
+	char * pagebase, *relocadr;
+	int	   numrelocs, t;
+	ULONG  relocval;
 
-#ifdef PEDEBUG      
-	printf("Page rva %ld, block size %ld\n",br->VirtualAddress,br->SizeOfBlock);
+#ifdef PEDEBUG
+	printf( "Page rva %ld, block size %ld\n", br->VirtualAddress, br->SizeOfBlock );
 #endif
 
 	// get base address of section to be relocated:
-
-	pagebase=PE_GetLinearAddress(p,br->VirtualAddress);
+	pagebase = PE_GetLinearAddress( p, br->VirtualAddress );
+	if( pagebase == NULL ) {
+		dll_error = "Unresolved virtual address";
+		return 0;
+	}
 
 	// find reloc word table address & number of entries:
+	reloc = (UWORD*)( (char*)br + sizeof( IMAGE_BASE_RELOCATION ) );
+	numrelocs = ( br->SizeOfBlock - sizeof( IMAGE_BASE_RELOCATION ) ) / sizeof( UWORD );
 
-	reloc=(UWORD *)((char *)br+sizeof(IMAGE_BASE_RELOCATION));
-	numrelocs=(br->SizeOfBlock-sizeof(IMAGE_BASE_RELOCATION))/sizeof(UWORD);
-
-#ifdef PEDEBUG        
-	printf("%d relocs at %p\n",numrelocs,reloc);
+#ifdef PEDEBUG
+	printf( "%d relocs at %p\n", numrelocs, reloc );
 #endif
 
-	for(t=0;t<numrelocs;t++){
-		
-#ifdef PEDEBUG                
-		printf("Type %d, Offset %u\n",reloc[t]>>12,reloc[t]&0xfff);
+	for( t = 0; t < numrelocs; t++ ) {
+#ifdef PEDEBUG
+		printf( "Type %d, Offset %u\n", reloc[t] >> 12, reloc[t] & 0xfff );
 #endif
 		// determine address where to apply relocation:
+		relocadr = pagebase + ( reloc[t] & 0xfff );
 
-		relocadr=pagebase+(reloc[t]&0xfff);
-
-		switch(reloc[t]>>12){
-
+		switch( reloc[t] >> 12 ) {
 			case IMAGE_REL_BASED_ABSOLUTE:
 				break;
 
 			case IMAGE_REL_BASED_HIGH:
-
 				// fetch word value at that place:
-				relocval=*((UWORD *)relocadr);
-				relocval<<=16;
-
+				relocval = *( (UWORD*)relocadr );
+				relocval <<= 16;
 				// make it into a RVA
-				relocval-=p->nh.OptionalHeader.ImageBase;
-
+				relocval -= p->nh.OptionalHeader.ImageBase;
 				// find the physical address it belongs to:
-				relocval=(ULONG)PE_GetLinearAddress(p,relocval);
-
+				relocval = (ULONG)PE_GetLinearAddress( p, relocval );
+				if( relocval == 0 ) {
+					dll_error = "Unresolved virtual address for relocation";
+					return 0;
+				}
 				// write back that value:
-				*((UWORD *)relocadr)=relocval>>16;
+				*( (UWORD*)relocadr ) = relocval >> 16;
 				break;
 
 			case IMAGE_REL_BASED_HIGHLOW:
-
 				// fetch long value at that place:
-				relocval=*((ULONG *)relocadr);
-
+				relocval = *( (ULONG*)relocadr );
 				// make it into a RVA
-				relocval-=p->nh.OptionalHeader.ImageBase;
-
+				relocval -= p->nh.OptionalHeader.ImageBase;
 				// find the physical address it belongs to:
-				relocval=(ULONG)PE_GetLinearAddress(p,relocval);
-
+				relocval = (ULONG)PE_GetLinearAddress( p, relocval );
+				if( relocval == 0 ) {
+					dll_error = "Unresolved virtual address for relocation";
+					return 0;
+				}
 				// write back that value:
-				*((ULONG *)relocadr)=relocval;
+				*( (ULONG*)relocadr ) = relocval;
 				break;
 
 			default:
-				dll_error="Unsupported relocation type";
+				dll_error = "Unsupported relocation type";
 				return 0;
 		}
 	}
 	return 1;
 }
 
-
-
-static int PE_Relocate(PE *p)
+static int PE_Relocate( PE* p )
 {
-	IMAGE_DATA_DIRECTORY *dd;
-	IMAGE_BASE_RELOCATION *br;
+	IMAGE_DATA_DIRECTORY*  dd;
+	IMAGE_BASE_RELOCATION* br;
 	ULONG t;
 
 	/* find relocation data directory, if any:
 	   p.s.: no relocation data is NoT an error */
-
-	if((dd=PE_ImageDirectory(p,IMAGE_DIRECTORY_ENTRY_BASERELOC))==NULL ||
-		dd->Size==0 ||
-	   (br=PE_GetLinearAddress(p,dd->VirtualAddress))==NULL) return 1;
+	dd = PE_ImageDirectory( p, IMAGE_DIRECTORY_ENTRY_BASERELOC );
+	if( dd == NULL || dd->Size == 0 ) return 1;
+	br = PE_GetLinearAddress( p, dd->VirtualAddress );
+	if( br == NULL ) return 1;
 
 	// fetch total number of bytes in relocation tables
-
-	t=dd->Size;
+	t = dd->Size;
 
 	// do all relocation tables until we're done
-
-	while(t>0){
-		if(!PE_ApplyReloc(p,br)) return 0;
-		t-=br->SizeOfBlock;
-		br=(IMAGE_BASE_RELOCATION *)((char *)br+br->SizeOfBlock);
+	while( t > 0 ) {
+		if( !PE_ApplyReloc( p, br ) ) return 0;
+		t -= br->SizeOfBlock;
+		br = (IMAGE_BASE_RELOCATION*)( (char*)br + br->SizeOfBlock );
 	}
-
 	return 1;
 }
-
-
 
 /*************************************************
 
@@ -507,188 +508,157 @@ static int PE_Relocate(PE *p)
 
 *************************************************/
 
-
-
-PE *PE_ReadFP(FILE *in)
+PE* PE_ReadFP( FILE* in )
 {
 	int t;
-	UWORD id=0;
+	UWORD id = 0;
 	IMAGE_DOS_HEADER dh;
-	PE *p;
+	PE* p;
 
 	// allocate PE structure
-
-	if((p=calloc(1,sizeof(PE)))==NULL){
-		dll_error="Error allocating PE structure";
+	p = calloc( 1, sizeof( PE ) );
+	if( p == NULL ) {
+		dll_error = "Error allocating PE structure";
 		return NULL;
 	}
 
 	// load dos header
-
-	if(!fread(&dh,sizeof(IMAGE_DOS_HEADER),1,in) ||
-		dh.e_magic!=IMAGE_DOS_SIGNATURE){
-		dll_error="Not a dos executable header";
-		PE_Free(p);
+	if( !fread( &dh, sizeof( IMAGE_DOS_HEADER ), 1, in ) || dh.e_magic != IMAGE_DOS_SIGNATURE ) {
+		dll_error = "Not a DOS executable header";
+		PE_Free( p );
 		return NULL;
 	}
 
 	// seek to the PE header
-
 #ifdef PEDEBUG
-	printf("NT header offset at 0x%lx\n",dh.e_lfanew);
+	printf( "NT header offset at 0x%lx\n", dh.e_lfanew );
 #endif
-
-	fseek(in,dh.e_lfanew,SEEK_SET);
+	fseek( in, dh.e_lfanew, SEEK_SET );
 
 	// read the magic ID
-
-	if(!fread(&id,2,1,in) || id!=IMAGE_NT_SIGNATURE){
-		dll_error="Not a portable executable format file.";
-		PE_Free(p);
+	if( !fread( &id, 4, 1, in ) || id != IMAGE_NT_SIGNATURE ) {
+		dll_error = "Not a Portable Executable format file.";
+		PE_Free( p );
 		return NULL;
 	}
 
 	// reset the file position to the PE header.. again
-
-	fseek(in,dh.e_lfanew,SEEK_SET);
+	fseek( in, dh.e_lfanew, SEEK_SET );
 
 	// read the PE Windows NT headers
-
-	if(!fread(&p->nh,sizeof(IMAGE_NT_HEADERS),1,in) ||
-	   p->nh.Signature!=IMAGE_NT_SIGNATURE ||
-	   p->nh.FileHeader.SizeOfOptionalHeader != IMAGE_SIZEOF_NT_OPTIONAL_HEADER ||
-	   p->nh.FileHeader.Machine != IMAGE_FILE_MACHINE_I386){
-		dll_error="Unknown portable executable format.";
-		PE_Free(p);
+	if( !fread( &p->nh, sizeof( IMAGE_NT_HEADERS ), 1, in ) || p->nh.Signature != IMAGE_NT_SIGNATURE ||
+	  p->nh.FileHeader.SizeOfOptionalHeader != IMAGE_SIZEOF_NT_OPTIONAL_HEADER ||
+	  p->nh.FileHeader.Machine != IMAGE_FILE_MACHINE_I386 ) {
+		dll_error = "Unknown Portable Executable format.";
+		PE_Free( p );
 		return NULL;
 	}
 
 #ifdef PEDEBUG
-	printf("Number of sections: %d\n",p->nh.FileHeader.NumberOfSections);
+	printf( "Number of sections: %d\n", p->nh.FileHeader.NumberOfSections );
 #endif
 
 	// read section headers
-
-	if( (p->sh=calloc(p->nh.FileHeader.NumberOfSections,sizeof(IMAGE_SECTION_HEADER)))==NULL ||
-		!fread(p->sh,sizeof(IMAGE_SECTION_HEADER),p->nh.FileHeader.NumberOfSections,in)){
-		dll_error="Failed allocating or loading section headers";
-		PE_Free(p);
+	p->sh = calloc( p->nh.FileHeader.NumberOfSections, sizeof( IMAGE_SECTION_HEADER ) );
+	if( p->sh == NULL || !fread( p->sh, sizeof( IMAGE_SECTION_HEADER ), p->nh.FileHeader.NumberOfSections, in ) ) {
+		dll_error = "Failed allocating or loading section headers";
+		PE_Free( p );
 		return NULL;
 	}
 
-	// read section bodys
-
-	for(t=0;t<p->nh.FileHeader.NumberOfSections;t++){
-		p->sh[t].PhysicalAddress=NULL;
-		if(!PE_LoadSection(in,&p->sh[t])){
-			PE_Free(p);
+	// read section bodies
+	for( t = 0; t < p->nh.FileHeader.NumberOfSections; t++ ) {
+		//p->sh[t].PhysicalAddress = NULL;
+		if( !PE_LoadSection( in, p, &p->sh[t] ) ) {
+			PE_Free( p );
 			return NULL;
 		}
 	}
 
 	// relocate image.
-
-	if(!PE_Relocate(p)){
-		PE_Free(p);
+	if( !PE_Relocate( p ) ) {
+		PE_Free( p );
 		return NULL;
 	}
 
 	return p;
 }
 
-
-
-void PE_Free(PE *p)
+void PE_Free( PE* p )
 {
-	int t;
-
 	// free sections, if any:
-
-	if(p->sh!=NULL){
-		for(t=0;t<p->nh.FileHeader.NumberOfSections;t++){
-
+	if( p->sh != NULL ) {
+		int t;
+		for( t = 0; t < p->nh.FileHeader.NumberOfSections; t++ ) {
 			// sections body present? -> remove it:
-
-			if(p->sh[t].PhysicalAddress!=NULL){
-				free(p->sh[t].PhysicalAddress);
+			if( p->sh[t].PhysicalAddress != NULL ) {
+				free( p->sh[t].PhysicalAddress );
 			}
 		}
-		free(p->sh);
+		free( p->sh );
 	}
-	free(p);
+	free( p );
 }
 
-
-FILE * open_file(char * file);
-
-PE *PE_ReadFN(char *filename)
+PE* PE_ReadFN( const char* filename )
 {
-FILE *in;
-PE *p;
+	FILE* in;
+	PE*	  p;
 
-	if((in=open_file(filename))==NULL)
-	{
-		dll_error="error opening file";
+	in = open_file( filename );
+	if( in == NULL ) {
+		dll_error = "Error opening file";
 		return NULL;
 	}
-
-	p=PE_ReadFP(in);
-
-	fclose(in);
+	p = PE_ReadFP( in );
+	fclose( in );
 	return p;
 }
 
-
-
-void *PE_ImportFnc(PE *p,char *funcname)
+void* PE_ImportFnc( PE* p, const char* funcname )
 {
-IMAGE_EXPORT_DIRECTORY *e;
-ULONG *nametable,*rvatable;
-UWORD *ordtable;
-int t,u;
-char cwork[256];
+	IMAGE_EXPORT_DIRECTORY* e;
+	ULONG *nametable, *rvatable;
+	UWORD* ordtable;
+	int	 t;
+	char cwork[256];
 
 	// find export directory address:
-
-	e=PE_ImageDirectoryOffset(p,IMAGE_DIRECTORY_ENTRY_EXPORT);
+	e = PE_ImageDirectoryOffset( p, IMAGE_DIRECTORY_ENTRY_EXPORT );
 
 	// not present, return NULL.
-
-	if(e==NULL) return NULL;
+	if( e == NULL ) return NULL;
 
 	// find lookup table addresses
-
-	nametable=PE_GetLinearAddress(p,e->AddressOfNames);
-	ordtable =PE_GetLinearAddress(p,e->AddressOfNameOrdinals);
-	rvatable =PE_GetLinearAddress(p,e->AddressOfFunctions);
+	nametable = PE_GetLinearAddress( p, e->AddressOfNames );
+	ordtable = PE_GetLinearAddress( p, e->AddressOfNameOrdinals );
+	rvatable = PE_GetLinearAddress( p, e->AddressOfFunctions );
 
 	// if any one of them isn't present, return NULL
-
-	if(nametable==NULL || ordtable==NULL || rvatable==NULL) return NULL;
+	if( nametable == NULL || ordtable == NULL || rvatable == NULL ) {
+		return NULL;
+	}
 
 	// try to find the function we are looking for
-
-	for(t=0;t<e->NumberOfNames;t++)
-	{
-
-    strcpy(cwork,(char *)PE_GetLinearAddress(p,nametable[t]));
-    if(cwork[1]=='?')
-    {
-      strcpy(cwork,cwork+2);
-      u=0;
-      while(cwork[u]!='$'){u++;}
-      cwork[u ]='_';
-      cwork[u+1]=0;
-    }
+	for( t = 0; t < e->NumberOfNames; t++ ) {
+		char* name = (char*)PE_GetLinearAddress( p, nametable[t] );
+		if( name != NULL ) {
+			strcpy( cwork, name );
+			if( cwork[1] == '?' ) {
+				int u = 0;
+				strcpy( cwork, cwork + 2 );
+				while( cwork[u] != '$' ) u++;
+				cwork[u] = '_';
+				cwork[u + 1] = 0;
+			}
 #ifdef PEDEBUG
-    printf("Seek Function Name %s\n",funcname);
-	  printf("Function Name      %s\n",cwork);
+			printf( "Seek Function Name %s\n", funcname );
+			printf( "Function Name %s\n", cwork );
 #endif
-    if(!strcmp(funcname,cwork))
-    {
-//		if(!strcmp(funcname,(char *)PE_GetLinearAddress(p,nametable[t]))){
-			// found it, so return the address
-			return(PE_GetLinearAddress(p,rvatable[ordtable[t]]));
+			if( !strcmp( funcname, cwork ) ) {
+				// found it, so return the address
+				return PE_GetLinearAddress( p, rvatable[ordtable[t]] );
+			}
 		}
 	}
 	return NULL;
