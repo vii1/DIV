@@ -11,11 +11,11 @@ CONFIG = release
 
 OUTDIR = $(CONFIG)
 
-SOURCES = testdll.c divdll1.c divdll2.c
+SOURCES = testdll.c divdll.c pe_loader.c
 
 OBJS = $(SOURCES:.c=.obj)
 
-OPTIONS = -bt= -zq -zp4
+OPTIONS = -bt= -zq -zp4 -I.. -DPEDEBUG
 
 !ifeqi CONFIG debug
 OPTIONS += -d2
@@ -39,9 +39,10 @@ $(OUTDIR)/$(EXE): $(OBJS)
 		file { $(OBJS) }
 
 .obj: $(OUTDIR)
+.c: .;..
 
 .c.obj: .AUTODEPEND
-	*wcc386 $(OPTIONS) -fo=$(OUTDIR)$(SEP)$[:$^. -fr=$(OUTDIR)$(SEP)$[:$^& $<
+	*wcc386 $(OPTIONS) -fo=$(OUTDIR)$(SEP)$^:$^. -fr=$(OUTDIR)$(SEP)$^:$^& $<
 
 clean: .SYMBOLIC
 	@if exist $(OUTDIR)$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)*.err
