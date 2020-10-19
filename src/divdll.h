@@ -4,7 +4,7 @@
 #ifndef DIVDLL_H
 #define DIVDLL_H
 
-#include "pe_loader.h"
+#include "pe_load.h"
 
 #ifdef __cplusplus
 extern "C" {

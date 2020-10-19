@@ -71,7 +71,7 @@ SOURCES = cdrom.cpp det_vesa.cpp div.cpp divbasic.cpp divbin.cpp &
 	divmap3d.cpp divmix.cpp divmixer.cpp divmouse.cpp divpaint.cpp &
 	divpalet.cpp divpcm.cpp divsb.cpp divsetup.cpp divsound.cpp divspr.cpp &
 	divsprit.cpp divtimer.cpp divvideo.cpp divwindo.cpp fpgfile.cpp &
-	grabador.cpp ifs.cpp a.asm divdll.c pe_loader.c
+	grabador.cpp ifs.cpp a.asm divdll.c pe_load.c
 SOURCES += timer.asm
 SOURCES += vesa.asm
 

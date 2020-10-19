@@ -11,7 +11,7 @@ CONFIG = release
 
 OUTDIR = $(CONFIG)
 
-SOURCES = testdll.c divdll.c pe_loader.c
+SOURCES = testdll.c divdll.c pe_load.c
 
 OBJS = $(SOURCES:.c=.obj)
 

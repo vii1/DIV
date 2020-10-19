@@ -61,7 +61,7 @@ INC_NOTARGETS=1
 SOURCES = i.cpp f.cpp c.cpp s.cpp v.cpp a.asm divfli.cpp cdrom.cpp &
 	divkeybo.cpp mouse.cpp ia.cpp divsound.cpp &
 	divmixer.cpp divtimer.cpp timer.asm divlengu.cpp vesa.asm &
-	det_vesa.cpp dll.c divdll.c pe_loader.c
+	det_vesa.cpp dll.c divdll.c pe_load.c
 
 !ifeq SESSION 1
 SOURCES += d.cpp
