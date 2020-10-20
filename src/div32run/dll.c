@@ -22,3 +22,7 @@ void LookForAutoLoadDlls()
 		ct = _dos_findnext( &dllfiles );
 	}
 }
+
+#ifdef PEDEBUG
+#include "../pedebug.c"
+#endif

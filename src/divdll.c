@@ -62,6 +62,9 @@ void DIV_export( const char* name, void* obj )
 		e->next = pool;
 		pool = e;
 	}
+#ifdef PEDEBUG
+	printf("DIV_export @ %p ( \"%s\", %p )\n", DIV_export, name, obj);
+#endif
 }
 
 void DIV_RemoveExport( const char* name, void* obj )
@@ -104,6 +107,9 @@ void* DIV_import( const char* name )
 #endif
 		return NULL;
 	}
+#ifdef PEDEBUG
+	printf("DIV_import @ %p ( \"%s\" ) -> %p\n", DIV_import, name, e->obj);
+#endif
 	return e->obj;
 }
 
