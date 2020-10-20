@@ -371,11 +371,6 @@ static int PE_LoadSection( FILE* in, PE* p, IMAGE_SECTION_HEADER* h )
 		return 0;
 	};
 
-	// Pad with zeros if required
-	if( realSize > h->SizeOfRawData ) {
-		memset( (BYTE*)h->PhysicalAddress + h->SizeOfRawData, 0, realSize - h->SizeOfRawData );
-	}
-
 #ifdef PEDEBUG
 	if( verbosity >= 1 ) {
 		printf("Section: '%s'\n"
@@ -396,7 +391,16 @@ static int PE_LoadSection( FILE* in, PE* p, IMAGE_SECTION_HEADER* h )
 #endif
 
 	// BSS section ? -> don't try to load it.
-	if( h->Characteristics & IMAGE_SCN_CNT_UNINITIALIZED_DATA ) return 1;
+	if( h->Characteristics & IMAGE_SCN_CNT_UNINITIALIZED_DATA ) {
+		// Watcom 10 pone las variables inicializadas a 0 en BSS !!!!
+		memset( h->PhysicalAddress, 0, realSize );
+		return 1;
+	}
+
+	// Pad with zeros if required
+	if( realSize > h->SizeOfRawData ) {
+		memset( (BYTE*)h->PhysicalAddress + h->SizeOfRawData, 0, realSize - h->SizeOfRawData );
+	}
 
 	// load every other type of section
 	fseek( in, h->PointerToRawData, SEEK_SET );
