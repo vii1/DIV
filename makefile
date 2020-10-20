@@ -92,8 +92,8 @@ SRC_DIV32RUN= src$(SEP)div32run
 	@echo Building on : $(OUTDIR_BASE)
 	@if not exist $(OUTDIR_BASE) mkdir $(OUTDIR_BASE)
 
-all: d.exe d.386 session.div session.386 div32run.ins div32run.386 .SYMBOLIC
-
+all: d.exe d.386 session.div session.386 div32run.ins div32run.386 dlls .SYMBOLIC
+	@%null
 
 d.exe: .SYMBOLIC
 	cd $(SRC_DIV)
@@ -125,6 +125,11 @@ div32run.386: .SYMBOLIC
 	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=386 SESSION=0 div32run.386
 	cd ../..
 
+dlls: .SYMBOLIC
+	cd dll
+	$(MAKE)
+	cd ..
+
 .SILENT
 clean: .SYMBOLIC
 	cd $(SRC_DIV)
@@ -137,12 +142,16 @@ clean: .SYMBOLIC
 	cd src/bin2h
 	$(MAKE) clean
 	cd ../..
+	cd dll
+	$(MAKE) clean
+	cd ..
 
-DIRS_RAIZ = dll genspr help install setup system
+DIRS_RAIZ = genspr help install setup system
 DIRS_GENSPR = enano enano_a hombre hombre_a mujer mujer_a
-DIRS_VACIOS = dat fli mod pcm wav fnt fpg map prg
+DIRS_VACIOS = dat fli mod pcm wav fnt fpg map prg dll dll$(SEP)source
 DIRS_RESOURCE = fnt$(SEP)tutorial fpg$(SEP)tutorial ifs map$(SEP)tapices &
 	pal pal$(SEP)libreria prg$(SEP)tutor wld
+DLL_SOURCE = *.cpp div_dll.lnk div.h LEEME.txt make.bat
 
 .SILENT
 update: all .SYMBOLIC
@@ -158,6 +167,10 @@ update: all .SYMBOLIC
 		$(COPY) genspr$(SEP)%i$(SEP)*.* $(INSTALL_DIR)$(SEP)genspr$(SEP)%i
 	for %i in ($(DIRS_RESOURCE)) do &
 		if exist resource$(SEP)%i$(SEP)*.* $(COPY) resource$(SEP)%i$(SEP)*.* $(INSTALL_DIR)$(SEP)%i
+	
+	for %i in ($(DLL_SOURCE)) do &
+		$(COPY) dll$(SEP)%i $(INSTALL_DIR)$(SEP)dll$(SEP)source
+	$(COPY) $(OUTDIR_BASE)$(SEP)dll$(SEP)*.dll $(INSTALL_DIR)$(SEP)dll
 
 	$(COPY) $(%OUTDIR).586$(SEP)d.exe $(INSTALL_DIR)
 	$(COPY) $(%OUTDIR).386$(SEP)d.386 $(INSTALL_DIR)$(SEP)system

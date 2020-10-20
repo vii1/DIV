@@ -5,6 +5,7 @@
 *.386
 *.586
 *.ovl
+*.dll
 
 # ficheros intermedios de Watcom
 *.err

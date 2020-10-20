@@ -1,5 +1,5 @@
 
-DIV Games Studio 2.0 - Dinamic Link Libraries
+DIV Games Studio 2.0 - Dynamic Link Libraries
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 Este documento presenta la informaci¢n necesaria para construir DLL para DIV.
@@ -10,13 +10,13 @@ Este documento presenta la informaci¢n necesaria para construir DLL para DIV.
 fusionarse con otro programa en tiempo de ejecuci¢n, y que contiene funciones
 o procedimientos que ser n utilizados por el programa.
 
-- ¨Para que sirven?
+- ¨Para qu‚ sirven?
 
   Las DLL sirven para extender el lenguaje de programaci¢n DIV o para modificar
 parcialmente su funcionamiento. Estas permiten implementar partes de un
 programa en lenguaje C, para despu‚s llamarlas desde el propio DIV.
 
-- ¨Que tipos hay?
+- ¨Qu‚ tipos hay?
 
   Hay b sicamente tres tipos de DLL que pueden construirse para DIV, las
 primeras son los salvapantallas, las segundas las de autocarga y las terceras
@@ -25,13 +25,15 @@ las que a¤aden nuevas funciones al lenguaje.
 Instrucciones generales.
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-Este es un procedimiento asequible £nicamente para programadores EXPERTOS en C,
-que dispongan del "WATCOM C++ Compiler", es probable que se puedan utilizar
-para esto otros compiladores de C, pero nosotros no hemos hecho pruebas con
-ellos y, por lo tanto, no podemos asegurar que vayan a funcionar.
+Este es un procedimiento asequible £nicamente para programadores EXPERTOS en C.
+Se requiere el compilador WATCOM C++ 10.0 o superior, o bien OpenWatcom
+(www.openwatcom.org). Es probable que se puedan utilizar para esto otros
+compiladores de C, pero nosotros no hemos hecho pruebas con ellos y, por lo
+tanto, no podemos asegurar que vayan a funcionar.
 
-Lo primero debe ser a¤adir el siguiente texto al fichero WLSYSTEM.LNK de Watcom
-(que est  en el directorio BINB\ de este compilador).
+Si usamos Watcom, lo primero debe ser a¤adir el siguiente texto al fichero
+WLSYSTEM.LNK (que est  en el directorio BINB o BINW de este compilador,
+dependiendo de la versi¢n).
 
 system begin div_dll
     option osname='DIV DLL'
@@ -43,8 +45,13 @@ end
 El formato de c¢digo empleado es el de las DLL de Windows NT, y esta es la
 forma de indicarle a Watcom que genere este tipo de c¢digo.
 
+En OpenWatcom hay un m‚todo alternativo y es configurar la variable de entorno
+WLINK_LNK para que apunte al fichero DIV_DLL.LNK incluido en este directorio:
+
+    SET WLINK_LNK=DIV_DLL.LNK
+
 Despu‚s se debe incluir el fichero de cabecera DIV.H, que tambi‚n viene en este
-directorio, en ‚l se describen las variables y funciones b sicas sobre las que
+directorio. En ‚l se describen las variables y funciones b sicas sobre las que
 se puede interactuar. Adem s este fichero contiene una serie de "#define" para
 facilitar el acceso a las variables internas de DIV32RUN, que es el m¢dulo que
 contiene todas las funciones y rutinas internas de DIV Games Studio.
@@ -56,8 +63,8 @@ Se incluyen varios ejemplos, los mas b sicos son estos tres:
   DEMO2.CPP - Ejemplo b sico de una DLL de funciones.
 
 Se puede utilizar el archivo de proceso por lotes denominado MAKE.BAT para
-compilar estas DLL (si se dispone del Watcom C++ para DOS) que, si no se
-produce ning£n error, generar  la DLL correspondiente (con el mismo nombre).
+llamar al compilador Watcom que, si no se produce ning£n error, generar  la
+DLL correspondiente (con el mismo nombre que el fichero fuente).
 
 Normas b sicas.
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -71,7 +78,7 @@ realizar la siguiente definici¢n:
   #define GLOBALS
 
   antes de incluir esta cabecera (antes del #include "div.h"), para que se
-definan las variables, tipos y estructuras b sicas el dicho m¢dulo (esto es
+definan las variables, tipos y estructuras b sicas en dicho m¢dulo (esto es
 para cuando se construyan DLL formadas por varios fuentes CPP).
 
 - No es posible utilizar en las mismas las funciones malloc(), free(), fopen()
@@ -79,7 +86,7 @@ o fclose(), debi‚ndose utilizar en su lugar div_malloc(), div_free(),
 div_fopen() y div_fclose(). Estas funciones se comportan exactamente igual que
 sus hom¢nimas de C.
 
-- Deben definirse siempre dos funciones, de inicializaci¢n y finalizaci¢n de
+- Deben definirse siempre dos funciones de inicializaci¢n y finalizaci¢n de
 la DLL, estas son:
 
   void __export divmain(COMMON_PARAMS) {
@@ -146,7 +153,7 @@ DLL de autocarga (ver demo1.cpp)
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
   Estas son DLL que suelen sustituir algunas de las funciones internas de DIV
-por otras, las funciones que se pueden definir est n explicadas en DIV.H
+por otras. Las funciones que se pueden definir est n explicadas en DIV.H
 (bajo la cabecera "DIV standard Entry-Points").
 
   Para que una DLL se auto-cargue, se debe incluir la siguiente sentencia
@@ -165,9 +172,11 @@ DLL de funciones (ver demo2.cpp)
 
   Es f cil a¤adir nuevas funciones al lenguaje:
 
-  Primero, se debe crear la nueva funci¢n en la DLL, esta debe leer sus
-par metros de llamada con getparm() (que devuelve siempre un int), y al
-finalizar se debe SIEMPRE retornar un valor con retval() (ver demo2.cpp).
+  Primero, se debe crear la nueva funci¢n en la DLL. La funci¢n en C siempre
+debe devolver void y no recibir ning£n par metro. Los par metros que reciba
+desde DIV debe leerlos con getparm() en orden INVERSO. getparm() siempre
+devuelve un int. Al finalizar la funci¢n, SIEMPRE debe retornar un valor con
+retval() (ver demo2.cpp).
 
   Despu‚s se debe definir en la DLL la funci¢n:
 
@@ -184,11 +193,11 @@ n£mero de par metros de llamada.
   En los programas creados en DIV, tras hacer el IMPORT de la DLL, se podr n
 utilizar directamente estas funciones.
 
-¨Que se puede hacer?
+¨Qu‚ se puede hacer?
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 Explorando DIV.H encontrar s muchas cosas a las que se puede acceder en las
-DLL, se pueden hacer programas que modifiquen las variables de los procesos,
+DLL: se pueden hacer programas que modifiquen las variables de los procesos,
 que sustituyan las rutinas de v¡deo, que apliquen efectos en ventanas, etc.
 
 Si consigues crear una DLL funcional, no se pone ning£n pero a que la

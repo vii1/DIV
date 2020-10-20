@@ -10,7 +10,7 @@
 
 #ifdef GLOBALS
   #define EXTERN
-  void main(){};
+  int main(){};
 #else
   #define EXTERN extern
 #endif
@@ -198,6 +198,13 @@ typedef struct __video_modes{
         int     mode;
 }_video_modes;
 
+// Clipping regions, in screen coordinates
+typedef struct __region {
+  int x0, x1;
+  int y0, y1;
+} _region;
+
+
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 // Description of some basic DIV archives (for modifying them once loaded)
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
@@ -310,6 +317,7 @@ EXTERN int  *_set_palette;
 EXTERN unsigned long _buffer;
 EXTERN unsigned long _background;
 EXTERN unsigned long _ghost;
+EXTERN _region* regions;
 
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 // DIV exported functions
@@ -401,6 +409,7 @@ div_free    = ( void  (*)(void * )       ) DIV_import("div_free"  ); \
 div_fopen   = ( FILE *(*)(char *,char *) ) DIV_import("div_fopen" ); \
 div_fclose  = ( void  (*)(FILE *)        ) DIV_import("div_fclose"); \
 div_rand    = ( int   (*)(int ,int )     ) DIV_import("div_rand"  ); \
-div_text_out= ( void  (*)(char *,int,int)) DIV_import("div_text_out");
+div_text_out= ( void  (*)(char *,int,int)) DIV_import("div_text_out"); \
+regions     = ( _region* ) DIV_import("region");
 
 #endif
