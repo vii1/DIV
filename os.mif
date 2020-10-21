@@ -1,6 +1,9 @@
 ############################################
 # COSAS DEPENDENDIENTES DEL SITEMA OPERATIVO
 ############################################
+!ifndef OS_MIF
+OS_MIF=1
+
 !ifndef %OS
 !ifdef __UNIX__
 %OS=UNIX
@@ -26,13 +29,22 @@
 COPY = cp
 DELETE = rm
 SEP = /
+EXE_SUFFIX =
 
-!else
+!else #!__UNIX__
 
 COPY = copy /Y
-# (/Y sirve para sobreescribir archivos sin pedir confirmaciÂ¢n).
+# (/Y sirve para sobreescribir archivos sin pedir confirmaci¢n).
 DELETE = del
 SEP = \
+EXE_SUFFIX = .exe
 
+!ifdef %USERPROFILE
+%HOME=$(%USERPROFILE)
+!else
+%HOME=$(SEP)
 !endif
 
+!endif # __UNIX__
+
+!endif # OS_MIF

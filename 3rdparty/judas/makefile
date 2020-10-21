@@ -3,16 +3,15 @@
 # NOTE: modules which are or might be called from within an interrupt have the
 # -zu option, to tell that SS != DS. It'll crash otherwise.
 
-ASM=$(%ASM)
-TASM_EXE=$(%TASM_EXE)
-WASM_EXE=$(%WASM_EXE)
+ASM=TASM
+TASM_EXE=tasm32.exe
 
 #CFLAGS1= -oneatx -w3 -zp4 -fpc -3r
-CFLAGS1= -oneatx -w3 -zp4 -fp5 -5r -q
+CFLAGS1= -oneatx -w3 -zp4 -fp5 -5r -q -bt=dos
 #CFLAGS1= /d2 /wx /zp4 /fp5 /mf /bt=dos /5r
 
 #CFLAGS2= -oneatx -zu -w3 -zp4 -fpc -3r
-CFLAGS2= -oneatx -zu -w3 -zp4 -fp5 -5r -q
+CFLAGS2= -oneatx -zu -w3 -zp4 -fp5 -5r -q -bt=dos
 #CFLAGS2= /d2 /zu /wx /zp4 /fp5 /mf /bt=dos /5r
 
 judas.lib: judas.obj judassmp.obj judasraw.obj judaswav.obj judastbl.obj judasxm.obj judasmod.obj judass3m.obj judasio.obj judasasm.obj judasdma.obj judasmem.obj
@@ -42,7 +41,7 @@ judasdma.obj: judasdma.c
         wcc386 $(CFLAGS2) judasdma.c
 
 judasasm.obj: judasasm.asm
-!ifeq ASM TASM
+!ifeqi ASM TASM
         $(TASM_EXE) /m /ml judasasm.asm
 !else
         @echo ERROR: Es necesario Turbo Assembler para compilar JUDAS

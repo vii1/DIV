@@ -1,29 +1,35 @@
-SCITECH = $(%SCITECH)
-CC = $(%CC)
-TASM=$(%TASM_EXE)
-ASM=$(%ASM)
-%INCLUDE += INCLUDE;$(SCITECH)\INCLUDE
-C_FLAGS = -zq-w2-s-fh -fhq -DDOS4GW -D_SVGAKIT -D_SVGAKIT
-TASM_FLAGS = /t /mx /m /D__FLAT__ /i$(SCITECH)\INCLUDE /q -DDOS4GW
+!ifdef %SCITECH
+SCITECH		= $(%SCITECH)
+!else
+SCITECH		= ..\..
+!endif
+CC			= wcc386
+ASM			= TASM
+TASM_EXE	= tasm32.exe
+INCLUDE		= /I$(SCITECH)\INCLUDE
+C_FLAGS		= -bt=dos -zq-w2-s-fh -fhq -DDOS4GW -D_SVGAKIT $(INCLUDE)
+TASM_FLAGS	= /t /mx /m /D__FLAT__ /q -DDOS4GW $(INCLUDE)
+
 SOURCES = pmlite.c pmpro.c vflat.c _pmlite.asm _pmpro.asm _vflat.asm
+
 OBJS = $(SOURCES:.c=.obj)
 OBJS = $(OBJS:.asm=.obj)
-WAS = $(SOURCES_ASM:.asm=.was)
 
 LIBCMD = -+$(OBJS: = -+)
 
 all: pmode.lib .SYMBOLIC
+	@%null
 
 pmode.lib: $(OBJS)
-	-@if exist $^ del $^
+	-@if exist $@ del $@
 	*wlib -q $@ $(LIBCMD)
 
 .c.obj:
 	*$(CC) $(C_FLAGS) $<
 
 .asm.obj:
-!ifeq ASM TASM
-	$(TASM) $(TASM_FLAGS) $<
+!ifeqi ASM TASM
+	$(TASM_EXE) $(TASM_FLAGS) $<
 !else
 	@echo ERROR: Es necesario Turbo Assembler para compilar las librer�as de SciTech
 	@%abort

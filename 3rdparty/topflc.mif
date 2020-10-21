@@ -1,6 +1,9 @@
 !ifndef ROOT
 !error Se requiere la macro ROOT
 !endif
+!ifndef SEP
+!error Se requiere la macro SEP
+!endif
 
 !ifndef INC_NOVARS
 
@@ -13,16 +16,14 @@ INCLUDE += -I$(TFLC_DIR)
 !ifndef INC_NOTARGETS
 
 $(TFLC_LIB): lib3p_dir .EXISTSONLY
-	@%make savedir
 	cd $(TFLC_DIR)
-	! $(MAKE) -f makefile.w32 $^.
+	*$(MAKE) -f makefile.w32 $^.
 	$(COPY) $^. $^:
-	@%make loaddir
+	cd $+$(%cwd)$-
 
 clean_tflc: .SYMBOLIC
-	@%make savedir
 	cd $(TFLC_DIR)
-	! $(MAKE) -f makefile.w32 clean
-	@%make loaddir
+	*$(MAKE) -f makefile.w32 clean
+	cd $+$(%cwd)$-
 
 !endif #INC_NOTARGETS

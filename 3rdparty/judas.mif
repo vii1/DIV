@@ -1,6 +1,9 @@
 !ifndef ROOT
 !error Se requiere la macro ROOT
 !endif
+!ifndef SEP
+!error Se requiere la macro SEP
+!endif
 
 !ifndef INC_NOVARS
 
@@ -13,16 +16,14 @@ JUDAS_DIR = $(ROOT)$(SEP)3rdparty$(SEP)judas
 !ifndef INC_NOTARGETS
 
 $(JUDAS_LIB): lib3p_dir .EXISTSONLY
-	@%make savedir
 	cd $(JUDAS_DIR)
-	! $(MAKE) $^.
+	*$(MAKE) ASM=$(ASM) TASM_EXE=$(TASM_EXE) $^.
 	$(COPY) $^. $^:
-	@%make loaddir
+	cd $+$(%cwd)$-
 
 clean_judas: .SYMBOLIC
-	@%make savedir
 	cd $(JUDAS_DIR)
-	! $(MAKE) clean
-	@%make loaddir
+	*$(MAKE) clean
+	cd $+$(%cwd)$-
 
 !endif #INC_NOTARGETS

@@ -3,35 +3,8 @@
 !ifndef ROOT
 !error Se requiere la macro ROOT
 !endif
-
-!ifdef __UNIX__
-
-!ifndef COPY
-COPY = cp
-!endif
-!ifndef DELETE
-DELETE = rm
-!endif
 !ifndef SEP
-SEP = /
-!endif
-
-!else
-
-!ifndef COPY
-COPY = copy /y
-!endif
-!ifndef DELETE
-DELETE = del
-!endif
-!ifndef SEP
-SEP = '\\'
-!endif
-
-!endif #__UNIX
-
-!ifndef TOUCH
-TOUCH = wtouch -c
+!error Se requiere la macro SEP
 !endif
 
 !include $(ROOT)$(SEP)3rdparty$(SEP)jpeglib.mif

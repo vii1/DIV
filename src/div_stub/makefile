@@ -2,64 +2,54 @@
 # si cambia su tama¤o en un solo byte se rompe la compatibilidad con la
 # DIV32RUN.DLL de DIV2.
 
-!ifndef SEP
-!ifdef __UNIX__
-SEP = /
-!else
-SEP = \
-!endif
-!endif
+!include ../../os.mif
 
-!ifdef __UNIX__
-DELETE = rm
-!else
-DELETE = del
-!endif
+ROOT		= ..$(SEP)..
+CONFIG		= release
+OUTDIR_BASE	= $(ROOT)$(SEP)build.dos
+OUTDIR		= $(OUTDIR_BASE)$(SEP)div_stub$(SEP)$(CONFIG)
+H			= $(OUTDIR)$(SEP)div_stub.h
+EXE			= $(OUTDIR)$(SEP)div_stub.exe
+BIN2H		= $(OUTDIR_BASE)$(SEP)bin2h$(SEP)bin2h$(EXE_SUFFIX)
+MAKE		= $+$(MAKE) -h$-
 
-OUTDIR=$(CONFIG)
+OPTIONS		= -bt=dos -q
 
-!ifeq CONFIG debug
-OPTIONS=-bt=dos -d2
-!else # CONFIG = release
-OPTIONS=-bt=dos
+!ifeqi CONFIG debug
+OPTIONS		+= -d1
 !endif
 
 .BEFORE
+	@if not exist $(OUTDIR_BASE) mkdir $(OUTDIR_BASE)
+	@if not exist $(OUTDIR_BASE)$(SEP)div_stub mkdir $(OUTDIR_BASE)$(SEP)div_stub
 	@if not exist $(OUTDIR) mkdir $(OUTDIR)
 
-H=$(OUTDIR)$(SEP)div_stub.h
-EXE=$(OUTDIR)$(SEP)div_stub.exe
-BIN2H = ..$(SEP)bin2h$(SEP)bin2h
-!ifdef __MSDOS__
-BIN2H = $(BIN2H).exe
-!endif
-!ifdef __NT__
-BIN2H = $(BIN2H).exe
-!endif
-
-$(H): $(BIN2H) $(EXE)
+$(H): bin2h $(EXE)
 	$(BIN2H) $(EXE) div_stub > $@
 
-$(BIN2H): ../bin2h/makefile ../bin2h/bin2h.c
+bin2h: .SYMBOLIC
 	cd ../bin2h
-	$(MAKE)
+	*$(MAKE)
 	cd ../div_stub
 	
 $(EXE): $(OUTDIR)/exec.obj
-	wlink &
+	*wlink &
+		option quiet &
         system dos &
         name $(EXE) &
 		option stack=512 &
-        file $(OUTDIR)/exec.obj
+		path $(OUTDIR) &
+        file exec.obj
+
+.obj: $(OUTDIR)
 
 $(OUTDIR)/exec.obj: asm/exec.asm
 #	wcc $(OPTIONS) -fo=$@ -fr=$^* div_stub.cpp
-	wasm asm$(SEP)exec.asm $(OPTIONS) -fo=$@ -fr=$^*
+	*wasm asm$(SEP)exec.asm $(OPTIONS) -fo=$^@ -fr=$^*
 
 #$(OUTDIR)/cstrt086.obj:
 #	wasm asm$(SEP)cstrt086.asm $(OPTIONS) -fo=$@ -fr=$^*
 
-.SILENT
 clean: .SYMBOLIC
 	if exist $(EXE) $(DELETE) $(EXE)
 	if exist $(OUTDIR)$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)*.obj

@@ -4,20 +4,7 @@
 
 # Se requiere Watcom 10.0 o superior, o bien OpenWatcom 1.0 o superior.
 
-############################################
-# COSAS DEPENDENDIENTES DEL SITEMA OPERATIVO
-############################################
 !include os.mif
-!ifdef __UNIX__
-ROOT=$+ $(%cwd) $-
-!else
-ROOT=$+ $(%cdrive):$(%cwd) $-
-!ifdef %USERPROFILE
-%HOME=$(%USERPROFILE)
-!else
-%HOME=$(SEP)
-!endif
-!endif
 
 #####################
 # COSAS CONFIGURABLES (pueden indicarse en la l¡nea de comando de wmake)
@@ -54,35 +41,15 @@ TASM_EXE = tasm32.exe
 # FIN DE COSAS CONFIGURABLES
 ############################
 
-# Nota: definimos variables de entorno (con prefijo %) para datos que
-# necesitamos pasar a otros makefiles
+ROOT=$+$(%cwd)$-
+MAKE=$+$(MAKE) -h$-
+OUTDIR_BASE = $(ROOT)$(SEP)build.dos
 
-MAKE=$+ $(MAKE) -h $-
-%CONFIG=$(CONFIG)
+MAKE_OPTIONS = CONFIG=$(CONFIG) ASM=$(ASM) ROOT=$(ROOT) OUTDIR_BASE=$(OUTDIR_BASE)
 
-%ASM=$(ASM)
-
-%CC = wcc386
-%TASM_EXE = $(TASM_EXE)
-%WASM_EXE = wasm
-
-%OPTIONS = -wx -mf -i=judas -i=netlib -i=vbe -zq
-%TASM_OPTIONS = /w2 /z /ml
-
-%WCC386 = -bt=dos
-%WASM = -bt=dos
-
-!ifeqi %CONFIG debug
-%OPTIONS += -d2
-%TASM_OPTIONS += /zi
-!else
-%OPTIONS += -oneatr -d0
-%TASM_OPTIONS += /zn
+!ifeq ASM TASM
+MAKE_OPTIONS += TASM_EXE=$(TASM_EXE)
 !endif
-
-OUTDIR_BASE = build.dos
-%OUTDIR = $+ $(ROOT)$(SEP)$(OUTDIR_BASE)$(SEP)$(CONFIG) $-
-%STUB = $(ROOT)$(SEP)src$(SEP)wstub$(SEP)$(%CONFIG)$(SEP)wstub.exe
 
 SRC_DIV= src$(SEP)div
 SRC_DIV32RUN= src$(SEP)div32run
@@ -97,53 +64,52 @@ all: d.exe d.386 session.div session.386 div32run.ins div32run.386 dlls .SYMBOLI
 
 d.exe: .SYMBOLIC
 	cd $(SRC_DIV)
-	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=586 d.exe
+	*$(MAKE) $(MAKE_OPTIONS) CPU=586 d.exe
 	cd ../..
 
 d.386: .SYMBOLIC
 	cd $(SRC_DIV)
-	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=386 d.386
+	*$(MAKE) $(MAKE_OPTIONS) CPU=386 d.386
 	cd ../..
 
 session.div: .SYMBOLIC
 	cd $(SRC_DIV32RUN)
-	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=586 SESSION=1 session.div
+	*$(MAKE) $(MAKE_OPTIONS) CPU=586 SESSION=1 session.div
 	cd ../..
 
 session.386: .SYMBOLIC
 	cd $(SRC_DIV32RUN)
-	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=386 SESSION=1 session.386
+	*$(MAKE) $(MAKE_OPTIONS) CPU=386 SESSION=1 session.386
 	cd ../..
 
 div32run.ins: .SYMBOLIC
 	cd $(SRC_DIV32RUN)
-	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=586 SESSION=0 div32run.ins
+	*$(MAKE) $(MAKE_OPTIONS) CPU=586 SESSION=0 div32run.ins
 	cd ../..
 
 div32run.386: .SYMBOLIC
 	cd $(SRC_DIV32RUN)
-	$(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=386 SESSION=0 div32run.386
+	*$(MAKE) $(MAKE_OPTIONS) CPU=386 SESSION=0 div32run.386
 	cd ../..
 
 dlls: .SYMBOLIC
 	cd dll
-	$(MAKE)
+	*$(MAKE) $(MAKE_OPTIONS)
 	cd ..
 
-.SILENT
-clean: .SYMBOLIC
+clean: clean_lib3p .SYMBOLIC
 	cd $(SRC_DIV)
-	@for %i in (586 386) do $(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=%i clean
+	@for %i in (586 386) do *$(MAKE) $(MAKE_OPTIONS) CPU=%i clean
 	cd ../..
 	cd $(SRC_DIV32RUN)
-	@for %i in (586 386) do $(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=%i SESSION=1 clean
-	@for %i in (586 386) do $(MAKE) ROOT=$(ROOT) SEP=$(SEP) CPU=%i SESSION=0 clean
+	@for %i in (586 386) do *$(MAKE) $(MAKE_OPTIONS) CPU=%i SESSION=1 clean
+	@for %i in (586 386) do *$(MAKE) $(MAKE_OPTIONS) CPU=%i SESSION=0 clean
 	cd ../..
 	cd src/bin2h
-	$(MAKE) clean
+	*$(MAKE) $(MAKE_OPTIONS) clean
 	cd ../..
 	cd dll
-	$(MAKE) clean
+	*$(MAKE) $(MAKE_OPTIONS) clean
 	cd ..
 
 DIRS_RAIZ = genspr help install setup system
@@ -153,51 +119,54 @@ DIRS_RESOURCE = fnt$(SEP)tutorial fpg$(SEP)tutorial ifs map$(SEP)tapices &
 	pal pal$(SEP)libreria prg$(SEP)tutor wld
 DLL_SOURCE = *.cpp div_dll.lnk div.h LEEME.txt make.bat
 
-.SILENT
 update: all .SYMBOLIC
-	echo Instalando en: $(INSTALL_DIR)
-	if not exist $(INSTALL_DIR) mkdir $(INSTALL_DIR)
-	for %i in ($(DIRS_RAIZ) $(DIRS_VACIOS) $(DIRS_RESOURCE)) do &
-		if not exist $(INSTALL_DIR)$(SEP)%i mkdir $(INSTALL_DIR)$(SEP)%i
-	for %i in ($(DIRS_GENSPR)) do &
-		if not exist $(INSTALL_DIR)$(SEP)genspr$(SEP)%i mkdir $(INSTALL_DIR)$(SEP)genspr$(SEP)%i
-	for %i in ($(DIRS_RAIZ)) do &
+	@echo Instalando en: $(INSTALL_DIR)
+	@if not exist $(INSTALL_DIR) mkdir $(INSTALL_DIR)
+	@for %i in ($(DIRS_RAIZ) $(DIRS_VACIOS) $(DIRS_RESOURCE)) do &
+		@if not exist $(INSTALL_DIR)$(SEP)%i mkdir $(INSTALL_DIR)$(SEP)%i
+	@for %i in ($(DIRS_GENSPR)) do &
+		@if not exist $(INSTALL_DIR)$(SEP)genspr$(SEP)%i mkdir $(INSTALL_DIR)$(SEP)genspr$(SEP)%i
+	@for %i in ($(DIRS_RAIZ)) do &
 		$(COPY) %i$(SEP)*.* $(INSTALL_DIR)$(SEP)%i
-	for %i in ($(DIRS_GENSPR)) do &
+	@for %i in ($(DIRS_GENSPR)) do &
 		$(COPY) genspr$(SEP)%i$(SEP)*.* $(INSTALL_DIR)$(SEP)genspr$(SEP)%i
-	for %i in ($(DIRS_RESOURCE)) do &
-		if exist resource$(SEP)%i$(SEP)*.* $(COPY) resource$(SEP)%i$(SEP)*.* $(INSTALL_DIR)$(SEP)%i
+	@for %i in ($(DIRS_RESOURCE)) do &
+		@if exist resource$(SEP)%i$(SEP)*.* $(COPY) resource$(SEP)%i$(SEP)*.* $(INSTALL_DIR)$(SEP)%i
 	
-	for %i in ($(DLL_SOURCE)) do &
+	@for %i in ($(DLL_SOURCE)) do &
 		$(COPY) dll$(SEP)%i $(INSTALL_DIR)$(SEP)dll$(SEP)source
-	$(COPY) $(OUTDIR_BASE)$(SEP)dll$(SEP)*.dll $(INSTALL_DIR)$(SEP)dll
+	$(COPY) $(OUTDIR_BASE)$(SEP)dll$(SEP)$(CONFIG)$(SEP)*.dll $(INSTALL_DIR)$(SEP)dll
 
-	$(COPY) $(%OUTDIR).586$(SEP)d.exe $(INSTALL_DIR)
-	$(COPY) $(%OUTDIR).386$(SEP)d.386 $(INSTALL_DIR)$(SEP)system
-	$(COPY) $(%OUTDIR).586$(SEP)session$(SEP)session.div $(INSTALL_DIR)$(SEP)system
-	$(COPY) $(%OUTDIR).386$(SEP)session$(SEP)session.386 $(INSTALL_DIR)$(SEP)system
-	$(COPY) $(%OUTDIR).586$(SEP)div32run$(SEP)div32run.ins $(INSTALL_DIR)$(SEP)install
-	$(COPY) $(%OUTDIR).386$(SEP)div32run$(SEP)div32run.386 $(INSTALL_DIR)$(SEP)install
-	for %i in (LICENSE README.md) do $(COPY) %i $(INSTALL_DIR)
+	$(COPY) $(OUTDIR_BASE)$(SEP)div$(SEP)$(CONFIG).586$(SEP)d.exe $(INSTALL_DIR)
+	$(COPY) $(OUTDIR_BASE)$(SEP)div$(SEP)$(CONFIG).386$(SEP)d.386 $(INSTALL_DIR)$(SEP)system
+	$(COPY) $(OUTDIR_BASE)$(SEP)session$(SEP)$(CONFIG).586$(SEP)session.div $(INSTALL_DIR)$(SEP)system
+	$(COPY) $(OUTDIR_BASE)$(SEP)session$(SEP)$(CONFIG).386$(SEP)session.386 $(INSTALL_DIR)$(SEP)system
+	$(COPY) $(OUTDIR_BASE)$(SEP)div32run$(SEP)$(CONFIG).586$(SEP)div32run.ins $(INSTALL_DIR)$(SEP)install
+	$(COPY) $(OUTDIR_BASE)$(SEP)div32run$(SEP)$(CONFIG).386$(SEP)div32run.386 $(INSTALL_DIR)$(SEP)install
+	@for %i in (LICENSE README.md) do $(COPY) %i $(INSTALL_DIR)
 
-.SILENT
 install: update .SYMBOLIC
-	if exist $(INSTALL_DIR)$(SEP)system$(SEP)setup.bin $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)setup.bin
-	if exist $(INSTALL_DIR)$(SEP)system$(SEP)session.dtf $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)session.dtf
-	if exist $(INSTALL_DIR)$(SEP)system$(SEP)user.nfo $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)user.nfo
-	if exist $(INSTALL_DIR)$(SEP)system$(SEP)exec.* $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)exec.*
+	@if exist $(INSTALL_DIR)$(SEP)system$(SEP)setup.bin $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)setup.bin
+	@if exist $(INSTALL_DIR)$(SEP)system$(SEP)session.dtf $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)session.dtf
+	@if exist $(INSTALL_DIR)$(SEP)system$(SEP)user.nfo $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)user.nfo
+	@if exist $(INSTALL_DIR)$(SEP)system$(SEP)exec.* $(DELETE) $(INSTALL_DIR)$(SEP)system$(SEP)exec.*
+	@if exist $(INSTALL_DIR)$(SEP)sound.cfg $(DELETE) $(INSTALL_DIR)$(SEP)sound.cfg
 
-.SILENT
-testinstall: install .SYMBOLIC
-	for %i in (setup.bin session.dtf user.nfo) do $(COPY) system\%i $(INSTALL_DIR)\system
+#testinstall: install .SYMBOLIC
+#	for %i in (setup.bin session.dtf user.nfo) do $(COPY) system$(SEP)%i $(INSTALL_DIR)$(SEP)system
+
+test: .SYMBOLIC
+	cd dll
+	*$(MAKE) $(MAKE_OPTIONS) test
+	cd ..
 
 !include 3rdparty.mif
 
 libclean: .SYMBOLIC
 	@echo --------------------------------------------------------------
-	@echo Esto eliminara el contenido de 3rdparty\lib.
+	@echo Esto eliminara el contenido de 3rdparty$(SEP)lib.
 	@echo Tendras que recompilar las librerias (necesitaras TASM)
 	@echo o bien volver a descargarlas.
 	@echo No se recomienda!! LEE EL README PRIMERO!!
 	@%stop
-	-del 3rdparty/lib/*.lib
+	-$(DELETE) 3rdparty$(SEP)lib$(SEP)*.lib

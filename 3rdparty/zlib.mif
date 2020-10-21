@@ -1,7 +1,6 @@
 !ifndef ROOT
 !error Se requiere la macro ROOT
 !endif
-
 !ifndef SEP
 !error Se requiere la macro SEP
 !endif
@@ -17,16 +16,14 @@ INCLUDE += -I$(ZLIB_DIR)
 !ifndef INC_NOTARGETS
 
 $(ZLIB_LIB): lib3p_dir .EXISTSONLY
-	@%make savedir
 	cd $(ZLIB_DIR)
-	! $(MAKE) -f watcom$(SEP)watcom_f.mak $^.
+	*$(MAKE) -f watcom$(SEP)watcom_f.mak $^.
 	$(COPY) $^. $^:
-	@%make loaddir
+	cd $+$(%cwd)$-
 
 clean_zlib: .SYMBOLIC
-	@%make savedir
 	cd $(ZLIB_DIR)
-	! $(MAKE) -f watcom$(SEP)watcom_f.mak clean
-	@%make loaddir
+	*$(MAKE) -f watcom$(SEP)watcom_f.mak clean
+	cd $+$(%cwd)$-
 
 !endif #INC_NOTARGETS

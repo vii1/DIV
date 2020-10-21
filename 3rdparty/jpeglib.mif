@@ -1,7 +1,6 @@
 !ifndef ROOT
 !error Se requiere la macro ROOT
 !endif
-
 !ifndef SEP
 !error Se requiere la macro SEP
 !endif
@@ -17,16 +16,14 @@ INCLUDE += -I$(JPEG_DIR)
 !ifndef INC_NOTARGETS
 
 $(JPEG_LIB): lib3p_dir .EXISTSONLY
-	@%make savedir
 	cd $(JPEG_DIR)
-	$(MAKE) $^.
+	*$(MAKE) $^.
 	$(COPY) $^. $^:
-	@%make loaddir
+	cd $+$(%cwd)$-
 
 clean_jpeg: .SYMBOLIC
-	@%make savedir
 	cd $(JPEG_DIR)
-	$(MAKE) clean
-	@%make loaddir
+	*$(MAKE) clean
+	cd $+$(%cwd)$-
 
 !endif #INC_NOTARGETS

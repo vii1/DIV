@@ -1,27 +1,25 @@
 !include ../../os.mif
 
-EXE = testdll
-!ifndef __UNIX__
-EXE = $+ $(EXE).exe $-
-!endif
+ROOT			= ..$(SEP)..
+CONFIG			= release
+OUTDIR_BASE		= $(ROOT)$(SEP)build.dos
+OUTDIR			= $(OUTDIR_BASE)$(SEP)testdll$(SEP)$(CONFIG)
 
-!ifndef CONFIG
-CONFIG = release
-!endif
+OPTIONS			= -bt -q -zp4 -I.. -DPEDEBUG
 
-OUTDIR = $(CONFIG)
+EXE				= testdll$(EXE_SUFFIX)
+
+!ifeqi CONFIG debug
+OPTIONS			+= -d2
+!endif
 
 SOURCES = testdll.c divdll.c pe_load.c
 
 OBJS = $(SOURCES:.c=.obj)
 
-OPTIONS = -bt= -zq -zp4 -I.. -DPEDEBUG
-
-!ifeqi CONFIG debug
-OPTIONS += -d2
-!endif
-
 .BEFORE
+	@if not exist $(OUTDIR_BASE) mkdir $(OUTDIR_BASE)
+	@if not exist $(OUTDIR_BASE)$(SEP)testdll mkdir $(OUTDIR_BASE)$(SEP)testdll
 	@if not exist $(OUTDIR) mkdir $(OUTDIR)
 
 $(EXE): $(OUTDIR)/$(EXE) .SYMBOLIC
@@ -30,11 +28,11 @@ $(EXE): $(OUTDIR)/$(EXE) .SYMBOLIC
 $(OUTDIR)/$(EXE): $(OBJS)
 	*wlink &
 		option quiet &
-		name $(OUTDIR)$(SEP)$^. &
+		name $^@ &
 !ifeqi CONFIG debug
 		debug all &
 !endif
-		option map=$(OUTDIR)$(SEP)$^& &
+		option map=$^* &
 		path $(OUTDIR) &
 		file { $(OBJS) }
 
@@ -42,7 +40,7 @@ $(OUTDIR)/$(EXE): $(OBJS)
 .c: .;..
 
 .c.obj: .AUTODEPEND
-	*wcc386 $(OPTIONS) -fo=$(OUTDIR)$(SEP)$^:$^. -fr=$(OUTDIR)$(SEP)$^:$^& $<
+	*wcc386 $(OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 
 clean: .SYMBOLIC
 	@if exist $(OUTDIR)$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)*.err

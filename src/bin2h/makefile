@@ -1,23 +1,19 @@
-EXE = bin2h
-!ifdef __MSDOS__
-EXE = $(EXE).exe
-!endif
-!ifdef __NT__
-EXE = $(EXE).exe
-!endif
-!ifdef __UNIX__
-DELETE = rm
-!else
-DELETE = del
-!endif
+!include ../../os.mif
 
-CL = wcl386 -bt
+ROOT		= ..$(SEP)..
+OUTDIR_BASE	= $(ROOT)$(SEP)build.dos
+OUTDIR		= $(OUTDIR_BASE)$(SEP)bin2h
+EXE			= $(OUTDIR)$(SEP)bin2h$(EXE_SUFFIX)
+OPTIONS		= -bt -q
+
+.BEFORE
+	@if not exist $(OUTDIR_BASE) mkdir $(OUTDIR_BASE)
+	@if not exist $(OUTDIR) mkdir $(OUTDIR)
 
 $(EXE): bin2h.c
-	$(CL) $<
+	*wcl386 $(OPTIONS) -fo=$(OUTDIR)$(SEP)$^& -fr=$(OUTDIR)$(SEP)$^& -fe=$^@ $<
 
-.SILENT
 clean: .SYMBOLIC
-	-$(DELETE) $(EXE)
-	-$(DELETE) bin2h.obj
-	-$(DELETE) bin2h.err
+	@if exist $(EXE) $(DELETE) $(EXE)
+	@if exist $(OUTDIR)$(SEP)bin2h.obj $(DELETE) $(OUTDIR)$(SEP)bin2h.obj
+	@if exist $(OUTDIR)$(SEP)bin2h.err $(DELETE) $(OUTDIR)$(SEP)bin2h.err

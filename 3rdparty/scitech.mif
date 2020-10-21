@@ -1,6 +1,9 @@
 !ifndef ROOT
 !error Se requiere la macro ROOT
 !endif
+!ifndef SEP
+!error Se requiere la macro SEP
+!endif
 
 !ifndef INC_NOVARS
 
@@ -16,29 +19,25 @@ INCLUDE += -I$(SCITECH)$(SEP)include
 !ifndef INC_NOTARGETS
 
 $(SVGA_LIB): lib3p_dir .EXISTSONLY
-	@%make savedir
 	cd $(SVGA_DIR)
-	! $(MAKE) -f makefile.wat $^. SCITECH=$(SCITECH)
+	*$(MAKE) -f makefile.wat $^. SCITECH=$(SCITECH)
 	$(COPY) $^. $^:
-	@%make loaddir
+	cd $+$(%cwd)$-
 
 $(PMODE_LIB): lib3p_dir .EXISTSONLY
-	@%make savedir
 	cd $(PMODE_DIR)
-	! $(MAKE) -f makefile.wat $^. SCITECH=$(SCITECH)
+	*$(MAKE) -f makefile.wat $^. SCITECH=$(SCITECH)
 	$(COPY) $^. $^:
-	@%make loaddir
+	cd $+$(%cwd)$-
 
 clean_svga: .SYMBOLIC
-	@%make savedir
 	cd $(SVGA_DIR)
-	! $(MAKE) -f makefile.wat clean
-	@%make loaddir
+	*$(MAKE) -f makefile.wat clean
+	cd $+$(%cwd)$-
 
 clean_pmode: .SYMBOLIC
-	@%make savedir
-	cd $(SVGA_DIR)
-	! $(MAKE) -f makefile.wat clean
-	@%make loaddir
+	cd $(PMODE_DIR)
+	*$(MAKE) -f makefile.wat clean
+	cd $+$(%cwd)$-
 
 !endif #INC_NOTARGETS
