@@ -20,6 +20,9 @@
 *.bak
 *.bac
 
+# logs de Vagrant
+/*.log
+
 # ficheros temporales de programas externos
 /3rdparty/scitech/doc/*/*.[Gg][Ii][Dd]
 

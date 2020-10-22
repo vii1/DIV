@@ -7,7 +7,7 @@
 #include "pmw1.h"
 #include "encode.h"
 
-#include "..\pmwver.h"
+#include "../pmwver.h"
 
 #define RT_BLOCKSIZE 16380
 
@@ -594,7 +594,7 @@ int checkswitch( unsigned char sw, unsigned int numargs, char* args[] )
 {
 	unsigned int x;
 	for( x = 1; x < numargs; x++ )
-		if( args[x][0] == '-' || args[x][0] == '/' )
+		if( args[x][0] == '-' )
 			if( toupper( args[x][1] ) == sw ) return x;
 	return 0;
 }
@@ -603,7 +603,7 @@ int findfilename( unsigned int numargs, char* args[] )
 {
 	unsigned int x;
 	for( x = 1; x < numargs; x++ )
-		if( args[x][0] != '-' && args[x][0] != '/' ) return x;
+		if( args[x][0] != '-' ) return x;
 	return 0;
 }
 
@@ -611,7 +611,7 @@ int ifindfilename( unsigned int numargs, char* args[], int startindex )
 {
 	unsigned int x;
 	for( x = startindex; x < numargs; x++ )
-		if( args[x][0] != '-' && args[x][0] != '/' ) return x;
+		if( args[x][0] != '-' ) return x;
 	return 0;
 }
 
@@ -627,9 +627,9 @@ void usage( void )
 	printf( "Usage:  PMWLITE [options] <filename>\n" );
 	printf( "\nOptions:\n" );
 	printf( "--------\n" );
-	printf( "/Cx            Compression (4=Max, 3=Extra, 2=Normal, 1=Faster, 0=Fastest)\n" );
-	printf( "/D<filename>   Use <filename> for destination instead of default\n" );
-	printf( "/S<filename>   Specify a stub to use instead of PMODEW.EXE\n" );
+	printf( "-Cx            Compression (4=Max, 3=Extra, 2=Normal, 1=Faster, 0=Fastest)\n" );
+	printf( "-D<filename>   Use <filename> for destination instead of default\n" );
+	printf( "-S<filename>   Specify a stub to use instead of PMODEW.EXE\n" );
 	quit( 1 );
 }
 

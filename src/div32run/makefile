@@ -122,7 +122,7 @@ $(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) $(PMW_DEPS)
 !ifeqi CONFIG release
 !ifeq SESSION 0
 !ifeq PACK 1
-	$(OUTDIR_BASE)$(SEP)pmwlite$(SEP)$(CONFIG)$(SEP)pmwlite /C4 $^@
+	$(OUTDIR_BASE)$(SEP)pmwlite$(SEP)$(CONFIG)$(SEP)pmwlite -C4 -S$(ROOT)$(SEP)pmwlite$(SEP)pmodew.exe $^@
 !endif
 !endif
 !endif
