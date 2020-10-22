@@ -21,6 +21,8 @@ OPTIONS			= -bt=dos -wx -mf -i=judas -i=netlib -i=vbe -q -DDIV32RUN
 WASM_OPTIONS	= -bt=dos -q
 TASM_OPTIONS	= /w2 /z /ml /t /m2 /i..\vpe /jMASM
 
+PMW_DEPS		=
+
 !ifeq SESSION 1
 OPTIONS 		+= -DDEBUG
 SYSTEM			= dos4g
@@ -33,6 +35,7 @@ EXE				= session.386
 !else # SESSION = 0
 SYSTEM			= pmodew
 OUTDIR			= $(OUTDIR_BASE)$(SEP)div32run$(SEP)$(CONFIG).$(CPU)
+PMW_DEPS		= pmwlite
 !ifeq CPU 586
 EXE				= div32run.ins
 !else
@@ -102,7 +105,7 @@ OPTIONS += $(INCLUDE)
 $(EXE): $(OUTDIR)$(SEP)$(EXE) .SYMBOLIC
 	@%null
 
-$(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS)
+$(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) $(PMW_DEPS)
 	*wlink &
 		option quiet &
 		system $(SYSTEM) &
@@ -115,6 +118,17 @@ $(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS)
 		path $(OUTDIR) &
 		file { $(OBJS) } &
 		libfile { $(LIBS) }
+!ifeqi CONFIG release
+	-*wstrip $^@
+!ifeq SESSION 0
+	$(OUTDIR_BASE)$(SEP)pmwlite$(SEP)$(CONFIG)$(SEP)pmwlite /C4 $^@
+!endif
+!endif
+
+pmwlite: .SYMBOLIC
+	cd $(ROOT)$(SEP)pmwlite$(SEP)src$(SEP)pmwlite
+	*$(MAKE)
+	cd $+$(%cwd)$+
 
 .asm: .;..;..$(SEP)vpe
 .c: .;..;..$(SEP)netlib

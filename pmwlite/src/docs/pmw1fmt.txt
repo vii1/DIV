@@ -1,0 +1,61 @@
+The following is the preliminary format for a PMW1 compressed/uncompressed
+executable:
+
+ีออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออธ
+ณ               PMODE/W (PMW1) Linear Executable Header Format               ณ
+ฦออออออออัออออออออออออัออออออออออออออออออออออออออออออออออออออออออออออออออออออต
+ณ Offset ณ    Size    ณ Description                                          ณ
+ฦออออออออุออออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออต
+ณ000000h ณ   DWORD    ณ 'PMW1' ID Tag                                        ณ
+ณ000004h ณ   WORD     ณ Executable Version (Lo=Major, Hi=Minor)              ณ
+ณ000006h ณ   WORD     ณ Information Flags Bitmap                             ณ
+ณ        ณ            ณ                                                      ณ
+ณ        ณ            ณ ีอัออออออออออออออออออออออออออออัอออออัออออออธ        ณ
+ณ        ณ            ณ ณ0ณCompression                 ณ1=On ณ0=Off ณ        ณ
+ณ        ณ            ณ รฤมฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤมฤฤฤฤฤมฤฤฤฤฤฤด        ณ
+ณ        ณ            ณ ณ  Bits 1-15 Are For Future Expansion       ณ        ณ
+ณ        ณ            ณ ิอออออออออออออออออออออออออออออออออออออออออออพ        ณ
+ณ        ณ            ณ                                                      ณ
+รฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤด
+ณ000008h ณ   DWORD    ณ Initial CS:EIP Object #                              ณ
+ณ00000Ch ณ   DWORD    ณ Initial CS:EIP Offset                                ณ
+ณ000010h ณ   DWORD    ณ Initial SS:ESP Object #                              ณ
+ณ000014h ณ   DWORD    ณ Initial SS:ESP Offset                                ณ
+ณ000018h ณ   DWORD    ณ Object Table Offset                                  ณ
+ณ00001Ch ณ   DWORD    ณ Object Table Entries                                 ณ
+ณ000020h ณ   DWORD    ณ Relocation Table Offset (RT)                         ณ
+ณ000024h ณ   DWORD    ณ Data Pages Offset                                    ณ
+ภฤฤฤฤฤฤฤฤมฤฤฤฤฤฤฤฤฤฤฤฤมฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤู
+
+
+
+
+ีออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออธ
+ณ                     PMODE/W (PMW1) Object Table Format                     ณ
+ฦออออออออัออออออออออออัออออออออออออออออออออออออออออออออออออออออออออออออออออออต
+ณ Offset ณ    Size    ณ Description                                          ณ
+ฦออออออออุออออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออต
+ณ000000h ณ   DWORD    ณ Virtual Size In Bytes                                ณ
+ณ000004h ณ   DWORD    ณ Actual Size Stored Within Executable                 ณ
+ณ000008h ณ   DWORD    ณ Object Flags                                         ณ
+ณ00000Ch ณ   DWORD    ณ Offset Of Relocation Info (Relative To Start Of RT)  ณ
+ณ000010h ณ   DWORD    ณ Number Of Relocation Blocks (Zero If None)           ณ
+ณ000014h ณ   DWORD    ณ Uncompressed Data Size                               ณ
+ภฤฤฤฤฤฤฤฤมฤฤฤฤฤฤฤฤฤฤฤฤมฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤู
+
+
+ีออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออธ
+ณ                    PMODE/W (PMW1) Relocation Table Entry                   ณ
+ฦออออออออัออออออออออออัออออออออออออออออออออออออออออออออออออออออออออออออออออออต
+ณ Offset ณ    Size    ณ Description                                          ณ
+ฦออออออออุออออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออต
+ณ000000h ณ   BYTE     ณ Relocation Type                                      ณ
+ณ000001h ณ   DWORD    ณ Source Offset (Relative To Object Start)             ณ
+ณ000005h ณ   BYTE     ณ Target Object Number                                 ณ
+ณ000006h ณ   DWORD    ณ Target Offset (Relative To Object Start)             ณ
+ภฤฤฤฤฤฤฤฤมฤฤฤฤฤฤฤฤฤฤฤฤมฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤู
+
+
+
+
+
