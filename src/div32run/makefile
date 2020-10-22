@@ -22,6 +22,7 @@ WASM_OPTIONS	= -bt=dos -q
 TASM_OPTIONS	= /w2 /z /ml /t /m2 /i..\vpe /jMASM
 
 PMW_DEPS		=
+PACK			= 1
 
 !ifeq SESSION 1
 OPTIONS 		+= -DDEBUG
@@ -119,9 +120,10 @@ $(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) $(PMW_DEPS)
 		file { $(OBJS) } &
 		libfile { $(LIBS) }
 !ifeqi CONFIG release
-	-*wstrip $^@
 !ifeq SESSION 0
+!ifeq PACK 1
 	$(OUTDIR_BASE)$(SEP)pmwlite$(SEP)$(CONFIG)$(SEP)pmwlite /C4 $^@
+!endif
 !endif
 !endif
 

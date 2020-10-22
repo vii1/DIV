@@ -3,6 +3,7 @@
 #include <string.h>
 #include <io.h>
 #include <env.h>
+#include <time.h>
 #include "pmw1.h"
 #include "encode.h"
 
@@ -45,7 +46,7 @@ unsigned int ctypes[5] = { ENCODE_PROBESMIN, ENCODE_PROBESFEW, ENCODE_PROBESNORM
 unsigned int  spc;
 unsigned char spinc[5] = "|/-\\";
 
-unsigned int* p = 0x46c;
+unsigned int* p;
 
 char tpath[_MAX_PATH];
 
@@ -171,7 +172,7 @@ void opentempfiles( int force )
 	if( c = checkswitch( 'D', gargc, gargv ) ) {
 		exefilename = &gargv[c][2];
 	}
-	srand( p[0] );
+	srand( (int)time(NULL) );
 	d = rand();
 	sprintf( buf, "%3d", d );
 	buf[3] = NULL;
