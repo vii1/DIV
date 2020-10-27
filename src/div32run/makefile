@@ -12,6 +12,7 @@ CONFIG			= release
 CPU				= 586
 SESSION			= 0
 OUTDIR_BASE		= $(ROOT)$(SEP)build.dos
+OUTDIR_BASE_SYS = $(ROOT)$(SEP)build.$(SYS)
 
 MAKE			= $+ $(MAKE) -h $-
 ASM				= WASM
@@ -122,7 +123,7 @@ $(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) $(PMW_DEPS)
 !ifeqi CONFIG release
 !ifeq SESSION 0
 !ifeq PACK 1
-	$(OUTDIR_BASE)$(SEP)pmwlite$(SEP)$(CONFIG)$(SEP)pmwlite -C4 -S$(ROOT)$(SEP)pmwlite$(SEP)pmodew.exe $^@
+	$(OUTDIR_BASE_SYS)$(SEP)pmwlite$(SEP)$(CONFIG)$(SEP)pmwlite -C4 -S$(ROOT)$(SEP)pmwlite$(SEP)pmodew.exe $^@
 !endif
 !endif
 !endif

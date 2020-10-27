@@ -4,20 +4,24 @@
 !ifndef OS_MIF
 OS_MIF=1
 
-!ifndef %OS
+#!ifndef %OS
 !ifdef __UNIX__
 %OS=UNIX
+SYS=unx
 !endif
 !ifdef __LINUX__
 %OS=LINUX
+SYS=lin
 !endif
 !ifdef __MSDOS__
 %OS=DOS
+SYS=dos
 !endif
 !ifdef __NT__
 %OS=WINDOWS
+SYS=win
 !endif
-!endif
+#!endif
 
 # Se definen varias variables que dependen del SO donde se compila
 # COPY -> El comando que se usa para copiar cosas con ``wmake install``
