@@ -7,6 +7,8 @@
 
 #include <zlib.h>
 
+#include "vesa.h"
+
 enum _ErrorNum {
 	E_RUTA = 0,		   // La unidad o ruta especificada no es v lida
 	E_INTERR = 1,	   // La instalaci¢n ha sido interrumpida por el usuario
@@ -77,6 +79,8 @@ FpgMapHeader** fpgIndex;
 unsigned char* installFpg;
 Fnt			   smallFnt;
 Fnt			   bigFnt;
+
+VBESCREEN screen;
 
 void error( ErrorNum num )
 {
@@ -274,6 +278,11 @@ int main( int argc, char* argv[] )
 
 	chdir_to_install_dir( argv[0] );
 	lee_datos_exe( argv[0] );
+
+	if(vbeInit() != 0) {
+		error(E_VESA);
+	}
+	vbeSetMode(640, 480, 8, &screen);
 
 	return 0;
 }
