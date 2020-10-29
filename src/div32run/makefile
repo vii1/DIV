@@ -37,7 +37,9 @@ EXE				= session.386
 !else # SESSION = 0
 SYSTEM			= pmodew
 OUTDIR			= $(OUTDIR_BASE)$(SEP)div32run$(SEP)$(CONFIG).$(CPU)
+!ifeq PACK 1
 PMW_DEPS		= pmwlite
+!endif
 !ifeq CPU 586
 EXE				= div32run.ins
 !else
@@ -112,7 +114,7 @@ $(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) $(PMW_DEPS)
 		option quiet &
 		system $(SYSTEM) &
 		name $^@ &
-!ifeqi %CONFIG debug
+!ifeqi CONFIG debug
 		debug all &
 !endif
 		option stack=64k &
@@ -167,7 +169,7 @@ pmwlite: .SYMBOLIC
 clean: .SYMBOLIC
 	@if exist $(OUTDIR)$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)*.err
 	@if exist $(OUTDIR)$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)*.obj
-	@if exist $(OUTDIR)$(SEP)*.exe $(DELETE) $(OUTDIR)$(SEP)*.exe
+	@if exist $(OUTDIR)$(SEP)$(EXE) $(DELETE) $(OUTDIR)$(SEP)$(EXE)
 	@if exist $(OUTDIR)$(SEP)vpe$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)vpe$(SEP)*.err
 	@if exist $(OUTDIR)$(SEP)vpe$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)vpe$(SEP)*.obj
 	@if exist $(OUTDIR)$(SEP)netlib$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)netlib$(SEP)*.err
