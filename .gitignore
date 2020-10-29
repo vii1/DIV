@@ -30,7 +30,7 @@
 /bin
 /_trash
 /_basura
-/build.dos
+/build.*
 /.vscode
 /.vagrant
 
