@@ -56,12 +56,27 @@ typedef struct {
 	} cpoints[];
 } FpgMapHeader;
 
+typedef struct {
+	unsigned int width;
+	unsigned int height;
+	int			 inc_y;
+	unsigned int offset;
+} FntCharHeader;
+
+typedef struct {
+	unsigned char* fnt;
+	FntCharHeader* table;
+	unsigned int   averageWidth;
+	unsigned int   maxHeight;
+	unsigned int   averageCenter;
+} Fnt;
+
 char		   install_dir[_MAX_PATH + 1];
 unsigned char* paleta;
 FpgMapHeader** fpgIndex;
 unsigned char* installFpg;
-unsigned char* smallFnt;
-unsigned char* bigFnt;
+Fnt			   smallFnt;
+Fnt			   bigFnt;
 
 void error( ErrorNum num )
 {
@@ -145,6 +160,32 @@ void cargar_fpg( const unsigned char* buf, unsigned int uSize, unsigned int zSiz
 	}
 }
 
+void cargar_fnt( Fnt* fnt, const unsigned char* buf, unsigned int uSize, unsigned int zSize )
+{
+	FntCharHeader* i;
+	int			   numChars = 0;
+	int			   totalWidth = 0;
+
+	fnt->fnt = div_malloc( uSize );
+	descomprimir( fnt->fnt, uSize, buf, zSize );
+	if( memcmp( fnt->fnt, "fnt\x1a\x0d\x0a", 7 ) ) {
+		error( E_FPG );
+	}
+	fnt->table = (FntCharHeader*)( fnt->fnt + 0x54c );
+	fnt->maxHeight = 0;
+	for( i = fnt->table; i < fnt->table + 256; ++i ) {
+		if( i->width ) {
+			++numChars;
+			totalWidth += i->width;
+			if( i->inc_y + i->height > fnt->maxHeight ) {
+				fnt->maxHeight = i->inc_y + i->height;
+			}
+		}
+	}
+	fnt->averageWidth = totalWidth / numChars;
+	fnt->averageCenter = fnt->averageWidth / 2;
+}
+
 void lee_datos_exe( const char* exe )
 {
 	FILE*		f;
@@ -202,6 +243,14 @@ void lee_datos_exe( const char* exe )
 	ptr = (unsigned char*)&iptr[5];
 	cargar_fpg( ptr, installData.sizeInstallFpg, installData.sizeInstallFpgZ );
 	ptr += installData.sizeInstallFpgZ;
+	cargar_fnt( &smallFnt, ptr, installData.sizeSmallFnt, installData.sizeSmallFntZ );
+	if( installData.segundoFont && installData.sizeBigFntZ ) {
+		ptr += installData.sizeSmallFntZ;
+		cargar_fnt( &bigFnt, ptr, installData.sizeBigFnt, installData.sizeBigFntZ );
+	} else {
+		bigFnt = smallFnt;
+	}
+	free( buf );
 }
 
 void chdir_to_install_dir( const char* argv0 )

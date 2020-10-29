@@ -1,0 +1,43 @@
+Descripci¢n del contenido de INSTALL.FPG
+========================================
+
+Las ventanas se muestran centradas en pantalla. Se puede usar el color
+transparente para dejar un margen si se quiere mostrar descentrada.
+
+Los textos se muestran centrados vertical y horizontalmente en su punto de
+control, salvo cuando se trata de una caja de texto, en cuyo caso se
+proporcionan dos puntos de control para delimitar dicha caja.
+
+C¢digo  Descripci¢n                     Puntos de control
+======  =============================== ===========================
+    1   Puntero del rat¢n               0 = centro de gravedad
+    2   Pantalla de introducci¢n
+    3   Fondo del instalador            1 = bot¢n Instalar
+                                        2 = bot¢n Ayuda
+                                        3 = bot¢n Salir
+                                        4 = t¡tulo
+                                        5 = copyright
+                                        6 = espacio requerido
+                                        7 = espacio disponible
+                                        8 = unidad 1
+                                        9 = unidad 2
+                                        10 = unidad 3
+                                        11 = unidad 4
+    4   Bot¢n Instalar - pulsado
+    5   Bot¢n Instalar - normal
+    6   Bot¢n Ayuda - pulsado
+    7   Bot¢n Ayuda - normal
+    8   Bot¢n Salir - pulsado
+    9   Bot¢n salir - normal
+   10   Unidad seleccionada
+   11   Unidad sin seleccionar
+   12   Ventana de Ayuda                0 = esquina superior izquierda del texto
+                                        1 = esquina inferior derecha del texto
+   13   Ventana de introducir ruta      0 = esquina superior izquierda para la entrada de texto
+                                        1 = esquina inferior derecha para la entrada de texto
+   14   Ventana de progreso             0 = centro de la barra de progreso
+   15   Barra de progreso
+   16   Ventana de informaci¢n          0 = esquina superior izquierda del texto
+                                        1 = esquina inferior derecha del texto
+   17   Ventana de error                0 = esquina superior izquierda del texto
+                                        1 = esquina inferior derecha del texto
