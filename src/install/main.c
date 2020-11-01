@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -7,80 +6,35 @@
 
 #include <zlib.h>
 
-#include "vesa.h"
-
-enum _ErrorNum {
-	E_RUTA = 0,		   // La unidad o ruta especificada no es v lida
-	E_INTERR = 1,	   // La instalaci¢n ha sido interrumpida por el usuario
-	E_LECTURA = 2,	   // Se produjo un error en la lectura de los archivos
-	E_ESCRITURA = 3,   // Se produjo un error en la escritura de los archivos
-	E_ESPACIO = 4,	   // No hay suficiente espacio en la unidad seleccionada
-	E_MEMORIA = 5,	   // No hay suficiente memoria para realizar la instalaci¢n
-	E_FPG = 6,		   // El FPG interno no es v lido (faltan gr ficos o puntos de control)
-	E_VESA = 7,		   // No se encontr¢ un driver VESA (controlador de pantalla)
-	E_DISCO = 8		   // No se encontr¢ ning£n disco duro en el que instalar
-};
-typedef enum _ErrorNum ErrorNum;
+#include "main.h"
+#include "video.h"
+#include "fpg.h"
+#include "fnt.h"
 
 struct {
-	const char*	 appName;
-	const char*	 copyright;
-	const char*	 packName;
-	const char*	 defaultDir;
-	const char*	 msgFin;
-	const char*	 msgHelp;
-	const char*	 msgDisk1;
-	const char*	 msgDisk2;
-	const char*	 errores[9];
-	unsigned int totalLen;
-	unsigned int packSize;
-	int			 createDir;
-	int			 includeSetup;
-	int			 segundoFont;
-	unsigned int sizeInstallFpgZ;
-	unsigned int sizeInstallFpg;
-	unsigned int sizeSmallFntZ;
-	unsigned int sizeSmallFnt;
-	unsigned int sizeBigFntZ;
-	unsigned int sizeBigFnt;
+	const char* appName;
+	const char* copyright;
+	const char* packName;
+	const char* defaultDir;
+	const char* msgFin;
+	const char* msgHelp;
+	const char* msgDisk1;
+	const char* msgDisk2;
+	const char* errores[9];
+	dword		totalLen;
+	dword		packSize;
+	int			createDir;
+	int			includeSetup;
+	int			segundoFont;
+	dword		sizeInstallFpgZ;
+	dword		sizeInstallFpg;
+	dword		sizeSmallFntZ;
+	dword		sizeSmallFnt;
+	dword		sizeBigFntZ;
+	dword		sizeBigFnt;
 } installData = { 0 };
 
-typedef struct {
-	unsigned int code;
-	unsigned int length;
-	char		 description[32];
-	char		 filename[12];
-	unsigned int width;
-	unsigned int height;
-	unsigned int numCpoints;
-	_Packed struct {
-		short x, y;
-	} cpoints[];
-} FpgMapHeader;
-
-typedef struct {
-	unsigned int width;
-	unsigned int height;
-	int			 inc_y;
-	unsigned int offset;
-} FntCharHeader;
-
-typedef struct {
-	unsigned char* fnt;
-	FntCharHeader* table;
-	unsigned int   averageWidth;
-	unsigned int   maxHeight;
-	unsigned int   averageCenter;
-} Fnt;
-
-char		   install_dir[_MAX_PATH + 1];
-unsigned char* paleta;
-FpgMapHeader** fpgIndex;
-unsigned char* installFpg;
-Fnt			   smallFnt;
-Fnt			   bigFnt;
-
-VBESCREEN screen;
+char install_dir[_MAX_PATH + 1];
 
 void error( ErrorNum num )
 {
@@ -97,6 +51,7 @@ char* div_strdup( const char* string )
 {
 	char* s = strdup( string );
 	if( !s ) {
+		video_reset();
 		if( installData.errores[E_MEMORIA] ) {
 			printf( "%s\n", installData.errores[E_MEMORIA] );
 		} else {
@@ -111,6 +66,7 @@ void* div_malloc( size_t size )
 {
 	void* p = malloc( size );
 	if( !p ) {
+		video_reset();
 		if( installData.errores[E_MEMORIA] ) {
 			printf( "%s\n", installData.errores[E_MEMORIA] );
 		} else {
@@ -121,7 +77,7 @@ void* div_malloc( size_t size )
 	return p;
 }
 
-void descomprimir( unsigned char* dest, unsigned int destLen, const unsigned char* src, unsigned int srcLen )
+void descomprimir( byte* dest, unsigned int destLen, const byte* src, unsigned int srcLen )
 {
 	switch( uncompress( dest, (unsigned long*)&destLen, src, srcLen ) ) {
 		case Z_OK: break;
@@ -132,62 +88,6 @@ void descomprimir( unsigned char* dest, unsigned int destLen, const unsigned cha
 			error( E_FPG );
 		}
 	}
-}
-
-void cargar_fpg( const unsigned char* buf, unsigned int uSize, unsigned int zSize )
-{
-	unsigned char* ptr;
-	int			   i = 0;
-	unsigned int   max = 0;
-	installFpg = div_malloc( uSize );
-	descomprimir( installFpg, uSize, buf, zSize );
-	if( memcmp( installFpg, "fpg\x1a\x0d\x0a", 7 ) ) {
-		error( E_FPG );
-	}
-	paleta = installFpg + 8;
-	ptr = installFpg + 0x548;
-	while( ptr < installFpg + uSize && i < 1000 ) {
-		FpgMapHeader* map = (FpgMapHeader*)ptr;
-		if( map->code > max ) max = map->code;
-		++i;
-		ptr += map->length;
-	}
-	fpgIndex = div_malloc( max * sizeof( FpgMapHeader* ) );
-	memset( fpgIndex, 0, max * sizeof( FpgMapHeader* ) );
-	ptr = installFpg + 0x548;
-	i = 0;
-	while( ptr < installFpg + uSize && i < 1000 ) {
-		FpgMapHeader* map = (FpgMapHeader*)ptr;
-		fpgIndex[map->code] = map;
-		++i;
-		ptr += map->length;
-	}
-}
-
-void cargar_fnt( Fnt* fnt, const unsigned char* buf, unsigned int uSize, unsigned int zSize )
-{
-	FntCharHeader* i;
-	int			   numChars = 0;
-	int			   totalWidth = 0;
-
-	fnt->fnt = div_malloc( uSize );
-	descomprimir( fnt->fnt, uSize, buf, zSize );
-	if( memcmp( fnt->fnt, "fnt\x1a\x0d\x0a", 7 ) ) {
-		error( E_FPG );
-	}
-	fnt->table = (FntCharHeader*)( fnt->fnt + 0x54c );
-	fnt->maxHeight = 0;
-	for( i = fnt->table; i < fnt->table + 256; ++i ) {
-		if( i->width ) {
-			++numChars;
-			totalWidth += i->width;
-			if( i->inc_y + i->height > fnt->maxHeight ) {
-				fnt->maxHeight = i->inc_y + i->height;
-			}
-		}
-	}
-	fnt->averageWidth = totalWidth / numChars;
-	fnt->averageCenter = fnt->averageWidth / 2;
 }
 
 void lee_datos_exe( const char* exe )
@@ -244,7 +144,7 @@ void lee_datos_exe( const char* exe )
 	installData.includeSetup = iptr[3];
 	installData.segundoFont = iptr[4];
 
-	ptr = (unsigned char*)&iptr[5];
+	ptr = (byte*)&iptr[5];
 	cargar_fpg( ptr, installData.sizeInstallFpg, installData.sizeInstallFpgZ );
 	ptr += installData.sizeInstallFpgZ;
 	cargar_fnt( &smallFnt, ptr, installData.sizeSmallFnt, installData.sizeSmallFntZ );
@@ -271,6 +171,11 @@ void chdir_to_install_dir( const char* argv0 )
 
 int main( int argc, char* argv[] )
 {
+#ifdef _DEBUG
+	if( 0 ) {
+		argv[0] = "D:\\BUILD.DOS\\INSTALL\\DEBUG\\TEST\\INSTALL.EXE";
+	}
+#endif
 	if( argc < 1 ) return 1;
 
 	// TODO: considerar un handler que sirva para algo
@@ -279,10 +184,19 @@ int main( int argc, char* argv[] )
 	chdir_to_install_dir( argv[0] );
 	lee_datos_exe( argv[0] );
 
-	if(vbeInit() != 0) {
-		error(E_VESA);
-	}
-	vbeSetMode(640, 480, 8, &screen);
+	// TODO: obtener discos duros y espacio libre
+	verificar_fpg();
 
+	if( video_set_mode() ) {
+		error( E_VESA );
+	}
+	pal_init();
+
+	// Imagen intro
+	volcado( fpg_map( 2 ) );
+	fade_on();
+	
+	fade_off();
+	video_reset();
 	return 0;
 }
