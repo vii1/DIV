@@ -6,10 +6,11 @@
 
 #include <zlib.h>
 
-#include "main.h"
 #include "video.h"
 #include "fpg.h"
 #include "fnt.h"
+#include "mouse.h"
+#include "main.h"
 
 struct {
 	const char* appName;
@@ -157,7 +158,7 @@ void lee_datos_exe( const char* exe )
 	free( buf );
 }
 
-void chdir_to_install_dir( const char* argv0 )
+static void chdir_to_install_dir( const char* argv0 )
 {
 	unsigned int n;
 	_fullpath( install_dir, argv0, _MAX_PATH + 1 );
@@ -169,9 +170,43 @@ void chdir_to_install_dir( const char* argv0 )
 	chdir( install_dir );
 }
 
+static void mainLoop()
+{
+	byte* fondoMouse;
+	Rect  mouseRect, prevMouseRect;
+	int	  mousecx, mousecy;
+	int	  salir = 0;
+
+	fpg_map_center( FPG_MOUSE, &mousecx, &mousecy );
+	mouseRect = rect( mouseX - mousecx, mouseY - mousecy, fpgIndex[FPG_MOUSE]->width, fpgIndex[FPG_MOUSE]->height );
+	prevMouseRect = mouseRect;
+	fondoMouse = div_malloc( mouseRect.an * mouseRect.al );
+	get( fondoMouse, mouseRect );
+	put( fpg_map( FPG_MOUSE ), mouseRect );
+	volcado_parcial( mouseRect );
+	while( !salir ) {
+		read_mouse();
+		if( mouseX != prevMouseX || mouseY != prevMouseY ) {
+			prevMouseRect = mouseRect;
+			mouseRect.x = mouseX - mousecx;
+			mouseRect.y = mouseY - mousecy;
+			put( fondoMouse, prevMouseRect );
+			get( fondoMouse, mouseRect );
+			put( fpg_map( FPG_MOUSE ), mouseRect );
+			volcado_parcial( prevMouseRect );
+			volcado_parcial( mouseRect );
+		}
+		retrazo();
+	}
+	//	r.x = 320;
+	//	r.y = 240;
+	//	r.an = fpgIndex[1]->width;
+	//	r.al = fpgIndex[1]->height;
+	//	put( fpg_map( 1 ), r );
+	//	volcado_parcial( r );
+}
 int main( int argc, char* argv[] )
 {
-	Rect r;
 #ifdef _DEBUG
 	if( 0 ) {
 		argv[0] = "D:\\BUILD.DOS\\INSTALL\\DEBUG\\TEST\\INSTALL.EXE";
@@ -194,16 +229,11 @@ int main( int argc, char* argv[] )
 	pal_init();
 
 	// Imagen intro
-	put_screen( fpg_map( 2 ) );
+	put_screen( fpg_map( FPG_INTRO ) );
 	volcado();
 	fade_on();
 
-	r.x = 320;
-	r.y = 240;
-	r.an = fpgIndex[1]->width;
-	r.al = fpgIndex[1]->height;
-	put( fpg_map( 1 ), r );
-	volcado_parcial( r );
+	mainLoop();
 
 	fade_off();
 	video_reset();

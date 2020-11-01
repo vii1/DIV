@@ -188,7 +188,7 @@ void put( const byte* map, Rect rect )
 	map += ( t.y - rect.y ) * rect.an + ( t.x - rect.x );
 	for( ; t.al > 0; --t.al, dst += screen.xres, map += rect.an ) {
 		// memcpy( p, src, tan );
-        register int x = t.an;
+		register int x = t.an;
 		for( ; x; --x ) {
 			register byte b = map[x];
 			if( b ) dst[x] = b;
@@ -196,12 +196,22 @@ void put( const byte* map, Rect rect )
 	}
 }
 
-void get( byte* dst, Rect rect )
+void get( byte* dst, Rect r )
 {
 	byte* src;
-	if( rect.an <= 0 || rect.al <= 0 ) return;
-	src = buffer + rect.y * screen.xres + rect.x;
-	for( ; rect.al > 0; --rect.al, dst += rect.an, src += screen.xres ) {
-		memcpy( dst, src, rect.an );
+	if( r.an <= 0 || r.al <= 0 ) return;
+	src = buffer + r.y * screen.xres + r.x;
+	for( ; r.al > 0; --r.al, dst += r.an, src += screen.xres ) {
+		memcpy( dst, src, r.an );
 	}
+}
+
+Rect rect( int x, int y, int an, int al )
+{
+	Rect r;
+	r.x = x;
+	r.y = y;
+	r.an = an;
+	r.al = al;
+	return r;
 }

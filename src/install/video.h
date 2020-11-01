@@ -2,6 +2,7 @@
 #define __VIDEO_H__
 
 #include "main.h"
+#include "vesa.h"
 
 #define PALETTE_SIZE ( 256 * 3 )
 
@@ -24,7 +25,9 @@ void recortar( Rect* r );
 void put_screen( const byte* map );
 void put( const byte* map, Rect rect );
 void get( byte* dst, Rect rect );
+Rect rect( int x, int y, int an, int al );
 
 extern byte* paleta;
+extern VBESCREEN screen;
 
 #endif	 // __VIDEO_H__

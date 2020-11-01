@@ -56,3 +56,15 @@ const byte* fpg_map( int code )
 	const FpgMapHeader* map = fpgIndex[code];
 	return (const byte*)( &map->cpoints[map->numCpoints] );
 }
+
+void fpg_map_center( int code, int* cx, int* cy )
+{
+	FpgMapHeader* map = fpgIndex[code];
+	if( map->numCpoints == 0 ) {
+		if( cx ) *cx = map->width / 2;
+		if( cy ) *cy = map->height / 2;
+	} else {
+		if( cx ) *cx = map->cpoints[0].x;
+		if( cy ) *cy = map->cpoints[0].y;
+	}
+}
