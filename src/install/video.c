@@ -10,6 +10,7 @@ byte	  paleta_activa[PALETTE_SIZE];
 byte	  c0;
 byte*	  buffer;
 byte*	  paleta;
+word	  scanline;
 
 int video_set_mode()
 {
@@ -19,6 +20,7 @@ int video_set_mode()
 	if( vbeSetMode( 640, 480, 8, &screen ) != 0 ) {
 		return 1;
 	}
+	scanline = ModeInfoBlock.BytesPerScanLine;
 	buffer = div_malloc( 640 * 480 );
 	return 0;
 }
@@ -91,7 +93,7 @@ void fade_off()
 	}
 }
 
-byte find_color( const byte* pal, byte r, byte g, byte b )
+static byte find_color( const byte* pal, byte r, byte g, byte b )
 {
 	int			dmin, r2, g2, b2;
 	const byte *endpal, *color;
@@ -125,7 +127,81 @@ void pal_init()
 	c0 = find_color( paleta, 0, 0, 0 );
 }
 
-void volcado( const byte* src )
+void volcado()
 {
-	memcpy( screen.adr, src, screen.xres * screen.yres );
+	if( scanline == screen.xres ) {
+		memcpy( screen.adr, buffer, screen.xres * screen.yres );
+	} else {
+		const byte* src = buffer;
+		byte*		p = screen.adr;
+		int			i = 0;
+		for( ; i < screen.yres; ++i, p += scanline, src += screen.xres ) {
+			memcpy( p, src, screen.xres );
+		}
+	}
+}
+
+void recortar( Rect* r )
+{
+	if( r->x < 0 ) {
+		r->an += r->x;
+		r->x = 0;
+	}
+	if( r->y < 0 ) {
+		r->al += r->y;
+		r->y = 0;
+	}
+	if( r->x + r->an >= screen.xres ) {
+		r->an = screen.xres - r->x;
+	}
+	if( r->y + r->al >= screen.yres ) {
+		r->al = screen.yres - r->y;
+	}
+	if( r->an < 0 ) r->an = 0;
+	if( r->al < 0 ) r->al = 0;
+}
+
+void volcado_parcial( Rect r )
+{
+	byte *dst, *src;
+	recortar( &r );
+	if( r.an == 0 || r.al == 0 ) return;
+	dst = screen.adr + scanline * r.y + r.x;
+	src = buffer + screen.xres * r.y + r.x;
+	for( ; r.al > 0; --r.al, dst += scanline, src += screen.xres ) {
+		memcpy( dst, src, r.an );
+	}
+}
+
+void put_screen( const byte* map )
+{
+	memcpy( buffer, map, screen.xres * screen.yres );
+}
+
+void put( const byte* map, Rect rect )
+{
+	byte* dst;
+	Rect  t = rect;
+	recortar( &t );
+	if( t.an == 0 || t.al == 0 ) return;
+	dst = buffer + screen.xres * t.y + t.x;
+	map += ( t.y - rect.y ) * rect.an + ( t.x - rect.x );
+	for( ; t.al > 0; --t.al, dst += screen.xres, map += rect.an ) {
+		// memcpy( p, src, tan );
+        register int x = t.an;
+		for( ; x; --x ) {
+			register byte b = map[x];
+			if( b ) dst[x] = b;
+		}
+	}
+}
+
+void get( byte* dst, Rect rect )
+{
+	byte* src;
+	if( rect.an <= 0 || rect.al <= 0 ) return;
+	src = buffer + rect.y * screen.xres + rect.x;
+	for( ; rect.al > 0; --rect.al, dst += rect.an, src += screen.xres ) {
+		memcpy( dst, src, rect.an );
+	}
 }

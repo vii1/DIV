@@ -171,6 +171,7 @@ void chdir_to_install_dir( const char* argv0 )
 
 int main( int argc, char* argv[] )
 {
+	Rect r;
 #ifdef _DEBUG
 	if( 0 ) {
 		argv[0] = "D:\\BUILD.DOS\\INSTALL\\DEBUG\\TEST\\INSTALL.EXE";
@@ -193,9 +194,17 @@ int main( int argc, char* argv[] )
 	pal_init();
 
 	// Imagen intro
-	volcado( fpg_map( 2 ) );
+	put_screen( fpg_map( 2 ) );
+	volcado();
 	fade_on();
-	
+
+	r.x = 320;
+	r.y = 240;
+	r.an = fpgIndex[1]->width;
+	r.al = fpgIndex[1]->height;
+	put( fpg_map( 1 ), r );
+	volcado_parcial( r );
+
 	fade_off();
 	video_reset();
 	return 0;
