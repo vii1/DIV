@@ -14,7 +14,7 @@ int	 video_set_mode();
 void video_reset();
 void retrazo();
 void set_dac( const byte* _dac );
-// void fundido( const byte* paleta, int alfa );
+void fundido( int alfa );
 void fade_on();
 void fade_off();
 void pal_init();

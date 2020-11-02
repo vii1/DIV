@@ -10,6 +10,7 @@
 #include "fpg.h"
 #include "fnt.h"
 #include "mouse.h"
+#include "time.h"
 #include "main.h"
 
 struct {
@@ -185,6 +186,7 @@ static void mainLoop()
 	put( fpg_map( FPG_MOUSE ), mouseRect );
 	volcado_parcial( mouseRect );
 	while( !salir ) {
+		time_frame();
 		read_mouse();
 		if( mouseX != prevMouseX || mouseY != prevMouseY ) {
 			prevMouseRect = mouseRect;
@@ -228,6 +230,8 @@ int main( int argc, char* argv[] )
 		error( E_VESA );
 	}
 	pal_init();
+	time_init();
+	fundido( 0 );
 
 	// Imagen intro
 	put_screen( fpg_map( FPG_INTRO ) );

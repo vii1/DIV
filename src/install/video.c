@@ -3,6 +3,7 @@
 #include <conio.h>
 #include "vesa.h"
 #include "graph.h"
+#include "time.h"
 #include "video.h"
 
 VBESCREEN screen;
@@ -60,7 +61,7 @@ void set_dac( const byte* _dac )
  * alfa = 0 -> negro
  * alfa = 63 -> color original
  */
-void fundido( const byte* paleta, int alfa )
+void fundido( int alfa )
 {
 	if( alfa <= 0 ) {
 		memset( paleta_activa, 0, PALETTE_SIZE );
@@ -78,19 +79,23 @@ void fundido( const byte* paleta, int alfa )
 void fade_on()
 {
 	int i;
-	for( i = 0; i <= 63; ++i ) {
-		fundido( paleta, i );
+	for( i = 0; i < CLOCKS_PER_SEC; i += deltaTime ) {
+		fundido( i * 63 / CLOCKS_PER_SEC );
 		retrazo();
+		time_frame();
 	}
+	fundido( 63 );
 }
 
 void fade_off()
 {
 	int i;
-	for( i = 63; i >= 0; --i ) {
-		fundido( paleta, i );
+	for( i = CLOCKS_PER_SEC; i >= 0; i -= deltaTime ) {
+		fundido( i * 63 / CLOCKS_PER_SEC );
 		retrazo();
+		time_frame();
 	}
+	fundido( 0 );
 }
 
 static byte find_color( const byte* pal, byte r, byte g, byte b )
