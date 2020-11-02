@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <dos.h>
 #include <direct.h>
+#include <conio.h>
 
 #include <zlib.h>
 
@@ -11,6 +12,7 @@
 #include "fnt.h"
 #include "mouse.h"
 #include "time.h"
+#include "keyboard.h"
 #include "main.h"
 
 struct {
@@ -187,6 +189,10 @@ static void mainLoop()
 	volcado_parcial( mouseRect );
 	while( !salir ) {
 		time_frame();
+		tecla();
+		if( ( shift_status & SS_ALT ) && key( _X ) ) {
+			salir = 1;
+		}
 		read_mouse();
 		if( mouseX != prevMouseX || mouseY != prevMouseY ) {
 			prevMouseRect = mouseRect;
@@ -198,16 +204,10 @@ static void mainLoop()
 			volcado_parcial( prevMouseRect );
 			volcado_parcial( mouseRect );
 		}
-		if( mouseButtons != 0 ) salir = 1;
 		retrazo();
 	}
-	//	r.x = 320;
-	//	r.y = 240;
-	//	r.an = fpgIndex[1]->width;
-	//	r.al = fpgIndex[1]->height;
-	//	put( fpg_map( 1 ), r );
-	//	volcado_parcial( r );
 }
+
 int main( int argc, char* argv[] )
 {
 #ifdef _DEBUG
@@ -229,6 +229,10 @@ int main( int argc, char* argv[] )
 	if( video_set_mode() ) {
 		error( E_VESA );
 	}
+	vacia_buffer();
+	atexit( kbdReset );
+	kbdInit();
+
 	pal_init();
 	time_init();
 	fundido( 0 );
