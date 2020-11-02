@@ -190,12 +190,13 @@ static void mainLoop()
 			prevMouseRect = mouseRect;
 			mouseRect.x = mouseX - mousecx;
 			mouseRect.y = mouseY - mousecy;
-			put( fondoMouse, prevMouseRect );
+			put_raw( fondoMouse, prevMouseRect );
 			get( fondoMouse, mouseRect );
 			put( fpg_map( FPG_MOUSE ), mouseRect );
 			volcado_parcial( prevMouseRect );
 			volcado_parcial( mouseRect );
 		}
+		if( mouseButtons != 0 ) salir = 1;
 		retrazo();
 	}
 	//	r.x = 320;

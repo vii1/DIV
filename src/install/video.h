@@ -24,6 +24,7 @@ void recortar( Rect* r );
 
 void put_screen( const byte* map );
 void put( const byte* map, Rect rect );
+void put_raw( const byte* map, Rect rect );
 void get( byte* dst, Rect rect );
 Rect rect( int x, int y, int an, int al );
 

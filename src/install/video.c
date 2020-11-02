@@ -151,10 +151,10 @@ void recortar( Rect* r )
 		r->al += r->y;
 		r->y = 0;
 	}
-	if( r->x + r->an >= screen.xres ) {
+	if( r->x + r->an - 1 >= screen.xres ) {
 		r->an = screen.xres - r->x;
 	}
-	if( r->y + r->al >= screen.yres ) {
+	if( r->y + r->al - 1 >= screen.yres ) {
 		r->al = screen.yres - r->y;
 	}
 	if( r->an < 0 ) r->an = 0;
@@ -187,22 +187,37 @@ void put( const byte* map, Rect rect )
 	dst = buffer + screen.xres * t.y + t.x;
 	map += ( t.y - rect.y ) * rect.an + ( t.x - rect.x );
 	for( ; t.al > 0; --t.al, dst += screen.xres, map += rect.an ) {
-		// memcpy( p, src, tan );
-		register int x = t.an;
-		for( ; x; --x ) {
+		register int x = t.an - 1;
+		for( ; x >= 0; --x ) {
 			register byte b = map[x];
 			if( b ) dst[x] = b;
 		}
 	}
 }
 
+void put_raw( const byte* map, Rect rect )
+{
+	byte* dst;
+	Rect  t = rect;
+	recortar( &t );
+	if( t.an == 0 || t.al == 0 ) return;
+	dst = buffer + screen.xres * t.y + t.x;
+	map += ( t.y - rect.y ) * rect.an + ( t.x - rect.x );
+	for( ; t.al > 0; --t.al, dst += screen.xres, map += rect.an ) {
+		memcpy( dst, map, t.an );
+	}
+}
+
 void get( byte* dst, Rect r )
 {
 	byte* src;
-	if( r.an <= 0 || r.al <= 0 ) return;
-	src = buffer + r.y * screen.xres + r.x;
-	for( ; r.al > 0; --r.al, dst += r.an, src += screen.xres ) {
-		memcpy( dst, src, r.an );
+	Rect  t = r;
+	recortar( &t );
+	if( t.an <= 0 || t.al <= 0 ) return;
+	src = buffer + t.y * screen.xres + t.x;
+	dst += r.an * ( t.y - r.y ) + ( t.x - r.x );
+	for( ; t.al > 0; --t.al, dst += r.an, src += screen.xres ) {
+		memcpy( dst, src, t.an );
 	}
 }
 
