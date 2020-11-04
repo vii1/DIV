@@ -5,10 +5,16 @@
 #include "mouse.h"
 
 static float m_x = 320.f, m_y = 240.f;
-int			 mouse_ratio = 3;
+int			 mouseSpeed = 3;
 int			 prevMouseX, prevMouseY;
 int			 mouseX, mouseY;
 word		 mouseButtons;
+
+void moveMouse( float dx, float dy )
+{
+	m_x += dx;
+	m_y += dy;
+}
 
 void read_mouse()
 {
@@ -28,8 +34,8 @@ void read_mouse()
 	ix = regs.w.cx;
 	iy = regs.w.dx;
 
-	m_x += (float)ix / ( 1.0 + ( (float)mouse_ratio / 3.0 ) );
-	m_y += (float)iy / ( 1.0 + ( (float)mouse_ratio / 3.0 ) );
+	m_x += (float)ix / ( 1.0 + ( (float)mouseSpeed / 3.0 ) );
+	m_y += (float)iy / ( 1.0 + ( (float)mouseSpeed / 3.0 ) );
 
 	if( m_x < 0 ) m_x = 0;
 	if( m_y < 0 ) m_y = 0;

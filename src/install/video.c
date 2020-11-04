@@ -6,6 +6,8 @@
 #include "time.h"
 #include "video.h"
 
+#define FADE_TIME ( TICKS_PER_SEC / 4 )
+
 VBESCREEN screen;
 byte	  paleta_activa[PALETTE_SIZE];
 byte	  c0;
@@ -79,10 +81,9 @@ void fundido( int alfa )
 void fade_on()
 {
 	int i;
-	for( i = 0; i < CLOCKS_PER_SEC; i += deltaTime ) {
-		fundido( i * 63 / CLOCKS_PER_SEC );
+	for( i = 0; i < FADE_TIME * 10; i += time10frames ) {
+		fundido( i * 63 / (FADE_TIME * 10) );
 		retrazo();
-		time_frame();
 	}
 	fundido( 63 );
 }
@@ -90,10 +91,9 @@ void fade_on()
 void fade_off()
 {
 	int i;
-	for( i = CLOCKS_PER_SEC; i >= 0; i -= deltaTime ) {
-		fundido( i * 63 / CLOCKS_PER_SEC );
+	for( i = FADE_TIME * 10; i >= 0; i -= time10frames ) {
+		fundido( i * 63 / (FADE_TIME * 10) );
 		retrazo();
-		time_frame();
 	}
 	fundido( 0 );
 }

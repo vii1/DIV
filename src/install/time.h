@@ -1,11 +1,13 @@
 #ifndef __TIME_H__
 #define __TIME_H__
 
-#include <time.h>
+#define TICKS_PER_SEC 100
 
-extern clock_t deltaTime;
+extern unsigned int reloj;
+extern unsigned int time10frames;
 
-void time_init();
-void time_frame();
+int timer_init();
+void timer_uninit();
+void measure_time();
 
 #endif

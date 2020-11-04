@@ -35,7 +35,8 @@ INC_NOTARGETS=1
 !include $(ROOT)$(SEP)3rdparty.mif
 !undef INC_NOTARGETS
 
-SOURCES = main.c video.c vesa.asm fnt.c fpg.c mouse.c time.c keyboard.c
+SOURCES = main.c video.c vesa.asm fnt.c fpg.c mouse.c time.c keyboard.c &
+		  fases.c timer.asm
 
 OBJS = $(SOURCES:.c=.obj)
 OBJS = $(OBJS:.asm=.obj)

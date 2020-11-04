@@ -13,6 +13,7 @@
 #include "mouse.h"
 #include "time.h"
 #include "keyboard.h"
+#include "fases.h"
 #include "main.h"
 
 struct {
@@ -173,39 +174,57 @@ static void chdir_to_install_dir( const char* argv0 )
 	chdir( install_dir );
 }
 
-static void mainLoop()
+/*static void mainLoop()
 {
-	byte* fondoMouse;
-	Rect  mouseRect, prevMouseRect;
-	int	  mousecx, mousecy;
-	int	  salir = 0;
 
-	fpg_map_center( FPG_MOUSE, &mousecx, &mousecy );
-	mouseRect = rect( mouseX - mousecx, mouseY - mousecy, fpgIndex[FPG_MOUSE]->width, fpgIndex[FPG_MOUSE]->height );
-	prevMouseRect = mouseRect;
-	fondoMouse = div_malloc( mouseRect.an * mouseRect.al );
-	get( fondoMouse, mouseRect );
+	enum { FASE_INTRO, FASE_PRINCIPAL, FASE_AYUDA, FASE_RUTA, FASE_PROGRESO, FASE_INFO, FASE_ERROR } fase = FASE_INTRO;
+
+	// Imagen intro
+	put_screen( fpg_map( FPG_INTRO ) );
+
 	put( fpg_map( FPG_MOUSE ), mouseRect );
-	volcado_parcial( mouseRect );
+
+	volcado();
+	fade_on();
+
 	while( !salir ) {
 		time_frame();
 		tecla();
-		if( ( shift_status & SS_ALT ) && key( _X ) ) {
-			salir = 1;
-		}
 		read_mouse();
 		if( mouseX != prevMouseX || mouseY != prevMouseY ) {
 			prevMouseRect = mouseRect;
 			mouseRect.x = mouseX - mousecx;
 			mouseRect.y = mouseY - mousecy;
 			put_raw( fondoMouse, prevMouseRect );
-			get( fondoMouse, mouseRect );
-			put( fpg_map( FPG_MOUSE ), mouseRect );
-			volcado_parcial( prevMouseRect );
-			volcado_parcial( mouseRect );
+		}
+		switch( fase ) {
+			case FASE_INTRO:
+				if( mouseButtons || scan_code ) {
+					fade_off();
+					put_screen( fpg_map( FPG_FONDO ) );
+					get( fondoMouse, mouseRect );
+					volcado();
+					fade_on();
+					fase = FASE_PRINCIPAL;
+				}
+				break;
+			case FASE_PRINCIPAL:
+				if( key( _ESC ) ) {
+					salir = 1;
+				}
+				break;
+			default: break;
 		}
 		retrazo();
 	}
+
+	fade_off();
+}*/
+
+static void uninit()
+{
+	kbdReset();
+	timer_uninit();
 }
 
 int main( int argc, char* argv[] )
@@ -230,21 +249,16 @@ int main( int argc, char* argv[] )
 		error( E_VESA );
 	}
 	vacia_buffer();
-	atexit( kbdReset );
+	atexit( uninit );
 	kbdInit();
 
 	pal_init();
-	time_init();
+	timer_init();
 	fundido( 0 );
+	measure_time();
+	
+	faseIntro();
 
-	// Imagen intro
-	put_screen( fpg_map( FPG_INTRO ) );
-	volcado();
-	fade_on();
-
-	mainLoop();
-
-	fade_off();
 	video_reset();
 	return 0;
 }
