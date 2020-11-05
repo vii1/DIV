@@ -59,39 +59,6 @@ types:
         type: range
         repeat: expr
         repeat-expr: 16
-  map:
-    types:
-      cpoint:
-        seq:
-          - id: x
-            type: u2
-          - id: y
-            type: u2
-    seq:
-      - id: code
-        type: u4
-      - id: length
-        type: u4
-      - id: description
-        type: strz
-        size: 32
-      - id: filename
-        type: strz
-        size: 12
-      - id: width
-        type: u4
-      - id: height
-        type: u4
-      - id: n_cpoints
-        type: u4
-      - id: cpoints
-        type: cpoint
-        repeat: expr
-        repeat-expr: n_cpoints
-      - id: pixels
-        type: u1
-        repeat: expr
-        repeat-expr: width * height
 
   fnt_charset:
     seq:
@@ -107,6 +74,7 @@ types:
         type: b1
       - id: extended
         type: b1
+
   fnt_table:
     seq:
       - id: width
@@ -121,6 +89,7 @@ types:
       image:
         pos: offset
         size: width*height
+
 seq:
   - id: header
     type: header
