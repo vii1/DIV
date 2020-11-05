@@ -1,4 +1,5 @@
 #include <string.h>
+#include "video.h"
 #include "fnt.h"
 
 Fnt smallFnt;
@@ -28,4 +29,15 @@ void cargar_fnt( Fnt* fnt, const byte* buf, unsigned int uSize, unsigned int zSi
 	}
 	fnt->averageWidth = totalWidth / numChars;
 	fnt->averageCenter = fnt->averageWidth / 2;
+}
+
+int text_width(const Fnt* fnt, const char* text, int* w)
+{
+	while(*text) {
+		
+	}
+}
+void write(const Fnt* fnt, int x, int y, Anchor ancla, const char* text)
+{
+
 }

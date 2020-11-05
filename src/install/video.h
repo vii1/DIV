@@ -3,12 +3,9 @@
 
 #include "main.h"
 #include "vesa.h"
+#include "rect.h"
 
 #define PALETTE_SIZE ( 256 * 3 )
-
-typedef struct _Rect {
-	int x, y, an, al;
-} Rect;
 
 int	 video_set_mode();
 void video_reset();
@@ -20,13 +17,11 @@ void fade_off();
 void pal_init();
 void volcado();
 void volcado_parcial( Rect r );
-void recortar( Rect* r );
 
 void put_screen( const byte* map );
 void put( const byte* map, Rect rect );
 void put_raw( const byte* map, Rect rect );
 void get( byte* dst, Rect rect );
-Rect rect( int x, int y, int an, int al );
 
 extern byte* paleta;
 extern VBESCREEN screen;

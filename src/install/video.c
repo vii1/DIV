@@ -1,6 +1,7 @@
 #include <string.h>
 #include <i86.h>
 #include <conio.h>
+#include <stdlib.h>
 #include "vesa.h"
 #include "graph.h"
 #include "time.h"
@@ -82,7 +83,7 @@ void fade_on()
 {
 	int i;
 	for( i = 0; i < FADE_TIME * 10; i += time10frames ) {
-		fundido( i * 63 / (FADE_TIME * 10) );
+		fundido( i * 63 / ( FADE_TIME * 10 ) );
 		retrazo();
 	}
 	fundido( 63 );
@@ -92,7 +93,7 @@ void fade_off()
 {
 	int i;
 	for( i = FADE_TIME * 10; i >= 0; i -= time10frames ) {
-		fundido( i * 63 / (FADE_TIME * 10) );
+		fundido( i * 63 / ( FADE_TIME * 10 ) );
 		retrazo();
 	}
 	fundido( 0 );
@@ -144,26 +145,6 @@ void volcado()
 			memcpy( p, src, screen.xres );
 		}
 	}
-}
-
-void recortar( Rect* r )
-{
-	if( r->x < 0 ) {
-		r->an += r->x;
-		r->x = 0;
-	}
-	if( r->y < 0 ) {
-		r->al += r->y;
-		r->y = 0;
-	}
-	if( r->x + r->an - 1 >= screen.xres ) {
-		r->an = screen.xres - r->x;
-	}
-	if( r->y + r->al - 1 >= screen.yres ) {
-		r->al = screen.yres - r->y;
-	}
-	if( r->an < 0 ) r->an = 0;
-	if( r->al < 0 ) r->al = 0;
 }
 
 void volcado_parcial( Rect r )
@@ -224,14 +205,4 @@ void get( byte* dst, Rect r )
 	for( ; t.al > 0; --t.al, dst += r.an, src += screen.xres ) {
 		memcpy( dst, src, t.an );
 	}
-}
-
-Rect rect( int x, int y, int an, int al )
-{
-	Rect r;
-	r.x = x;
-	r.y = y;
-	r.an = an;
-	r.al = al;
-	return r;
 }

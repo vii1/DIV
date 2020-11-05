@@ -68,3 +68,19 @@ void fpg_map_center( int code, int* cx, int* cy )
 		if( cy ) *cy = map->cpoints[0].y;
 	}
 }
+
+void fpg_get( byte* dst, int code, Rect r )
+{
+	byte* src;
+	Rect  s = { 0 };
+	dword width = fpgIndex[code]->width;
+	s.an = width;
+	s.al = fpgIndex[code]->height;
+	s = interseccion( s, r );
+	if( s.an <= 0 || s.al <= 0 ) return;
+	src = fpg_map( code ) + s.y * width + s.x;
+	dst += r.an * ( s.y - r.y ) + ( s.x - r.x );
+	for( ; s.al > 0; --s.al, dst += r.an, src += width ) {
+		memcpy( dst, src, s.an );
+	}
+}

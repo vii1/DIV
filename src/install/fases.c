@@ -3,17 +3,13 @@
 #include "mouse.h"
 #include "keyboard.h"
 #include "time.h"
+#include "rect.h"
 #include "fases.h"
 
 static byte* fondoMouse;
 static Rect	 mouseRect, prevMouseRect;
 static int	 mousecx, mousecy;
 static int	 mouseRedibuja = 0;
-
-static int rectRect( Rect a, Rect b )
-{
-	return a.x + a.an >= b.x && a.x <= b.x + b.an && a.y + a.al >= b.y && a.y <= b.y + b.al;
-}
 
 static void mouseInit()
 {
@@ -101,7 +97,7 @@ static void lee_teclado()
 	}
 }
 
-void dibuja_centrado( int code, int x, int y )
+Rect calcula_rect( int code, int x, int y )
 {
 	Rect rect;
 	int	 cx, cy;
@@ -110,6 +106,12 @@ void dibuja_centrado( int code, int x, int y )
 	rect.y = y - cy;
 	rect.an = fpgIndex[code]->width;
 	rect.al = fpgIndex[code]->height;
+	return rect;
+}
+
+void dibuja_centrado( int code, int x, int y )
+{
+	Rect rect = calcula_rect(code, x, y);
 	put( fpg_map( code ), rect );
 	mouseCheck( rect );
 }
@@ -117,6 +119,8 @@ void dibuja_centrado( int code, int x, int y )
 void fasePrincipal()
 {
 	int salir = 0;
+	int unidad = 0;
+	
 	put_screen( fpg_map( FPG_FONDO ) );
 	mouseRedibuja = 1;
 	mouseDibuja();
