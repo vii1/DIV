@@ -105,6 +105,11 @@ void map_sortregions(int free_polys);
 void map_asignregions();
 void map_boundingbox();
 void map_reduce(int ancho, int alto, char *buffer);
+void map_update_heights();
+void map_set_floor_height(int new_height);
+void map_set_ceiling_height(int new_height);
+void map_choose_fpg();
+void map_center();
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //  Prototipos externos
@@ -229,7 +234,7 @@ int region_deleted=0;
 int first_point;
 int last_point=-1;
 float zoom_level;
-int grid=0,snap=0;
+int grid=1,snap=1;
 
 int altura_techo=2048;
 int altura_suelo=1024;
@@ -342,8 +347,16 @@ void MapperCreator0(void)
   v.tipo       = 1;
   v.titulo     = texto[442];
   v.nombre     = texto[442];
-  v.an         = 309;
-  v.al         = 200;
+  v.an = 309;
+  v.al = 200;
+  // COPIADO DE DIVEDIT.CPP
+  // v_prg->an=(vga_an/2-1-12*big2)/font_an;
+  // v_prg->al=(vga_al/2-32*big2-1)/font_al;
+
+  // Con esto deberกamos poder hacer que la ventana
+  // del editor sea del tamaคo del viewport.
+  // v.an         = (vga_an/2-1-12*big2);
+  // v.al         = (vga_al/2-32*big2-1);
 
   fade_pared=0;
   fade_sector=0;
@@ -381,17 +394,7 @@ void MapperCreator0(void)
   m3d_flags[modo_edicion]=1;
 
   zoom_level=0.0625;
-  map_boundingbox();
-  if (my_map->bbox_x_ini==65536) {
-    scroll_x=FIN_GRID/2;
-    scroll_y=FIN_GRID/2;
-  }
-  else {
-    scroll_x=(my_map->bbox_x_ini+my_map->bbox_x_fin)/2;
-    scroll_y=(my_map->bbox_y_ini+my_map->bbox_y_fin)/2;
-  }
-  scroll_x&=-64;
-  scroll_y&=-64;
+  map_center();
 
   v_terminado=0;
 }
@@ -478,6 +481,11 @@ void MapperCreator2(void)
   int an=v.an/big2,al=v.al/big2;
   int need_refresh=0;
   int inc,aux,dif_x,dif_y;
+
+  int elegir_textura_suelo = 0,
+      elegir_textura_techo = 0,
+      elegir_textura_pared = 0,
+      elegir_textura_fondo = 0;
 
   _process_items();
 
@@ -719,7 +727,9 @@ void MapperCreator2(void)
     {
       if(wmouse_in(ANCHO_VENTANA+6,          11, 50, 50)) // Textura de Pared
       {
-        if(m3d_edit.fpg_path[0]==0)
+	elegir_textura_pared = 1;
+        /*
+	if(m3d_edit.fpg_path[0]==0)
         {
           if(comprobar_fichero())
           {
@@ -735,12 +745,15 @@ void MapperCreator2(void)
           if(edit_wall != -1) my_map->walls[edit_wall]->texture=Tex[PARED].cod;
           need_refresh=1;
         }
+	*/
       }
     }
     if(modo_edicion==EDITA_SECTOR || modo_edicion==PINTA_SECTOR)
     {
       if(wmouse_in(ANCHO_VENTANA+6,     11+50+1, 50, 50)) // Textura de Techo
       {
+	elegir_textura_techo = 1;
+	/*
         if(m3d_edit.fpg_path[0]==0)
         {
           if(comprobar_fichero())
@@ -756,12 +769,13 @@ void MapperCreator2(void)
           dialogo((int)MapperBrowseFPG0);
           if(edit_region != -1) my_map->regions[edit_region]->ceil_tex=Tex[TECHO].cod;
           need_refresh=1;
-        }
+        }*/
       }
       else
       if(wmouse_in(ANCHO_VENTANA+6, 11+100+2+12, 50, 50)) // Textura de Suelo
       {
-        if(m3d_edit.fpg_path[0]==0)
+        elegir_textura_suelo = 1;
+        /*if(m3d_edit.fpg_path[0]==0)
         {
           if(comprobar_fichero())
           {
@@ -777,10 +791,13 @@ void MapperCreator2(void)
           if(edit_region != -1) my_map->regions[edit_region]->floor_tex=Tex[SUELO].cod;
           need_refresh=1;
         }
+	*/
       }
     }
     if(wmouse_in(201, 174, 44, 23)) // Fondo
     {
+      elegir_textura_fondo = 1;
+      /*
       if(m3d_edit.fpg_path[0]==0)
       {
         if(comprobar_fichero())
@@ -796,6 +813,7 @@ void MapperCreator2(void)
         dialogo((int)MapperBrowseFPG0);
         need_refresh=1;
       }
+      */
     }
     if(wmouse_in(an-63, al-12, 60, 9)) // Seleccion de FPG
     {
@@ -823,24 +841,112 @@ void MapperCreator2(void)
       map_draw();
       break;
 
+    case _E:
+      if (num_bandera > 0) {
+        num_bandera--;
+      }
+      break;
+
+    case _R:
+      if (num_bandera < 999) {
+        num_bandera++;
+      }
+      break;
+
+    case _PGUP:
+      if (altura_techo < TOPE_TECHO) {
+        map_set_ceiling_height(altura_techo + 1);
+      }
+      break;
+
+    case _PGDN:
+      if (altura_techo > altura_suelo) {
+        map_set_ceiling_height(altura_techo - 1);
+      }
+      break;
+
+    case _HOME:
+      if (altura_suelo < altura_techo) {
+        map_set_floor_height(altura_suelo + 1);
+      }
+      break;
+
+    case _END:
+      if (altura_suelo > 0) {
+        map_set_floor_height(altura_suelo - 1);
+      }
+      break;
+
+    case _F3:
+    case _U:
+      elegir_textura_fondo = 1;
+      break;
+
+    case _F4:
+    case _I:
+      elegir_textura_suelo = 1;
+      break;
+
+    case _F5:
+    case _O:
+      elegir_textura_pared = 1;
+      break;
+
+    case _F6:
+    case _P:
+      elegir_textura_techo = 1;
+      break;
+
     case _F10:
     case _C:
-      map_boundingbox();
-      if (my_map->bbox_x_ini==65536) {
-        scroll_x=FIN_GRID/2;
-        scroll_y=FIN_GRID/2;
-      }
-      else {
-        scroll_x=(my_map->bbox_x_ini+my_map->bbox_x_fin)/2;
-        scroll_y=(my_map->bbox_y_ini+my_map->bbox_y_fin)/2;
-      }
-      scroll_x&=-64;
-      scroll_y&=-64;
-      map_draw();
+      map_center();
       break;
   }
+  map_draw();
+  scan_code = 0;
 
   grid_size=(4*big2)/zoom_level;
+
+  if (elegir_textura_fondo) {
+    if (m3d_edit.fpg_path[0] == 0) {
+      map_choose_fpg();
+    } else {
+      TipoTex=FONDO;
+      dialogo(MapperBrowseFPG0);
+      need_refresh=1;
+    }
+  } else if (elegir_textura_suelo) {
+    if (m3d_edit.fpg_path[0] == 0) {
+      map_choose_fpg();
+    } else {
+      TipoTex=SUELO;
+      dialogo(MapperBrowseFPG0);
+      need_refresh=1;
+    }
+  } else if (elegir_textura_techo) {
+    if (m3d_edit.fpg_path[0] == 0) {
+      map_choose_fpg();
+    } else {
+      TipoTex=TECHO;
+      dialogo(MapperBrowseFPG0);
+      need_refresh=1;
+    }
+  } else if (elegir_textura_pared) {
+    if (m3d_edit.fpg_path[0] == 0) {
+      map_choose_fpg();
+    } else {
+      TipoTex=PARED;
+      dialogo(MapperBrowseFPG0);
+      if (edit_wall != -1) {
+	my_map->walls[edit_wall]->texture=Tex[PARED].cod;
+      }
+      need_refresh=1;
+    }
+  }
+  elegir_textura_fondo = 0;
+  elegir_textura_suelo = 0;
+  elegir_textura_techo = 0;
+  elegir_textura_pared = 0;
 
   // Scroll del mapa
   if (!(v.item[5].estado&2) && !(v.item[8].estado&2) && !(v.item[9].estado&2)) {
@@ -2083,7 +2189,13 @@ void map_addpoint()
   static int first_wall;
   static int angulo_provisional;
 
-  if (mouse_b&1 && old_but1==0) {
+  if (mouse_b&1 && old_but1==0 || scan_code == _SPC) {
+
+    // Reseteamos el scan_code
+    if (scan_code == _SPC) {
+      scan_code = 0;
+    }
+    
     old_but1=1;
     //-------------------------------------------------------------------------
     //  Aคade un punto a la lista
@@ -2434,6 +2546,7 @@ void map_draw()
   int x0,y0,x1,y1;
   int new_scroll_x,new_scroll_y;
   int inc,inc_aux,aux_x,aux_y,ini_i;
+  int mx,my,nx,ny,nl;
 
   aux_x=M_ANCHO_VENTANA*big2-M_ANCHO_VENTANA*big2/zoom_level;
   aux_y=M_ALTO_VENTANA*big2-M_ALTO_VENTANA*big2/zoom_level;
@@ -2599,6 +2712,19 @@ void map_draw()
       x1=zoom_level*(my_map->points[p2]->x-new_scroll_x)/big2;
       y1=zoom_level*(my_map->points[p2]->y-new_scroll_y)/big2;
       draw_line(x0,y0,x1,y1,c3);
+
+      mx=x0+((x1-x0) / 2);
+      my=y0+((y1-y0) / 2);
+      nx=-(y1-y0);
+      ny=x1-x0;
+      nl=sqrtf(nx * nx + ny * ny);
+      if (nl) {
+        nx=((float)nx/nl)*4;
+	ny=((float)ny/nl)*4;
+      }
+      if (nl) {
+        draw_line(mx,my,mx+nx,my+ny,c4);
+      }
     }
   }
   for (i=0;i<my_map->num_walls;i++) {
@@ -4162,3 +4288,58 @@ void lf_free_all()
 }
 */
 
+void map_update_heights() {
+  if (edit_region != -1) {
+    my_map->regions[edit_region]->ceil_height = altura_techo;
+    my_map->regions[edit_region]->floor_height = altura_suelo;
+  }
+}
+
+void map_set_floor_height(int new_value) {
+  altura_suelo = new_value;
+  if (altura_suelo > TOPE_TECHO) {
+    altura_suelo = TOPE_TECHO;
+  }
+  if (altura_suelo < 0) {
+    altura_suelo = 0;
+  }
+  if (altura_suelo > altura_techo) {
+    altura_techo = altura_suelo;
+  }
+  map_update_heights();
+}
+
+void map_set_ceiling_height(int new_value) {
+  altura_techo = new_value;
+  if (altura_techo > TOPE_TECHO) {
+    altura_techo = TOPE_TECHO;
+  }
+  if (altura_techo < 0) {
+    altura_techo = 0;
+  }
+  if (altura_suelo > altura_techo) {
+    altura_suelo = altura_techo;
+  }
+  map_update_heights();
+}
+
+void map_choose_fpg() {
+  if (comprobar_fichero()) {
+    strcpy((char *)m3d_edit.fpg_name, input);
+    strcpy((char *)m3d_edit.fpg_path, full);
+    M3D_crear_thumbs(&ltexturasbr, 1);
+  }
+}
+
+void map_center() {
+  map_boundingbox();
+  if (my_map->bbox_x_ini == 65536) {
+    scroll_x = FIN_GRID/2;
+    scroll_y = FIN_GRID/2;
+  } else {
+    scroll_x = (my_map->bbox_x_ini + my_map->bbox_x_fin) / 2;
+    scroll_y = (my_map->bbox_y_ini + my_map->bbox_y_fin) / 2;
+  }
+  scroll_x &= -64;
+  scroll_y &= -64;
+}

@@ -72,8 +72,12 @@
 
 #define _Q              0x10
 #define _W              0x11
+#define _E		0x12
+#define _R		0x13
 #define _T              0x14
+#define _Y		0x15
 #define _U              0x16
+#define _I		0x17
 #define _O              0x18
 #define _P              0x19
 #define _A              0x1e
