@@ -17,6 +17,7 @@ OUTDIR_BASE_SYS = $(ROOT)$(SEP)build.$(SYS)
 MAKE			= $+ $(MAKE) -h $-
 ASM				= WASM
 TASM_EXE		= tasm32.exe
+DOSBOX			= dosbox-x$(EXE_SUFFIX)
 
 OPTIONS			= -bt=dos -wx -mf -i=judas -i=netlib -i=vbe -q -DDIV32RUN
 WASM_OPTIONS	= -bt=dos -q
@@ -170,10 +171,39 @@ clean: .SYMBOLIC
 	@if exist $(OUTDIR)$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)*.err
 	@if exist $(OUTDIR)$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)*.obj
 	@if exist $(OUTDIR)$(SEP)$(EXE) $(DELETE) $(OUTDIR)$(SEP)$(EXE)
+	@if exist $(OUTDIR)$(SEP)*.exe $(DELETE) $(OUTDIR)$(SEP)*.exe
+	@if exist $(OUTDIR)$(SEP)*.log $(DELETE) $(OUTDIR)$(SEP)*.log
 	@if exist $(OUTDIR)$(SEP)vpe$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)vpe$(SEP)*.err
 	@if exist $(OUTDIR)$(SEP)vpe$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)vpe$(SEP)*.obj
 	@if exist $(OUTDIR)$(SEP)netlib$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)netlib$(SEP)*.err
 	@if exist $(OUTDIR)$(SEP)netlib$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)netlib$(SEP)*.obj
+
+$(OUTDIR)$(SEP)test.exe: test.obj f.obj
+	*wlink &
+		option quiet, eliminate, undefsok &
+# 28 = Warning: undefined reference
+		disable 28 &
+		system dos4g &
+		name $^@ &
+		debug all &
+#		option stack=64k &
+#		option map=$(OUTDIR)$(SEP)$^& &
+		path $(OUTDIR) &
+		file { $< }
+#		libfile { $(LIBS) }
+
+test: $(OUTDIR)$(SEP)test.exe .SYMBOLIC
+!ifeq SYS DOS
+	$(OUTDIR)$(SEP)test.exe
+!else
+	$(DOSBOX) -fastlaunch -noconfig -noautoexec -silent -c "mount c $(OUTDIR)" -c "c:\test.exe > c:\test.log"
+	@type $(OUTDIR)$(SEP)test.log
+!ifdef __UNIX__
+	@grep "Failed: 0" $(OUTDIR)$(SEP)test.log > /dev/null
+!else
+	@find "Failed: 0" $(OUTDIR)$(SEP)test.log > NUL
+!endif
+!endif
 
 INC_NOVARS=1
 !include $(ROOT)$(SEP)3rdparty.mif

@@ -1,4 +1,4 @@
-# Makefile principal de DIV. WORK IN PROGRESS.
+# Makefile principal de DIV.
 # ``wmake install`` compilar  todo lo necesario y crear  el  rbol de ficheros
 # en la ruta indicada por INSTALL_DIR.
 
@@ -36,6 +36,9 @@ ASM = WASM
 # TASM32.EXE deber¡a valer tanto para compilar en DOS como para Windows.
 #TASM_EXE = tasm.exe
 TASM_EXE = tasm32.exe
+
+# Para ejecutar algunos tests se requiere DOSBOX-X (excepto en DOS, claro).
+DOSBOX = dosbox-x$(EXE_SUFFIX)
 
 ############################
 # FIN DE COSAS CONFIGURABLES
@@ -162,6 +165,9 @@ test: .SYMBOLIC
 	cd dll
 	*$(MAKE) $(MAKE_OPTIONS) test
 	cd ..
+	cd src$(SEP)div32run
+	*$(MAKE) $(MAKE_OPTIONS) DOSBOX=$(DOSBOX) test
+	cd ..$(SEP)..
 
 !include 3rdparty.mif
 
