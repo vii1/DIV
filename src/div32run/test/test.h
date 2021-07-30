@@ -29,5 +29,6 @@ extern int testmem[1024];
 extern int proc2;
 
 int test_func1( const char* name, void ( *pfunc )( void ), int arg1, int expected );
+int test_func2( const char* name, void ( *pfunc )( void ), int arg1, int arg2, int expected );
 
 #endif /* __TEST_H__ */

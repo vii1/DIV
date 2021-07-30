@@ -6,15 +6,15 @@
 
 /* FUNCTIONS WE MAY TEST:
     get_angle()			Done!
-    get_dist()
-    get_distx()
-    get_disty()
+    get_dist()			Done!
+    get_distx()			Done!
+    get_disty()			Done!
     advance()
     fget_angle()
     fget_dist()
     near_angle()
     xadvance()
-    abs()
+    abs()				Done!
     acos()
     asin()
     atan()
@@ -68,7 +68,7 @@ const
 
 private
     int angles[] = 0, 1, pi, -pi, pi/2, -pi/2, -34939, 25413, 128373, 141729, 191278, 239747, 202220, 266022, 296266, 277990;
-    int distances[] = 1, 2, 8, 22, 64, 143, 339, 976, 3071, 8233, -450, -6355;
+    int distances[] = 0, 1, 2, 8, 22, 64, 143, 339, 976, 3071, 8233, -450, -6355;
     int coord_x[] = -7, 21, -47, 154, 345, 1225, -2523, 8665, -26886, -51602;
     int coord_y[] = 7, -20, 67, 132, -332, -1222, -2672, -6360, 22321, -68255;
     int data_abs[] = 0, -6, 17, 56, -132, -370, -1307, -2337, 7057, 19004, -70437;
@@ -108,6 +108,22 @@ begin
 	proc.y = y;
 	fputs(itoa(x)+","+itoa(y)+","+itoa(proc.x)+","+itoa(proc.y)+","+itoa(get_dist(proc))+","+CR, f);
     fputs("};"+CR, f);
+
+	fputs("int data_get_distx[]={"+CR, f);
+	for(i=0; i<sizeof(angles); i++)
+		for(j=0; j<sizeof(distances); j++)
+			fputs(itoa(angles[i])+","+itoa(distances[j])+","+itoa(get_distx(angles[i], distances[j]))+","+CR, f);
+		end
+	end
+	fputs("};"+CR, f);
+
+	fputs("int data_get_disty[]={"+CR, f);
+	for(i=0; i<sizeof(angles); i++)
+		for(j=0; j<sizeof(distances); j++)
+			fputs(itoa(angles[i])+","+itoa(distances[j])+","+itoa(get_disty(angles[i], distances[j]))+","+CR, f);
+		end
+	end
+	fputs("};"+CR, f);
 
     fputs("int data_abs[]={"+CR, f);
     for(i=0; i<sizeof(data_abs); i++)

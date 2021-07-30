@@ -27,12 +27,38 @@ int exec_func1( void ( *pfunc )( void ), int arg1 )
 	return pila[sp];
 }
 
+int exec_func2( void ( *pfunc )( void ), int arg1, int arg2 )
+{
+	assert( sp == 0 );
+	pila[sp++] = arg1;
+	pila[sp] = arg2;
+	pfunc();
+	if( sp != 0 ) {
+		errors++;
+		printf( "ERROR! Wrong SP (expected 0, actual %d)\n", sp );
+		sp = 0;
+	}
+	return pila[sp];
+}
+
 int test_func1( const char* name, void ( *pfunc )( void ), int arg1, int expected )
 {
 	int result = exec_func1( pfunc, arg1 );
 	++calls;
 	if( result != expected ) {
 		printf( "ERROR! [%d] %s( %d ) -> Expected %d, got %d\n", calls, name, arg1, expected, result );
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+int test_func2(const char* name, void(*pfunc)(void), int arg1, int arg2, int expected)
+{
+	int result = exec_func2( pfunc, arg1, arg2 );
+	++calls;
+	if( result != expected ) {
+		printf( "ERROR! [%d] %s( %d, %d ) -> Expected %d, got %d\n", calls, name, arg1, arg2, expected, result );
 		return 1;
 	} else {
 		return 0;
