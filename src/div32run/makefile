@@ -137,7 +137,7 @@ pmwlite: .SYMBOLIC
 	cd $+$(%cwd)$+
 
 .asm: .;..;..$(SEP)vpe
-.c: .;..;..$(SEP)netlib
+.c: .;..;..$(SEP)netlib;test
 .cpp: .;..$(SEP)vpe;..$(SEP)netlib
 
 .obj: $(OUTDIR)
@@ -178,7 +178,7 @@ clean: .SYMBOLIC
 	@if exist $(OUTDIR)$(SEP)netlib$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)netlib$(SEP)*.err
 	@if exist $(OUTDIR)$(SEP)netlib$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)netlib$(SEP)*.obj
 
-$(OUTDIR)$(SEP)test.exe: test.obj f.obj
+$(OUTDIR)$(SEP)test.exe: test.obj testmath.obj f.obj
 	*wlink &
 		option quiet, eliminate, undefsok &
 # 28 = Warning: undefined reference
