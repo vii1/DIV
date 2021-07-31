@@ -9,6 +9,7 @@
 #define TEST_START() \
 	int err = 0;     \
 	calls = 0;       \
+	epsilon = 0;     \
 	{
 
 #define TEST_END()                           \
@@ -24,6 +25,7 @@
 extern int errors;
 extern int tests;
 extern int calls;
+extern int epsilon;
 
 extern int testmem[1024];
 extern int proc2;

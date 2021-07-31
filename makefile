@@ -161,13 +161,23 @@ install: update .SYMBOLIC
 #testinstall: install .SYMBOLIC
 #	for %i in (setup.bin session.dtf user.nfo) do $(COPY) system$(SEP)%i $(INSTALL_DIR)$(SEP)system
 
-test: .SYMBOLIC
+test_dll: .SYMBOLIC
 	cd dll
 	*$(MAKE) $(MAKE_OPTIONS) test
 	cd ..
+
+test_div32run_386: .SYMBOLIC
 	cd src$(SEP)div32run
-	*$(MAKE) $(MAKE_OPTIONS) DOSBOX=$(DOSBOX) test
+	*$(MAKE) $(MAKE_OPTIONS) CPU=386 DOSBOX=$(DOSBOX) test
 	cd ..$(SEP)..
+
+test_div32run_586: .SYMBOLIC
+	cd src$(SEP)div32run
+	*$(MAKE) $(MAKE_OPTIONS) CPU=586 DOSBOX=$(DOSBOX) test
+	cd ..$(SEP)..
+
+test: test_dll test_div32run_386 test_div32run_586 .SYMBOLIC
+	@%null
 
 !include 3rdparty.mif
 

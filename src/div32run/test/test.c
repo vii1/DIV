@@ -4,12 +4,15 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 void test_math();
 
 int errors = 0;
 int tests = 0;
 int calls = 0;
+
+int epsilon = 0;
 
 int testmem[1024];
 int proc2;
@@ -45,19 +48,23 @@ int test_func1( const char* name, void ( *pfunc )( void ), int arg1, int expecte
 {
 	int result = exec_func1( pfunc, arg1 );
 	++calls;
-	if( result != expected ) {
-		printf( "ERROR! [%d] %s( %d ) -> Expected %d, got %d\n", calls, name, arg1, expected, result );
+	if( abs( expected - result ) > epsilon ) {
+		if( epsilon ) {
+			printf( "ERROR! [%d] %s( %d ) -> Expected %d ñ%d, got %d\n", calls, name, arg1, expected, epsilon, result );
+		} else {
+			printf( "ERROR! [%d] %s( %d ) -> Expected %d, got %d\n", calls, name, arg1, expected, result );
+		}
 		return 1;
 	} else {
 		return 0;
 	}
 }
 
-int test_func2(const char* name, void(*pfunc)(void), int arg1, int arg2, int expected)
+int test_func2( const char* name, void ( *pfunc )( void ), int arg1, int arg2, int expected )
 {
 	int result = exec_func2( pfunc, arg1, arg2 );
 	++calls;
-	if( result != expected ) {
+	if( abs( expected - result ) > epsilon ) {
 		printf( "ERROR! [%d] %s( %d, %d ) -> Expected %d, got %d\n", calls, name, arg1, arg2, expected, result );
 		return 1;
 	} else {

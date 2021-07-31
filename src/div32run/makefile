@@ -96,6 +96,8 @@ LIBS = $(JUDAS_LIB) $(JPEG_LIB) $(ZLIB_LIB) $(SVGA_LIB) $(PMODE_LIB) $(TFLC_LIB)
 INCLUDE += -I..
 OPTIONS += $(INCLUDE)
 
+TEST_OBJS = test.obj testmath.obj f.obj
+
 .BEFORE
 	@if not exist $(OUTDIR_BASE) mkdir $(OUTDIR_BASE)
 !ifeq SESSION 1
@@ -178,7 +180,7 @@ clean: .SYMBOLIC
 	@if exist $(OUTDIR)$(SEP)netlib$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)netlib$(SEP)*.err
 	@if exist $(OUTDIR)$(SEP)netlib$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)netlib$(SEP)*.obj
 
-$(OUTDIR)$(SEP)test.exe: test.obj testmath.obj f.obj
+$(OUTDIR)$(SEP)test.exe: test$(SEP)testdata.h $(TEST_OBJS)
 	*wlink &
 		option quiet, eliminate, undefsok &
 # 28 = Warning: undefined reference
@@ -189,7 +191,7 @@ $(OUTDIR)$(SEP)test.exe: test.obj testmath.obj f.obj
 #		option stack=64k &
 #		option map=$(OUTDIR)$(SEP)$^& &
 		path $(OUTDIR) &
-		file { $< }
+		file { $(TEST_OBJS) }
 #		libfile { $(LIBS) }
 
 test: $(OUTDIR)$(SEP)test.exe .SYMBOLIC
