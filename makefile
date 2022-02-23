@@ -65,55 +65,60 @@ SRC_DIV32RUN= src$(SEP)div32run
 	@echo Building on : $(OUTDIR_BASE)
 	@if not exist $(OUTDIR_BASE) mkdir $(OUTDIR_BASE)
 
-all: d.exe d.386 session.div session.386 div32run.ins div32run.386 dlls .SYMBOLIC
+all: d.exe d.386 session.div session.386 div32run.ins div32run.386 dlls install.ovl .SYMBOLIC
 	@%null
 
 d.exe: .SYMBOLIC
 	cd $(SRC_DIV)
 	*$(MAKE) $(MAKE_OPTIONS) CPU=586 d.exe
-	cd ../..
+	cd ..$(SEP)..
 
 d.386: .SYMBOLIC
 	cd $(SRC_DIV)
 	*$(MAKE) $(MAKE_OPTIONS) CPU=386 d.386
-	cd ../..
+	cd ..$(SEP)..
 
 session.div: .SYMBOLIC
 	cd $(SRC_DIV32RUN)
 	*$(MAKE) $(MAKE_OPTIONS) CPU=586 SESSION=1 session.div
-	cd ../..
+	cd ..$(SEP)..
 
 session.386: .SYMBOLIC
 	cd $(SRC_DIV32RUN)
 	*$(MAKE) $(MAKE_OPTIONS) CPU=386 SESSION=1 session.386
-	cd ../..
+	cd ..$(SEP)..
 
 div32run.ins: .SYMBOLIC
 	cd $(SRC_DIV32RUN)
 	*$(MAKE) $(MAKE_OPTIONS) CPU=586 SESSION=0 div32run.ins
-	cd ../..
+	cd ..$(SEP)..
 
 div32run.386: .SYMBOLIC
 	cd $(SRC_DIV32RUN)
 	*$(MAKE) $(MAKE_OPTIONS) CPU=386 SESSION=0 div32run.386
-	cd ../..
+	cd ..$(SEP)..
 
 dlls: .SYMBOLIC
 	cd dll
 	*$(MAKE) $(MAKE_OPTIONS)
 	cd ..
 
+install.ovl: .SYMBOLIC
+	cd src$(SEP)install
+	*$(MAKE) $(MAKE_OPTIONS) install.ovl
+	cd ..$(SEP)..
+
 clean: clean_lib3p .SYMBOLIC
 	cd $(SRC_DIV)
 	@for %i in (586 386) do *$(MAKE) $(MAKE_OPTIONS) CPU=%i clean
-	cd ../..
+	cd ..$(SEP)..
 	cd $(SRC_DIV32RUN)
 	@for %i in (586 386) do *$(MAKE) $(MAKE_OPTIONS) CPU=%i SESSION=1 clean
 	@for %i in (586 386) do *$(MAKE) $(MAKE_OPTIONS) CPU=%i SESSION=0 clean
-	cd ../..
+	cd ..$(SEP)..
 	cd src/bin2h
 	*$(MAKE) $(MAKE_OPTIONS) clean
-	cd ../..
+	cd ..$(SEP)..
 	cd dll
 	*$(MAKE) $(MAKE_OPTIONS) clean
 	cd ..
@@ -149,6 +154,7 @@ update: all .SYMBOLIC
 	$(COPY) $(OUTDIR_BASE)$(SEP)session$(SEP)$(CONFIG).386$(SEP)session.386 $(INSTALL_DIR)$(SEP)system
 	$(COPY) $(OUTDIR_BASE)$(SEP)div32run$(SEP)$(CONFIG).586$(SEP)div32run.ins $(INSTALL_DIR)$(SEP)install
 	$(COPY) $(OUTDIR_BASE)$(SEP)div32run$(SEP)$(CONFIG).386$(SEP)div32run.386 $(INSTALL_DIR)$(SEP)install
+	$(COPY) $(OUTDIR_BASE)$(SEP)install$(SEP)$(CONFIG)$(SEP)install.ovl $(INSTALL_DIR)$(SEP)install
 	@for %i in (LICENSE README.md) do $(COPY) %i $(INSTALL_DIR)
 
 install: update .SYMBOLIC
