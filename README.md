@@ -1,7 +1,7 @@
 # ![DIV GAMES STUDIO 2.0](https://github.com/vii1/DIV/blob/master/docs/img/divtitle.png)
 Reconstrucción y posible fork de DIV Games Studio 2.0
 
-[![Build Status](https://travis-ci.org/vii1/DIV.svg?branch=master)](https://travis-ci.org/vii1/DIV)
+[![Build Status](https://app.travis-ci.com/vii1/DIV.svg?branch=master)](https://app.travis-ci.com/vii1/DIV)
 
 Repositorio original: https://github.com/DIVGAMES/DIV-Games-Studio
 
