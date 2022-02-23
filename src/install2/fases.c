@@ -111,18 +111,31 @@ Rect calcula_rect( int code, int x, int y )
 
 void dibuja_centrado( int code, int x, int y )
 {
-	Rect rect = calcula_rect(code, x, y);
+	Rect rect = calcula_rect( code, x, y );
 	put( fpg_map( code ), rect );
 	mouseCheck( rect );
 }
 
 void fasePrincipal()
 {
-	int salir = 0;
-	int unidad = 0;
-	
+	int	  salir = 0;
+	int	  unidad = 0;
+	Rect  rectUnidad[4];
+	int	  i;
+
 	put_screen( fpg_map( FPG_FONDO ) );
+
+	for( i = 0; i < 4; ++i ) {
+		int	 px = fpgIndex[FPG_FONDO]->cpoints[8 + i].x;
+		int	 py = fpgIndex[FPG_FONDO]->cpoints[8 + i].y;
+		int	 code = i == 0 ? 10 : 11;
+		Rect r = calcula_rect( code, px, py );
+		rectUnidad[i] = r;
+		put( fpg_map( code ), r );
+	}
+
 	mouseRedibuja = 1;
+
 	mouseDibuja();
 	volcado();
 	fade_on();
