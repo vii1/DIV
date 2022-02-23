@@ -89,11 +89,19 @@ byte buffer[16384];
 
 #include "svga.h"
 #include "zlib.h"
-#include "divkeybo.cpp"
+// #include "divkeybo.cpp"
+#include "divkeybo.h"
+
+char shift_status,ascii,scan_code;
+byte kbdFLAGS[128];
+
+#define key(x) kbdFLAGS[x]
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 //  Variables globales
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+SV_devCtx* dc = NULL;         // SVGA Device Context
 
 int cluster_size=0; // Tama¤o del cluster
 
@@ -202,6 +210,58 @@ int __far critical_error(unsigned deverr,unsigned errcode,unsigned far*devhdr) {
   error_critico=1;
   return(_HARDERR_IGNORE);
 }
+
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//  Prototipos
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+void ReadSetupInfo(char * filename);
+int is_mouse_ok(void);
+void set_mouse(word x, word y);
+void _error(word e);
+int is_grf(int graf);
+int ancho(int graf);
+int alto(int graf);
+int is_point(int graf, int n);
+int px(int graf, int n);
+int py(int graf, int n);
+int grf_size(int graf);
+void init_mouse(void);
+void svmode(void);
+void set_paleta(int x);
+void fade_off(void);
+void fade_on(void);
+void set_dac(void);
+void init_volcado(void);
+void no_clip(void);
+void text_out(byte * font, int x,int y, int centro, char *ptr);
+void put(int graf, int x, int y, int centro);
+void read_mouse(void);
+void volcar(void);
+void options(void);
+void instalar(void);
+void info(int graf, char * e);
+void rvmode(void);
+void kbdReset(void);
+void salvaguarda(byte * p, int x, int y, int an, int al, int flag);
+int centro_x(int graf);
+int centro_y(int graf);
+void volcado(void);
+void volcadopsvga(byte *p);
+void volcadocsvga(byte *p);
+int graba_PCX(byte *mapa,FILE *f);
+void tecla(void);
+void texn(byte * p, int x, int y, byte an, int al);
+void texc(byte * p, int x, int y, byte an, int al);
+void restore_grf(int graf, int x, int y);
+void input(int x,int y);
+void mostrar_barra_progreso(void);
+void mostrar_progreso(void);
+int descomprimir_fichero(FILE * fin, FILE * fout, unsigned long len1, unsigned long len2);
+int copiar_fichero(FILE * fin, FILE * fout, unsigned long len);
+
+// divkeybo
+void kbdInit(void);
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 //  Programa principal
@@ -339,30 +399,33 @@ int main(int argc, char * argv[]) {
 
 void svmode(void) {
   int mode=0x101;
-  int VersionVesa;
 
   vga_an=640; vga_al=480;
 
-  VersionVesa=SV_init();
-  if(VersionVesa<0x102) {
+  if(!dc) {
+    dc = SV_init(0);
+  }
+  if(!dc) {
+	  error = 1;
+  } else if(dc->VBEVersion<0x102) {
     LinealMode=0;
     if (!_setvideomode(_VRES256COLOR)) error=1; else vga=(char *)0x0A0000;
   } else {
-    if(VersionVesa<0x200) {
+    if(dc->VBEVersion<0x200) {
       LinealMode=0;
-      if(!SV_setMode(mode)) {
+      if(!SV_setMode(mode, 0, 0, 1)) {
         if (!_setvideomode(_VRES256COLOR)) error=1; else vga=(char *)0x0A0000;
       } else vga=(char *)0x0A0000;
     } else {
       LinealMode=1;
       mode|=vbeLinearBuffer;
-      if(!SV_setMode(mode)) {
+      if(!SV_setMode(mode, 0, 0, 1)) {
         LinealMode=0;
         mode^=vbeLinearBuffer;
-        if(!SV_setMode(mode)) {
+        if(!SV_setMode(mode, 0, 0, 1)) {
           if (!_setvideomode(_VRES256COLOR)) error=1; else vga=(char *)0x0A0000;
-        } else vga=(char *)videoMem;
-      } else vga=(char *)videoMem;
+        } else vga=(char *)dc->videoMem;
+      } else vga=(char *)dc->videoMem;
     }
   }
 }
@@ -1123,56 +1186,56 @@ void text_out(byte * font, int x,int y, int centro, char *ptr) {
 
     if (y>=0 && y+al<=yy1) { // El texto coge entero (coord. y)
 
-      while (*ptr && x+fnt[*ptr].ancho<=0) {
-        if (fnt[*ptr].ancho==0) {
+      while (*ptr && x+fnt[(byte)*ptr].ancho<=0) {
+        if (fnt[(byte)*ptr].ancho==0) {
           x+=f_i[fuente].espacio; ptr++;
         } else {
-          x=x+fnt[*ptr].ancho+1; ptr++;
+          x=x+fnt[(byte)*ptr].ancho+1; ptr++;
         }
       }
 
 	    if (*ptr && x<0) {
-        if (fnt[*ptr].ancho==0) {
+        if (fnt[(byte)*ptr].ancho==0) {
           x+=f_i[fuente].espacio; ptr++;
         } else {
-          texc(font+fnt[*ptr].offset,x,y+fnt[*ptr].incY,fnt[*ptr].ancho,fnt[*ptr].alto);
-          x=x+fnt[*ptr].ancho+1; ptr++;
+          texc(font+fnt[(byte)*ptr].offset,x,y+fnt[(byte)*ptr].incY,fnt[(byte)*ptr].ancho,fnt[(byte)*ptr].alto);
+          x=x+fnt[(byte)*ptr].ancho+1; ptr++;
         }
       }
 
-    	while (*ptr && x+fnt[*ptr].ancho<=xx1) {
-        if (fnt[*ptr].ancho==0) {
+    	while (*ptr && x+fnt[(byte)*ptr].ancho<=xx1) {
+        if (fnt[(byte)*ptr].ancho==0) {
           x+=f_i[fuente].espacio; ptr++;
         } else {
-          texn(font+fnt[*ptr].offset,x,y+fnt[*ptr].incY,fnt[*ptr].ancho,fnt[*ptr].alto);
-          x=x+fnt[*ptr].ancho+1; ptr++;
+          texn(font+fnt[(byte)*ptr].offset,x,y+fnt[(byte)*ptr].incY,fnt[(byte)*ptr].ancho,fnt[(byte)*ptr].alto);
+          x=x+fnt[(byte)*ptr].ancho+1; ptr++;
         }
       }
 
       if (*ptr && x<xx1) {
-        if (fnt[*ptr].ancho==0) {
+        if (fnt[(byte)*ptr].ancho==0) {
           x+=f_i[fuente].espacio; ptr++;
         } else {
-          texc(font+fnt[*ptr].offset,x,y+fnt[*ptr].incY,fnt[*ptr].ancho,fnt[*ptr].alto);
+          texc(font+fnt[(byte)*ptr].offset,x,y+fnt[(byte)*ptr].incY,fnt[(byte)*ptr].ancho,fnt[(byte)*ptr].alto);
         }
       }
 
     } else {
 
-    	while (*ptr && x+fnt[*ptr].ancho<=0) {
-        if (fnt[*ptr].ancho==0) {
+    	while (*ptr && x+fnt[(byte)*ptr].ancho<=0) {
+        if (fnt[(byte)*ptr].ancho==0) {
           x+=f_i[fuente].espacio; ptr++;
         } else {
-          x=x+fnt[*ptr].ancho+1; ptr++;
+          x=x+fnt[(byte)*ptr].ancho+1; ptr++;
         }
       }
 
     	while (*ptr && x<xx1) {
-        if (fnt[*ptr].ancho==0) {
+        if (fnt[(byte)*ptr].ancho==0) {
           x+=f_i[fuente].espacio; ptr++;
         } else {
-          texc(font+fnt[*ptr].offset,x,y+fnt[*ptr].incY,fnt[*ptr].ancho,fnt[*ptr].alto);
-          x=x+fnt[*ptr].ancho+1; ptr++;
+          texc(font+fnt[(byte)*ptr].offset,x,y+fnt[(byte)*ptr].incY,fnt[(byte)*ptr].ancho,fnt[(byte)*ptr].alto);
+          x=x+fnt[(byte)*ptr].ancho+1; ptr++;
         }
       }
 
