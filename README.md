@@ -60,16 +60,16 @@ En 2015, MikeDX, antiguo miembro de FastTrak, anunció que había retomado el c�
 Aún existen algunos bugs y diferencias respecto a la versión comercial de DIV 2. Mira en la sección de [issues](https://github.com/vii1/DIV/issues) para verlos.
 
 ## Descripción de archivos y carpetas
-* **3rdparty**: Librerías de terceros y su código fuente
+* **3rdparty**: Librerías de terceros y su código fuente.
   * **lib**: En esta subcarpeta encontrarás las librerías de terceros ya compiladas.
   * **jpeglib**: La librería [JPEG](https://ijg.org/).
   * **JUDAS**: La librería de sonido: [JUDAS Apocalyptic Softwaremixing Sound System](https://github.com/volkertb/JUDAS).
   * **SCITECH**: [SuperVGA Kit](https://web.archive.org/web/19961114153004/http://www.scitechsoft.com/devprod.html).
   * **topflc**: TopFLC, librería para reproducir archivos FLI/FLC.
   * **zlib**: Librería de compresión [zlib](https://zlib.net).
-* **dll**: El SDK y los ejemplos
+* **dll**: El SDK y los ejemplos.
 * **formats**: Descripción de los formatos de archivo propios de DIV, en formato [Kaitai Struct](http://kaitai.io/). Más información en la [wiki](https://github.com/vii1/DIV/wiki/Formatos-de-archivo).
-* **pmwlite**: Extensor de 32 bits para DOS alternativo a DOS/4GW, que se usaba para la DIV32RUN.DLL.
+* **pmwlite**: Extensor de 32 bits para DOS alternativo a DOS/4GW, que se usaba para la DIV32RUN.DLL y el instalador.
 * **src**: Carpeta principal de código fuente. Aquí hay algunos archivos compartidos entre módulos.
   * **div**: Código fuente del IDE (D.EXE). Algunos archivos destacables:
     * **div.cpp**: fichero principal del Sistema Operativo DIV™.
@@ -90,3 +90,5 @@ Aún existen algunos bugs y diferencias respecto a la versión comercial de DIV 
   * **div_stub**: El programa que hacía de "cabecera" para los EXE de DIV2. A éste se le concatenaba el bytecode del programa compilado y algunos datos para el intérprete. Lo único que hacía el EXE en sí era ejecutar DIV32RUN.DLL, pasándose a sí mismo como parámetro.
   * **netlib**: Rutinas de red (originalmente era una DLL)
   * **vpe**: Librería de Modo-8 (una versión modificada de [Virtual Presence Engine](http://www.ii.uib.no/~alexey/vpe/index.html))
+  * **install**: El programa de instalación que DIV incluye cuando usas la opción _Crear instalación_.
+* **tools**: Código fuente de algunas herramientas accesorias que sólo se usan en ciertas fases de la compilación, en tests, o para depurar.

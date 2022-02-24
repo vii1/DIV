@@ -10,6 +10,6 @@ La forma oficial de compilar SVGA Kit es mediante un programa llamado DMAKE, una
 
 ## Acerca de SciTech Software
 
-**SciTech Software, Inc.** era una empresa de software basada en Chico, California. Desarrollaron diversas tecnologías entre las que se encuentran **UniVESA**/**UniVBE**, **SciTech Display Doctor**, **SciTech SNAP** o **SciTech MGL**. También, casualmente, fue la empresa que negoció con SyBase la apertura del compilador WATCOM, lo que dio origen al proyecto [OpenWatcom](http://openwatcom.org). Actualmente SciTech es propiedad de [Alt Richmond Inc.](http://www.altrichmond.ca/), una empresa canadiense que si bien sigue desarrollando los proyectos de SciTech para empresas, ya no provee SDKs al público.
+**SciTech Software, Inc.** era una empresa de software basada en Chico, California. Desarrollaron diversas tecnologías entre las que se encuentran **UniVESA**/**UniVBE**, **SciTech Display Doctor**, **SciTech SNAP** o **SciTech MGL**. También, casualmente, fue la empresa que negoció con SyBase la apertura del compilador WATCOM, lo que dio origen al proyecto [OpenWatcom](http://openwatcom.org). Actualmente SciTech es propiedad de [Alt Richmond Inc.](http://www.altrichmond.ca/), una empresa canadiense que, si bien sigue desarrollando los proyectos de SciTech para empresas, ya no provee SDKs al público.
 
 Su página web, _www.scitechsoft.com_, cerró en junio de 2009 pero se puede encontrar [archivada en archive.org](https://web.archive.org/web/*/http://www.scitechsoft.com).
