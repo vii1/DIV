@@ -195,10 +195,16 @@ $(OUTDIR)$(SEP)test.exe: test$(SEP)testdata.h $(TEST_OBJS)
 #		libfile { $(LIBS) }
 
 test: $(OUTDIR)$(SEP)test.exe .SYMBOLIC
+	@if exist $(OUTDIR)$(SEP)test.log $(DELETE) $(OUTDIR)$(SEP)test.log
 !ifeq SYS dos
 	$(OUTDIR)$(SEP)test.exe
 !else
-	$(DOSBOX) -fastlaunch -noconfig -noautoexec -silent -c "mount c $(OUTDIR)" -c "c:\test.exe > c:\test.log"
+	$(START) $(DOSBOX) -fastlaunch -silent -conf <<
+[autoexec]
+mount c $(OUTDIR)
+c:
+test.exe > test.log
+<<
 	@type $(OUTDIR)$(SEP)test.log
 !ifdef __UNIX__
 	@grep "Failed: 0" $(OUTDIR)$(SEP)test.log > /dev/null
