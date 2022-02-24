@@ -199,7 +199,7 @@ test: $(OUTDIR)$(SEP)test.exe .SYMBOLIC
 !ifeq SYS dos
 	$(OUTDIR)$(SEP)test.exe
 !else
-	$(START) $(DOSBOX) -fastlaunch -silent -conf <<
+	$(DOSBOX) -fastlaunch -silent -conf <<
 [autoexec]
 mount c $(OUTDIR)
 c:
