@@ -5,7 +5,9 @@ meta:
 
 seq:
   - id: magic
-    contents: ['stp',0x1a,0x0d,0x0a,0,0]
+    contents: ['stp',0x1a,0x0d,0x0a,0]
+  - id: not_final_vol
+    type: u1
   - id: num_files
     type: u4
   - id: files
