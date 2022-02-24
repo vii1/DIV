@@ -116,7 +116,13 @@ clean: clean_lib3p .SYMBOLIC
 	@for %i in (586 386) do *$(MAKE) $(MAKE_OPTIONS) CPU=%i SESSION=1 clean
 	@for %i in (586 386) do *$(MAKE) $(MAKE_OPTIONS) CPU=%i SESSION=0 clean
 	cd ..$(SEP)..
-	cd src/bin2h
+	cd src$(SEP)install
+	*$(MAKE) $(MAKE_OPTIONS) clean
+	cd ..$(SEP)..
+	cd tools$(SEP)bin2h
+	*$(MAKE) $(MAKE_OPTIONS) clean
+	cd ..$(SEP)..
+	cd tools$(SEP)testdll
 	*$(MAKE) $(MAKE_OPTIONS) clean
 	cd ..$(SEP)..
 	cd dll

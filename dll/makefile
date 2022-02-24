@@ -42,9 +42,9 @@ test: all testdll .SYMBOLIC
 	$(TESTDLL) -xa $(OUTDIR)$(SEP)ss1.dll
 
 testdll: .SYMBOLIC
-	cd ../src/testdll
+	cd $(ROOT)$(SEP)tools$(SEP)testdll
 	*$(MAKE) CONFIG=$(CONFIG)
-	cd ../../dll
+	cd ..$(SEP)..$(SEP)dll
 
 clean: .SYMBOLIC
 	@if exist $(OUTDIR)$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)*.err

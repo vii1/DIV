@@ -4,8 +4,9 @@ ROOT			= ..$(SEP)..
 CONFIG			= release
 OUTDIR_BASE		= $(ROOT)$(SEP)build.dos
 OUTDIR			= $(OUTDIR_BASE)$(SEP)testdll$(SEP)$(CONFIG)
+SRCDIR			= $(ROOT)$(SEP)src
 
-OPTIONS			= -bt -q -zp4 -I.. -DPEDEBUG
+OPTIONS			= -bt -q -zp4 -I$(SRCDIR) -DPEDEBUG
 
 EXE				= testdll$(EXE_SUFFIX)
 
@@ -37,7 +38,7 @@ $(OUTDIR)/$(EXE): $(OBJS)
 		file { $(OBJS) }
 
 .obj: $(OUTDIR)
-.c: .;..
+.c: .;$(SRCDIR)
 
 .c.obj: .AUTODEPEND
 	*wcc386 $(OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<

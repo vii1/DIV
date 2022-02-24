@@ -195,7 +195,7 @@ $(OUTDIR)$(SEP)test.exe: test$(SEP)testdata.h $(TEST_OBJS)
 #		libfile { $(LIBS) }
 
 test: $(OUTDIR)$(SEP)test.exe .SYMBOLIC
-!ifeq SYS DOS
+!ifeq SYS dos
 	$(OUTDIR)$(SEP)test.exe
 !else
 	$(DOSBOX) -fastlaunch -noconfig -noautoexec -silent -c "mount c $(OUTDIR)" -c "c:\test.exe > c:\test.log"

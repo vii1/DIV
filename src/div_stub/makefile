@@ -28,11 +28,11 @@ $(H): bin2h $(EXE)
 	$(BIN2H) $(EXE) div_stub > $@
 
 bin2h: .SYMBOLIC
-	cd ../bin2h
+	cd ..$(SEP)..$(SEP)tools$(SEP)bin2h
 	*$(MAKE)
-	cd ../div_stub
+	cd ..$(SEP)..$(SEP)src$(SEP)div_stub
 	
-$(EXE): $(OUTDIR)/exec.obj
+$(EXE): $(OUTDIR)$(SEP)exec.obj
 	*wlink &
 		option quiet &
         system dos &
@@ -43,7 +43,7 @@ $(EXE): $(OUTDIR)/exec.obj
 
 .obj: $(OUTDIR)
 
-$(OUTDIR)/exec.obj: asm/exec.asm
+$(OUTDIR)$(SEP)exec.obj: asm$(SEP)exec.asm
 #	wcc $(OPTIONS) -fo=$@ -fr=$^* div_stub.cpp
 	*wasm asm$(SEP)exec.asm $(OPTIONS) -fo=$^@ -fr=$^*
 
@@ -51,9 +51,9 @@ $(OUTDIR)/exec.obj: asm/exec.asm
 #	wasm asm$(SEP)cstrt086.asm $(OPTIONS) -fo=$@ -fr=$^*
 
 clean: .SYMBOLIC
-	if exist $(EXE) $(DELETE) $(EXE)
-	if exist $(OUTDIR)$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)*.obj
-	if exist $(OUTDIR)$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)*.err
-	if exist $(OUTDIR)$(SEP)*.sym $(DELETE) $(OUTDIR)$(SEP)*.sym
-	if exist $(OUTDIR)$(SEP)*.map $(DELETE) $(OUTDIR)$(SEP)*.map
-	if exist $(H) $(DELETE) $(H)
+	@if exist $(EXE) $(DELETE) $(EXE)
+	@if exist $(OUTDIR)$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)*.obj
+	@if exist $(OUTDIR)$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)*.err
+	@if exist $(OUTDIR)$(SEP)*.sym $(DELETE) $(OUTDIR)$(SEP)*.sym
+	@if exist $(OUTDIR)$(SEP)*.map $(DELETE) $(OUTDIR)$(SEP)*.map
+	@if exist $(H) $(DELETE) $(H)
