@@ -7,10 +7,11 @@
 ROOT		= ..$(SEP)..
 CONFIG		= release
 OUTDIR_BASE	= $(ROOT)$(SEP)build.dos
+OUTDIR_SYS	= $(ROOT)$(SEP)build.$(SYS)
 OUTDIR		= $(OUTDIR_BASE)$(SEP)div_stub$(SEP)$(CONFIG)
 H			= $(OUTDIR)$(SEP)div_stub.h
 EXE			= $(OUTDIR)$(SEP)div_stub.exe
-BIN2H		= $(OUTDIR_BASE)$(SEP)bin2h$(SEP)bin2h$(EXE_SUFFIX)
+BIN2H		= $(OUTDIR_SYS)$(SEP)bin2h$(SEP)bin2h$(EXE_SUFFIX)
 MAKE		= $+$(MAKE) -h$-
 
 OPTIONS		= -bt=dos -q

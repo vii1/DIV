@@ -2,12 +2,13 @@
 
 ROOT		= ..
 OUTDIR_BASE	= $(ROOT)$(SEP)build.dos
+OUTDIR_SYS	= $(ROOT)$(SEP)build.$(SYS)
 OUTDIR		= $(OUTDIR_BASE)$(SEP)dll$(SEP)$(CONFIG)
 CONFIG		= release
 
 OPTIONS		= -l=div_dll -q
 
-TESTDLL		= $(OUTDIR_BASE)$(SEP)testdll$(SEP)$(CONFIG)$(SEP)testdll$(EXE_SUFFIX)
+TESTDLL		= $(OUTDIR_SYS)$(SEP)testdll$(SEP)$(CONFIG)$(SEP)testdll$(EXE_SUFFIX)
 
 MAKE		= $+$(MAKE) -h$-
 %DOS4G		= QUIET

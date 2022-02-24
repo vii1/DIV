@@ -2,7 +2,7 @@
 
 ROOT			= ..$(SEP)..
 CONFIG			= release
-OUTDIR_BASE		= $(ROOT)$(SEP)build.dos
+OUTDIR_BASE		= $(ROOT)$(SEP)build.$(SYS)
 OUTDIR			= $(OUTDIR_BASE)$(SEP)unpak$(SEP)$(CONFIG)
 
 OPTIONS			= -bt -q -zp4

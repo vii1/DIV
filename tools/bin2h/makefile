@@ -1,7 +1,7 @@
 !include ../../os.mif
 
 ROOT		= ..$(SEP)..
-OUTDIR_BASE	= $(ROOT)$(SEP)build.dos
+OUTDIR_BASE	= $(ROOT)$(SEP)build.$(SYS)
 OUTDIR		= $(OUTDIR_BASE)$(SEP)bin2h
 EXE			= $(OUTDIR)$(SEP)bin2h$(EXE_SUFFIX)
 OPTIONS		= -bt -q
