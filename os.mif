@@ -51,4 +51,10 @@ EXE_SUFFIX = .exe
 
 !endif # __UNIX__
 
+!ifdef __NT__
+START = start "" /wait
+!else
+START =
+!endif
+
 !endif # OS_MIF

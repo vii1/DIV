@@ -99,7 +99,7 @@ pmwlite: .SYMBOLIC
 		$(TASM_EXE) $(TASM_OPTIONS) $<,$(OUTDIR)$(SEP)$^@
 !endif
 
-clean: .SYMBOLIC
+clean: clean_test .SYMBOLIC
 	@if exist $(OUTDIR)$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)*.err
 	@if exist $(OUTDIR)$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)*.obj
 	@if exist $(OUTDIR)$(SEP)$(EXE) $(DELETE) $(OUTDIR)$(SEP)$(EXE)
@@ -123,4 +123,7 @@ test: $(EXE) .SYMBOLIC
 	@echo - $(OUTDIR)$(SEP)test$(SEP)install.exe
 	@echo - $(OUTDIR)$(SEP)test$(SEP)heliobal.001
 !endif
-	
+
+clean_test: .SYMBOLIC
+	@if exist $(OUTDIR)$(SEP)test$(SEP)install.exe $(DELETE) $(OUTDIR)$(SEP)test$(SEP)install.exe
+	@if exist $(OUTDIR)$(SEP)test$(SEP)heliobal.001 $(DELETE) $(OUTDIR)$(SEP)test$(SEP)heliobal.001
