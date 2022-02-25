@@ -43,9 +43,10 @@ Result read_pak_info( FILE* f, HeaderType type, PakInfo** pInfo )
 		if( info->game.version != 0 ) {
 			if( keepGoing ) {
 				fprintf_s( stderr, "WARNING: File version is %u (expected 0), probably unsupported\n", info->game.version );
+				errors++;
 			} else {
 				fprintf_s( stderr, "ERROR: File version is %u (expected 0)\n", info->game.version );
-				fprintf_s( stderr, "To ignore this error, use -k option\n" );
+				fprintf_s( stderr, MSG_TOIGNORE );
 				err( ERR_VERSION );
 			}
 		}
@@ -78,9 +79,10 @@ Result read_pak_info( FILE* f, HeaderType type, PakInfo** pInfo )
 		if( strnlen_s( fi->name, 16 ) == 16 ) {
 			if( keepGoing ) {
 				fprintf_s( stderr, "WARNING: File #%u (%.16s): name with no zero terminator\n", i, fi->name );
+				errors++;
 			} else {
 				fprintf_s( stderr, "ERROR: File #%u (%.16s): name with no zero terminator\n", i, fi->name );
-				fprintf_s( stderr, "To ignore this error, use -k option\n" );
+				fprintf_s( stderr, MSG_TOIGNORE );
 				err( ERR_FILE_FORMAT );
 			}
 		}

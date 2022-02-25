@@ -14,6 +14,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 // TODO: option to verify checksums in game paks
+// TODO: extract individual files. use wildcards? see fnmatch()
 
 #define __STDC_WANT_LIB_EXT1__ 1
 
@@ -29,6 +30,9 @@ bool list = false;
 bool keepGoing = false;
 bool createDirs = false;
 bool noLower = false;
+uint errors = 0;
+
+Result process_file( char* file, const char* destdir );
 
 char* strlwr_s( char* str, size_t maxsize )
 {
@@ -118,6 +122,22 @@ HeaderType detect_header( FILE* f )
 	return HEADER_UNKNOWN;
 }
 
+// Switches extension to .001, then process that file
+Result process_first_volume( char* file, char* ext, const char* destdir )
+{
+	char*  first;
+	size_t len;
+	Result result;
+	*ext = 0;
+	len = strnlen_s( file, _MAX_PATH );
+	first = (char*)malloc( len + 5 );
+	memcpy_s( first, len, file, len );
+	memcpy_s( first + len, 5, ".001", 5 );
+	result = process_file( first, destdir );
+	free( first );
+	return result;
+}
+
 Result process_file( char* file, const char* destdir )
 {
 	FILE*	   f = NULL;
@@ -133,41 +153,32 @@ Result process_file( char* file, const char* destdir )
 	if( headerType == HEADER_GAME ) {
 		PakInfo* info = NULL;
 		Result	 result = read_pak_info( f, headerType, &info );
-		if( list || result != ERR_OK ) {
+		if( !list && result == ERR_OK ) {
+			result = extract( f, file, info, 0, destdir );
+		} else {
 			fclose( f );
-			return result;
 		}
+		free_PakInfo( info );
+		return result;
 	} else if( headerType == HEADER_INSTALL ) {
 		char* ext = extension( file );
 		if( strcmp( ext, ".001" ) ) {
-			char*  first;
-			size_t len;
-			Result r;
 			fclose( f );
-			*ext = 0;
-			len = strnlen_s( file, _MAX_PATH );
-			first = (char*)malloc( len + 5 );
-			memcpy_s( first, len, file, len );
-			memcpy_s( first + len, 5, ".001", 5 );
-			r = process_file( first, destdir );
-			free( first );
-			return r;
+			return process_first_volume( file, ext, destdir );
 		} else {
 			PakInfo* info = NULL;
 			Result	 result = read_pak_info( f, headerType, &info );
-			if( list || result != ERR_OK ) {
-				fclose( f );
-				return result;
+			if( !list && result == ERR_OK ) {
+				// TODO: extract
 			}
+			free_PakInfo( info );
+			fclose( f );
+			return result;
 		}
 	} else {
-		fclose( f );
 		fprintf_s( stderr, "Unrecognized file format\n" );
 		return ERR_FILE_FORMAT;
 	}
-
-	fclose( f );
-	return ERR_OK;
 }
 
 int main( int argc, char* argv[] )

@@ -5,6 +5,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#if defined(__UNIX__) || defined(__LINUX__) || defined(__linux__)
+#define SEP '/'
+#else
+#define SEP '\\'
+#endif
+
+#define MSG_TOIGNORE "To ignore this error, use -k option\n"
+
 typedef unsigned char byte;
 typedef unsigned int  uint;
 
@@ -13,7 +21,7 @@ typedef enum {
 	ERR_OK = 0,			// Successful
 	ERR_COMMAND_LINE,	// Error in command line
 	ERR_IO,				// I/O error or file not found
-	ERR_FILE_FORMAT,	// Invalid file format
+	ERR_FILE_FORMAT,	// Invalid file format or data
 	ERR_VERSION,		// Invalid file version
 	ERR_MEMORY,			// Out of memory
 	ERR_OTHER,			// Other
@@ -61,10 +69,13 @@ extern bool list;
 extern bool keepGoing;
 extern bool createDirs;
 extern bool noLower;
+extern uint errors;
 
 char* strlwr_s( char* str, size_t maxsize );
 void log( const char* fmt, ... );
 
 Result read_pak_info( FILE* f, HeaderType type, PakInfo** pInfo );
+
+Result extract( FILE * f, char* filename, const PakInfo* info, uint firstFile, const char* destdir );
 
 #endif	 // __UNPAK_H__
