@@ -73,6 +73,7 @@ Result read_pak_info( FILE* f, HeaderType type, PakInfo** pInfo )
 	// Read file infos
 	fi = info->files;
 	for( i = 0; i < info->numFiles; ++i, ++fi ) {
+		// Read file name
 		if( fread( &fi->name, 16, 1, f ) != 1 ) err( ERR_IO );
 		if( strnlen_s( fi->name, 16 ) == 16 ) {
 			if( keepGoing ) {
@@ -86,6 +87,7 @@ Result read_pak_info( FILE* f, HeaderType type, PakInfo** pInfo )
 		if( !noLower ) {
 			strlwr_s( fi->name, 16 );
 		}
+		// Read sizes
 		if( fread( &fi->offset, 4, 1, f ) != 1 ) err( ERR_IO );
 		if( fread( &fi->zSize, 4, 1, f ) != 1 ) err( ERR_IO );
 		totalZSize += fi->zSize;
@@ -96,6 +98,7 @@ Result read_pak_info( FILE* f, HeaderType type, PakInfo** pInfo )
 		} else {
 			ratio = ( (float)fi->zSize / fi->uSize ) * 100.f;
 		}
+		// Print out if desired
 		if( verbose ) {
 			int	 ndigits = 0;
 			uint n = info->numFiles;
@@ -109,6 +112,7 @@ Result read_pak_info( FILE* f, HeaderType type, PakInfo** pInfo )
 			printf_s( " %10u %10u %5.1f%% %-.16s\n", fi->uSize, fi->zSize, ratio, fi->name );
 		}
 	}
+	// Print totals
 	if( totalUSize == 0 ) {
 		ratio = _INFF;
 	} else {
