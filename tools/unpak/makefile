@@ -21,7 +21,7 @@ INC_NOTARGETS=1
 LIBS = $(ZLIB_LIB)
 OPTIONS += $(INCLUDE)
 
-SOURCES = unpak.c
+SOURCES = unpak.c game.c #install.c
 
 OBJS = $(SOURCES:.c=.obj)
 
