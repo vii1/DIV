@@ -13,6 +13,7 @@ PMODE_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)pmode.lib
 SVGA_DIR = $(SCITECH)$(SEP)src$(SEP)svgakit
 PMODE_DIR = $(SCITECH)$(SEP)src$(SEP)pmode
 INCLUDE += -I$(SCITECH)$(SEP)include
+CLEAN_LIB3P_DEPS += clean_svga clean_pmode
 
 !endif #INC_NOVARS
 

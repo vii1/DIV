@@ -10,6 +10,7 @@
 JPEG_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)libjpeg.lib
 JPEG_DIR = $(ROOT)$(SEP)3rdparty$(SEP)jpeglib
 INCLUDE += -I$(JPEG_DIR)
+CLEAN_LIB3P_DEPS += clean_jpeg
 
 !endif #INC_NOVARS
 

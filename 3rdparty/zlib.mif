@@ -10,6 +10,7 @@
 ZLIB_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)zlib_f.lib
 ZLIB_DIR = $(ROOT)$(SEP)3rdparty$(SEP)zlib
 INCLUDE += -I$(ZLIB_DIR)
+CLEAN_LIB3P_DEPS += clean_zlib
 
 !endif #INC_NOVARS
 

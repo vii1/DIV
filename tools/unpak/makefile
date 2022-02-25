@@ -13,11 +13,13 @@ EXE				= unpak$(EXE_SUFFIX)
 OPTIONS			+= -d2
 !endif
 
+!inject 1 NO_JPEG NO_JUDAS NO_SCITECH NO_TOPFLC
 INC_NOTARGETS=1
 !include $(ROOT)$(SEP)3rdparty.mif
 !undef INC_NOTARGETS
 
 LIBS = $(ZLIB_LIB)
+OPTIONS += $(INCLUDE)
 
 SOURCES = unpak.c
 
