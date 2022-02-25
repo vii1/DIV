@@ -13,6 +13,8 @@ You should have received a copy of the GNU General Public License along with
 this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
+// TODO: option to verify checksums in game paks
+
 #define __STDC_WANT_LIB_EXT1__ 1
 
 #include <stdio.h>
@@ -20,6 +22,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include <stdarg.h>
 #include <string.h>
 #include <stdbool.h>
+#include <float.h>
+#include <assert.h>
+#include <ctype.h>
 #include "zlib.h"
 
 typedef unsigned char byte;
@@ -61,12 +66,26 @@ typedef struct {
 // Game only: Packfile struct
 typedef struct {
 	byte	  version;	  // File format version
-	uint	  crc[3];	  // CRC checksum
+	uint	  crc[3];	  // Checksum (not true CRC) for compiled exes: 0=game exe, 1=setup.exe, 2=reserved
 	uint	  numFiles;	  // Number of files in packfile
 	FileInfo* files;	  // File info data
 } GamePakInfo;
 
-int verbose = 0;
+int	 verbose = 0;
+bool list = false;
+bool keepGoing = false;
+bool createDirs = false;
+bool noLower = false;
+
+char* strlwr_s( char* str, size_t maxsize )
+{
+	size_t i;
+	char*  p;
+	for( i = 0, p = str; *p && i < maxsize; ++i, ++p ) {
+		*p = (char)tolower( *p );
+	}
+	return str;
+}
 
 void banner()
 {
@@ -86,6 +105,8 @@ void help()
 	printf( "Unpacks DIV install paks and game paks.\n" );
 	printf( "Options:\n"
 			"   -l      List file info and contents\n"
+			"   -d      Create subdirectories when extracting\n"
+			"   -u      Don't convert filenames to lower case\n"
 			"   -k      Keep going even if file errors are found\n"
 			"   -v      Be verbose\n"
 			"   -h      Show this help\n"
@@ -117,6 +138,16 @@ HeaderType detect_header( FILE* f )
 	return HEADER_UNKNOWN;
 }
 
+void free_GamePakInfo( GamePakInfo* p )
+{
+	if( p ) {
+		if( p->files ) {
+			free( p->files );
+		}
+		free( p );
+	}
+}
+
 #define err( x )     \
 	{                \
 		result = x;  \
@@ -127,27 +158,111 @@ Result read_game_info( FILE* f, GamePakInfo** pInfo )
 {
 	Result		 result = ERR_OTHER;
 	GamePakInfo* info = (GamePakInfo*)malloc( sizeof( GamePakInfo ) );
+	uint		 i, totalZSize = 0, totalUSize = 0;
+	FileInfo*	 fi;
+	float		 ratio;
+
+	assert( f );
+	assert( pInfo );
+
 	if( !info ) err( ERR_MEMORY );
 	info->files = NULL;
-	if( !fread( &info->version, 1, 1, f ) != 1 ) err( ERR_IO );
-	if( info->version != 0 ) err( ERR_VERSION );
-
+	// Version must be 0
+	if( fread( &info->version, 1, 1, f ) != 1 ) err( ERR_IO );
+	log( "File version: %u\n", info->version );
+	if( info->version != 0 ) {
+		if( keepGoing ) {
+			fprintf_s( stderr, "WARNING: File version is %u (expected 0), probably unsupported\n", info->version );
+		} else {
+			fprintf_s( stderr, "ERROR: File version is %u (expected 0)\n", info->version );
+			fprintf_s( stderr, "To ignore this error, use -k option\n" );
+			err( ERR_VERSION );
+		}
+	}
+	// Checksums for exes
+	for( i = 0; i < 3; ++i ) {
+		if( fread( &info->crc[i], 4, 1, f ) != 1 ) err( ERR_IO );
+		log( "Checksum #%u: 0x%08X\n", i, info->crc[i] );
+	}
+	// Number of files in packfile
+	if( fread( &info->numFiles, 4, 1, f ) != 1 ) err( ERR_IO );
+	log( "Number of files: %u\n", info->numFiles );
+	info->files = (FileInfo*)malloc( sizeof( FileInfo ) * info->numFiles );
+	if( !info->files ) err( ERR_MEMORY );
+	// List header
+	if( list && !verbose ) {
+		printf_s( "Uncomp.size  Comp.size  Ratio Name\n"
+				  "----------- ---------- ------ ----------------\n" );
+	}
+	// Read file infos
+	fi = info->files;
+	for( i = 0; i < info->numFiles; ++i, ++fi ) {
+		if( fread( &fi->name, 16, 1, f ) != 1 ) err( ERR_IO );
+		if( strnlen_s( fi->name, 16 ) == 16 ) {
+			if( keepGoing ) {
+				fprintf_s( stderr, "WARNING: File #%u (%.16s): name with no zero terminator\n", i, fi->name );
+			} else {
+				fprintf_s( stderr, "ERROR: File #%u (%.16s): name with no zero terminator\n", i, fi->name );
+				fprintf_s( stderr, "To ignore this error, use -k option\n" );
+				err( ERR_FILE_FORMAT );
+			}
+		}
+		if( !noLower ) {
+			strlwr_s( fi->name, 16 );
+		}
+		if( fread( &fi->offset, 4, 1, f ) != 1 ) err( ERR_IO );
+		if( fread( &fi->zSize, 4, 1, f ) != 1 ) err( ERR_IO );
+		totalZSize += fi->zSize;
+		if( fread( &fi->uSize, 4, 1, f ) != 1 ) err( ERR_IO );
+		totalUSize += fi->uSize;
+		if( fi->uSize == 0 ) {
+			ratio = _INFF;
+		} else {
+			ratio = ( (float)fi->zSize / fi->uSize ) * 100.f;
+		}
+		if( verbose ) {
+			int	 ndigits = 0;
+			uint n = info->numFiles;
+			while( n ) {
+				++ndigits;
+				n /= 10;
+			}
+			log( "%*u: %-16.16s offset: %-10u uSize: %-10u zSize: %-10u ratio: %3.1f%%\n", ndigits, i, fi->name, fi->offset,
+			  fi->uSize, fi->zSize, ratio );
+		} else if( list ) {
+			printf_s( " %10u %10u %5.1f%% %-.16s\n", fi->uSize, fi->zSize, ratio, fi->name );
+		}
+	}
+	if( totalUSize == 0 ) {
+		ratio = _INFF;
+	} else {
+		ratio = ( (float)totalZSize / totalUSize ) * 100.f;
+	}
+	if( verbose ) {
+		printf_s( "TOTAL: uSize: %-10u zSize: %-10u ratio: %.1f%%\n", totalUSize, totalZSize, ratio );
+	}
+	if( list && !verbose ) {
+		printf_s( "----------- ---------- ------ ----------------\n"
+				  " %10u %10u %5.1f%% %u file(s) total\n",
+		  totalUSize, totalZSize, ratio, info->numFiles );
+	}
+	*pInfo = info;
 	return ERR_OK;
 
 _error:
 	*pInfo = NULL;
-	if( info ) {
-		if( info->files ) {
-			free( info->files );
-		}
-		free( info );
+	free_GamePakInfo( info );
+	if( result == ERR_MEMORY || result == ERR_IO ) {
+		perror( "Fatal" );
 	}
 	return result;
 }
 
-Result process_file( const char* file, const char* destdir, bool list, bool keepGoing )
+#undef err
+
+Result process_file( const char* file, const char* destdir )
 {
-	FILE* f;
+	FILE*	   f = NULL;
 	HeaderType headerType;
 
 	log( "Opening file: %s\n", file );
@@ -157,20 +272,27 @@ Result process_file( const char* file, const char* destdir, bool list, bool keep
 		return ERR_IO;
 	}
 	headerType = detect_header( f );
-	if( headerType == HEADER_UNKNOWN ) {
+	if( headerType == HEADER_GAME ) {
+		GamePakInfo* info = NULL;
+		Result		 result = read_game_info( f, &info );
+		if( list || result != ERR_OK ) {
+			fclose( f );
+			return result;
+		}
+	} else if( headerType == HEADER_INSTALL ) {
+	} else {
 		fclose( f );
 		fprintf_s( stderr, "Unrecognized file format\n" );
 		return ERR_FILE_FORMAT;
 	}
 
-	if( headerType == HEADER_GAME ) {
-	}
+	fclose( f );
 	return ERR_OK;
 }
 
 int main( int argc, char* argv[] )
 {
-	bool  list = false, hlp = false, keepGoing = false;
+	bool  hlp = false, noMoreOptions = false;
 	char *file = NULL, *destdir = NULL;
 	int	  i;
 	char* p;
@@ -182,10 +304,16 @@ int main( int argc, char* argv[] )
 	}
 
 	for( i = 1; i < argc; ++i ) {
-		if( argv[i][0] == '-' ) {
+		if( argv[i][0] == '-' && !noMoreOptions ) {
+			if( argv[i][1] == '-' && argv[i][2] == 0 ) {
+				noMoreOptions = true;
+				continue;
+			}
 			for( p = argv[i] + 1; *p; ++p ) {
 				switch( *p ) {
 					case 'l': list = true; break;
+					case 'd': createDirs = true; break;
+					case 'u': noLower = true; break;
 					case 'k': keepGoing = true; break;
 					case 'v': verbose = 1; break;
 					case 'h': hlp = true; break;
@@ -209,10 +337,10 @@ int main( int argc, char* argv[] )
 		return ERR_OK;
 	}
 
-	if( !file || ( list && !destdir ) ) {
+	if( !file || ( list && destdir ) ) {
 		help();
 		return ERR_COMMAND_LINE;
 	}
 
-	return process_file( file, destdir, list, keepGoing );
+	return process_file( file, destdir );
 }
