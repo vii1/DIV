@@ -42,7 +42,8 @@ $(OUTDIR)/$(EXE): $(OBJS)
 !endif
 		option map=$^* &
 		path $(OUTDIR) &
-		file { $(OBJS) }
+		file { $(OBJS) } &
+		libfile { $(LIBS) }
 
 .obj: $(OUTDIR)
 .c: .

@@ -6,10 +6,14 @@
 // #include <sys/stat.h>
 #include <fcntl.h>
 #include <io.h>
-
+#include <stdlib.h>
+#include "zlib.h"
 #include "unpak.h"
 
 #define CHUNK ( 128 * 1024 )
+
+unsigned char in[CHUNK];
+unsigned char out[CHUNK];
 
 char* get_destfile( const char* destdir, char* file )
 {
@@ -97,65 +101,93 @@ _error : {
 }
 }
 
-/* Decompress from file source to file dest until stream ends or EOF.
-   inf() returns Z_OK on success, Z_MEM_ERROR if memory could not be
-   allocated for processing, Z_DATA_ERROR if the deflate data is
-   invalid or incomplete, Z_VERSION_ERROR if the version of zlib.h and
-   the version of the library linked do not match, or Z_ERRNO if there
-   is an error reading or writing the files. */
-// int inf( FILE* source, FILE* dest )
-// {
-// 	int			  ret;
-// 	unsigned	  have;
-// 	z_stream	  strm;
-// 	unsigned char in[CHUNK];
-// 	unsigned char out[CHUNK];
-// 	/* allocate inflate state */
-// 	strm.zalloc = Z_NULL;
-// 	strm.zfree = Z_NULL;
-// 	strm.opaque = Z_NULL;
-// 	strm.avail_in = 0;
-// 	strm.next_in = Z_NULL;
-// 	ret = inflateInit( &strm );
-// 	if( ret != Z_OK ) return ret;
-// 	/* decompress until deflate stream ends or end of file */
-// 	do {
-// 		strm.avail_in = fread( in, 1, CHUNK, source );
-// 		if( ferror( source ) ) {
-// 			(void)inflateEnd( &strm );
-// 			return Z_ERRNO;
-// 		}
-// 		if( strm.avail_in == 0 ) break;
-// 		strm.next_in = in;
-// 		/* run inflate() on input until output buffer not full */
-// 		do {
-// 			strm.avail_out = CHUNK;
-// 			strm.next_out = out;
-// 			ret = inflate( &strm, Z_NO_FLUSH );
-// 			assert( ret != Z_STREAM_ERROR ); /* state not clobbered */
-// 			switch( ret ) {
-// 				case Z_NEED_DICT: ret = Z_DATA_ERROR; /* and fall through */
-// 				case Z_DATA_ERROR:
-// 				case Z_MEM_ERROR: (void)inflateEnd( &strm ); return ret;
-// 			}
-// 			have = CHUNK - strm.avail_out;
-// 			if( fwrite( out, 1, have, dest ) != have || ferror( dest ) ) {
-// 				(void)inflateEnd( &strm );
-// 				return Z_ERRNO;
-// 			}
-// 		} while( strm.avail_out == 0 );
-// 		/* done when inflate() says it's done */
-// 	} while( ret != Z_STREAM_END );
-// 	/* clean up and return */
-// 	(void)inflateEnd( &strm );
-// 	return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
-// }
+Result zresult( int ret )
+{
+	switch( ret ) {
+		case Z_OK: return ERR_OK;
+		case Z_MEM_ERROR: return ERR_MEMORY;
+		case Z_DATA_ERROR:
+		case Z_STREAM_ERROR: return ERR_FILE_FORMAT;
+		case Z_VERSION_ERROR: return ERR_VERSION;
+		case Z_ERRNO: return ERR_IO;
+		default: return ERR_OTHER;
+	}
+}
 
 #define err( x )     \
 	{                \
 		result = x;  \
 		goto _error; \
 	}
+
+/* Decompress from file source to file dest until stream ends or EOF.
+   inf() returns Z_OK on success, Z_MEM_ERROR if memory could not be
+   allocated for processing, Z_DATA_ERROR if the deflate data is
+   invalid or incomplete, Z_VERSION_ERROR if the version of zlib.h and
+   the version of the library linked do not match, or Z_ERRNO if there
+   is an error reading or writing the files. */
+Result zfcopy( FILE* from, size_t size, const char* destfile )
+{
+	int		 ret;
+	z_stream strm;
+	size_t	 bytes_read = 0;
+	Result	 result = ERR_OTHER;
+	bool	 deinit_inflate = false;
+
+	int hto, hfrom = fileno( from );   // Bypass stream buffering - CHECK!
+	if( hfrom == -1 || fflush( from ) ) return ERR_IO;
+	hto = open( destfile, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0666 );
+	if( hto == -1 ) return ERR_IO;
+
+	/* allocate inflate state */
+	strm.zalloc = Z_NULL;
+	strm.zfree = Z_NULL;
+	strm.opaque = Z_NULL;
+	strm.avail_in = 0;
+	strm.next_in = Z_NULL;
+	ret = inflateInit( &strm );
+	if( ret != Z_OK ) err( zresult( ret ) );
+	deinit_inflate = true;
+	/* decompress until deflate stream ends or end of file */
+	while( bytes_read < size && ret != Z_STREAM_END ) {
+		int n = read( hfrom, in, min( size - bytes_read, CHUNK ) );
+		if( n < 0 ) err( ERR_IO );
+		if( n == 0 ) err( ERR_FILE_FORMAT );
+		bytes_read += n;
+		strm.avail_in = (uint)n;
+		strm.next_in = in;
+		/* run inflate() on input until output buffer not full */
+		do {
+			unsigned have;
+			strm.avail_out = CHUNK;
+			strm.next_out = out;
+			ret = inflate( &strm, Z_NO_FLUSH );
+			assert( ret != Z_STREAM_ERROR ); /* state not clobbered */
+			switch( ret ) {
+				case Z_NEED_DICT: ret = Z_DATA_ERROR; /* and fall through */
+				case Z_DATA_ERROR:
+				case Z_MEM_ERROR: err( zresult( ret ) );
+			}
+			have = CHUNK - strm.avail_out;
+			n = write( hto, out, have );
+			if( n < 0 || n != (int)have ) err( ERR_IO );
+		} while( strm.avail_out == 0 );
+		/* done when inflate() says it's done */
+	}
+	/* clean up and return */
+	close( hto );
+	inflateEnd( &strm );
+	return zresult( ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR );
+
+_error : {
+	int temp_errno = errno;
+	close( hto );
+	if( remove( destfile ) ) perror( "Error deleting partial file" );
+	if( deinit_inflate ) inflateEnd( &strm );
+	errno = temp_errno;
+	return result;
+}
+}
 
 Result extract( FILE* f, char* filename, const PakInfo* info, uint firstFile, const char* destdir )
 {
@@ -225,33 +257,49 @@ Result extract( FILE* f, char* filename, const PakInfo* info, uint firstFile, co
 			}
 			// TODO: Extract partial file and continue in next volume
 			fprintf_s( stderr, "TODO: Extract partial file and continue in next volume\n" );
-		} else if( fi->uSize == fi->zSize ) {
-			// File is whole and uncompressed
-			result = fcopy( f, fi->uSize, destfile );
-			if( result == ERR_IO ) {
-				perror( destfile );
-				free( destfile );
-				if( keepGoing ) {
+		} else {
+			if( fi->uSize == fi->zSize ) {
+				// File is whole and uncompressed
+				result = fcopy( f, fi->uSize, destfile );
+			} else {
+				// File is whole and compressed
+				result = zfcopy( f, fi->uSize, destfile );
+			}
+			if( result != ERR_OK ) {
+				if( keepGoing && result != ERR_MEMORY ) {
+					if( result == ERR_IO ) {
+						perror( destfile );
+					} else {
+						fprintf_s( stderr, "WARNING: %." S_MAX_FILE "s: invalid data\n", fi->name );
+					}
+					free( destfile );
 					fprintf_s( stderr, "WARNING: Skipping file %." S_MAX_FILE "s\n", fi->name );
 					errors++;
 					continue;
 				} else {
-					fprintf_s( stderr, MSG_TOIGNORE );
-					err( ERR_IO );
+					if( result == ERR_IO ) {
+						perror( destfile );
+					} else if( result == ERR_MEMORY ) {
+						perror( "Fatal" );
+					} else {
+						fprintf_s( stderr, "ERROR: %." S_MAX_FILE "s: invalid data\n", fi->name );
+					}
+					free( destfile );
+					if( result != ERR_MEMORY ) {
+						fprintf_s( stderr, MSG_TOIGNORE );
+					}
+					err( result );
 				}
 			}
-		} else {
-			// File is whole and compressed
-			fprintf_s( stderr, "TODO: File is whole and compressed\n" );
 		}
 		free( destfile );
 	}
 
 _error:
 	if( f ) fclose( f );
-	if( result == ERR_MEMORY || result == ERR_IO ) {
-		perror( "Fatal" );
-	}
+	// if( result == ERR_MEMORY || result == ERR_IO ) {
+	// 	perror( "Fatal" );
+	// }
 	return result;
 }
 
