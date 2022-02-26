@@ -75,19 +75,19 @@ Result read_pak_info( FILE* f, HeaderType type, PakInfo** pInfo )
 	fi = info->files;
 	for( i = 0; i < info->numFiles; ++i, ++fi ) {
 		// Read file name
-		if( fread( &fi->name, 16, 1, f ) != 1 ) err( ERR_IO );
-		if( strnlen_s( fi->name, 16 ) == 16 ) {
+		if( fread( &fi->name, MAX_FILE, 1, f ) != 1 ) err( ERR_IO );
+		if( strnlen_s( fi->name, MAX_FILE ) == MAX_FILE ) {
 			if( keepGoing ) {
-				fprintf_s( stderr, "WARNING: File #%u (%.16s): name with no zero terminator\n", i, fi->name );
+				fprintf_s( stderr, "WARNING: File #%u (%." S_MAX_FILE "s): name with no zero terminator\n", i, fi->name );
 				errors++;
 			} else {
-				fprintf_s( stderr, "ERROR: File #%u (%.16s): name with no zero terminator\n", i, fi->name );
+				fprintf_s( stderr, "ERROR: File #%u (%." S_MAX_FILE "s): name with no zero terminator\n", i, fi->name );
 				fprintf_s( stderr, MSG_TOIGNORE );
 				err( ERR_FILE_FORMAT );
 			}
 		}
 		if( !noLower ) {
-			strlwr_s( fi->name, 16 );
+			strlwr_s( fi->name, MAX_FILE );
 		}
 		// Read sizes
 		if( fread( &fi->offset, 4, 1, f ) != 1 ) err( ERR_IO );
@@ -108,10 +108,10 @@ Result read_pak_info( FILE* f, HeaderType type, PakInfo** pInfo )
 				++ndigits;
 				n /= 10;
 			}
-			log( "%*u: %-16.16s offset: %-10u uSize: %-10u zSize: %-10u ratio: %3.1f%%\n", ndigits, i, fi->name,
-			  fi->offset, fi->uSize, fi->zSize, ratio );
+			log( "%*u: %-16." S_MAX_FILE "s offset: %-10u uSize: %-10u zSize: %-10u ratio: %3.1f%%\n",
+			  ndigits, i, fi->name, fi->offset, fi->uSize, fi->zSize, ratio );
 		} else if( list ) {
-			printf_s( " %10u %10u %5.1f%% %-.16s\n", fi->uSize, fi->zSize, ratio, fi->name );
+			printf_s( " %10u %10u %5.1f%% %-." S_MAX_FILE "s\n", fi->uSize, fi->zSize, ratio, fi->name );
 		}
 	}
 	// Print totals

@@ -22,7 +22,10 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include <string.h>
 #include <ctype.h>
 #include <libgen.h>
-#include "zlib.h"
+#include <sys/stat.h>
+#include <errno.h>
+#include <direct.h>
+#include <io.h>
 #include "unpak.h"
 
 int	 verbose = 0;
@@ -32,7 +35,7 @@ bool createDirs = false;
 bool noLower = false;
 uint errors = 0;
 
-Result process_file( char* file, const char* destdir );
+Result process_file( char* file, char* destdir );
 
 char* strlwr_s( char* str, size_t maxsize )
 {
@@ -46,7 +49,7 @@ char* strlwr_s( char* str, size_t maxsize )
 
 char* filename( char* path )
 {
-	char* p = path + strnlen_s( path, _MAX_PATH ) - 1;
+	char* p = path + strnlen_s( path, _MAX_PATH );
 	while( p > path ) {
 		--p;
 		if( *p == '/' || *p == '\\' || *p == ':' ) {
@@ -58,7 +61,7 @@ char* filename( char* path )
 
 char* extension( char* path )
 {
-	char* end = path + strnlen_s( path, _MAX_PATH ) - 1;
+	char* end = path + strnlen_s( path, _MAX_PATH );
 	char* p = end;
 	while( p > path ) {
 		--p;
@@ -123,7 +126,7 @@ HeaderType detect_header( FILE* f )
 }
 
 // Switches extension to .001, then process that file
-Result process_first_volume( char* file, char* ext, const char* destdir )
+Result process_first_volume( char* file, char* ext, char* destdir )
 {
 	char*  first;
 	size_t len;
@@ -138,7 +141,35 @@ Result process_first_volume( char* file, char* ext, const char* destdir )
 	return result;
 }
 
-Result process_file( char* file, const char* destdir )
+Result check_destdir( char* destdir )
+{
+	struct stat st;
+	char*		p = destdir + strnlen_s( destdir, _MAX_PATH ) - 1;
+	// Trims every \ / from the end
+	while( p > destdir && ( *p == '/' || *p == '\\' ) ) {
+		*p = 0;
+		--p;
+	}
+	// Check destdir exists (may be a file)
+	if( access( destdir, 0 ) ) {
+		if( errno == ENOENT ) {
+			// Does not exist. Try to create it
+			if( mkdir( destdir ) )
+				return ERR_IO;
+			else
+				return ERR_OK;
+		} else {
+			// Access denied.
+			return ERR_IO;
+		}
+	}
+	// It exists. Let's make sure it's a directory.
+	if( stat( destdir, &st ) ) return ERR_IO;
+	if( !S_ISDIR( st.st_mode ) ) return ERR_COMMAND_LINE;
+	return ERR_OK;
+}
+
+Result process_file( char* file, char* destdir )
 {
 	FILE*	   f = NULL;
 	HeaderType headerType;
@@ -154,6 +185,16 @@ Result process_file( char* file, const char* destdir )
 		PakInfo* info = NULL;
 		Result	 result = read_pak_info( f, headerType, &info );
 		if( !list && result == ERR_OK ) {
+			if( destdir ) {
+				result = check_destdir( destdir );
+				if( result == ERR_IO ) {
+					perror( destdir );
+					return ERR_IO;
+				} else if( result == ERR_COMMAND_LINE ) {
+					fprintf_s( stderr, "Not a valid directory: %." S_MAX_PATH "s\n", destdir );
+					return ERR_COMMAND_LINE;
+				}
+			}
 			result = extract( f, file, info, 0, destdir );
 		} else {
 			fclose( f );
@@ -169,7 +210,17 @@ Result process_file( char* file, const char* destdir )
 			PakInfo* info = NULL;
 			Result	 result = read_pak_info( f, headerType, &info );
 			if( !list && result == ERR_OK ) {
-				// TODO: extract
+				if( destdir ) {
+					result = check_destdir( destdir );
+					if( result == ERR_IO ) {
+						perror( destdir );
+						return ERR_IO;
+					} else if( result == ERR_COMMAND_LINE ) {
+						fprintf_s( stderr, "Not a valid directory: %." S_MAX_PATH "s\n", destdir );
+						return ERR_COMMAND_LINE;
+					}
+				}
+				result = extract( f, file, info, 0, destdir );
 			}
 			free_PakInfo( info );
 			fclose( f );
@@ -207,7 +258,8 @@ int main( int argc, char* argv[] )
 					case 'u': noLower = true; break;
 					case 'k': keepGoing = true; break;
 					case 'v': verbose = 1; break;
-					case 'h': hlp = true; break;
+					case 'h':
+					case '?': hlp = true; break;
 					default: help(); return ERR_COMMAND_LINE;
 				}
 			}
