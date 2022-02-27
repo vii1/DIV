@@ -37,6 +37,7 @@ uint errors = 0;
 
 Result process_file( char* file, char* destdir );
 
+// A more secure strlwr()
 char* strlwr_s( char* str, size_t maxsize )
 {
 	size_t i;
@@ -47,6 +48,8 @@ char* strlwr_s( char* str, size_t maxsize )
 	return str;
 }
 
+// Returns a pointer to the beginning of the filename in a path
+// If there is no filename, returns a pointer to the ending zero (empty string)
 char* filename( char* path )
 {
 	char* p = path + strnlen_s( path, _MAX_PATH );
@@ -59,6 +62,8 @@ char* filename( char* path )
 	return path;
 }
 
+// Returns a pointer to the beginning of the extension in a path (more precisely, the last dot)
+// If there is no extension, returns a pointer to the ending zero (empty string)
 char* extension( char* path )
 {
 	char* end = path + strnlen_s( path, _MAX_PATH );
@@ -100,6 +105,7 @@ void help()
 			"\n" );
 }
 
+// Printf only in verbose mode
 void log( const char* fmt, ... )
 {
 	va_list args;
@@ -110,6 +116,7 @@ void log( const char* fmt, ... )
 	va_end( args );
 }
 
+// Detect kind of packfile
 HeaderType detect_header( FILE* f )
 {
 	char magic[7];
@@ -125,22 +132,30 @@ HeaderType detect_header( FILE* f )
 	return HEADER_UNKNOWN;
 }
 
-// Switches extension to .001, then process that file
-Result process_first_volume( char* file, char* ext, char* destdir )
+// Alters filename setting its extension to the corresponding volume number
+// Example: set_volume_extension( "hello.001", 49 ) -> "hello.049"
+// PRE: filename is mutable and ends in a 3-character extension
+void set_volume_extension( char* filename, uint volume )
 {
-	char*  first;
-	size_t len;
-	Result result;
-	*ext = 0;
-	len = strnlen_s( file, _MAX_PATH );
-	first = (char*)malloc( len + 5 );
-	memcpy_s( first, len, file, len );
-	memcpy_s( first + len, 5, ".001", 5 );
-	result = process_file( first, destdir );
-	free( first );
-	return result;
+	char* p = strrchr( filename, '.' );
+	if( p ) {
+		snprintf_s( p + 1, 4, "%3.3u", volume );
+	}
 }
 
+// Switches extension to .001, then process that file
+// PRE: ext is the result of using extension() on file
+Result process_first_volume( char* file, char* ext, char* destdir )
+{
+	char   first[_MAX_PATH];
+	size_t len = min( ext - file, _MAX_PATH - 5 );
+	memcpy_s( first, _MAX_PATH, file, len );
+	memcpy_s( first + len, 5, ".001", 5 );
+	return process_file( first, destdir );
+}
+
+// Checks destdir exists and is a directory
+// If not, tries to mkdir it (not recursive)
 Result check_destdir( char* destdir )
 {
 	struct stat st;
@@ -169,10 +184,13 @@ Result check_destdir( char* destdir )
 	return ERR_OK;
 }
 
+// Does the thing
 Result process_file( char* file, char* destdir )
 {
 	FILE*	   f = NULL;
 	HeaderType headerType;
+	PakInfo*   info = NULL;
+	Result	   result = ERR_OTHER;
 
 	log( "Opening file: %s\n", file );
 	f = fopen( file, "rb" );
@@ -181,55 +199,38 @@ Result process_file( char* file, char* destdir )
 		return ERR_IO;
 	}
 	headerType = detect_header( f );
-	if( headerType == HEADER_GAME ) {
-		PakInfo* info = NULL;
-		Result	 result = read_pak_info( f, headerType, &info );
-		if( !list && result == ERR_OK ) {
-			if( destdir ) {
-				result = check_destdir( destdir );
-				if( result == ERR_IO ) {
-					perror( destdir );
-					return ERR_IO;
-				} else if( result == ERR_COMMAND_LINE ) {
-					fprintf_s( stderr, "Not a valid directory: %." S_MAX_PATH "s\n", destdir );
-					return ERR_COMMAND_LINE;
-				}
-			}
-			result = extract( f, file, info, 0, destdir );
-		} else {
-			fclose( f );
-		}
-		free_PakInfo( info );
-		return result;
+	if( headerType == HEADER_UNKNOWN ) {
+		fprintf_s( stderr, "Unrecognized file format\n" );
+		fclose( f );
+		return ERR_FILE_FORMAT;
 	} else if( headerType == HEADER_INSTALL ) {
+		// If it's an installer pak, we need to start by the first volume
 		char* ext = extension( file );
 		if( strcmp( ext, ".001" ) ) {
 			fclose( f );
 			return process_first_volume( file, ext, destdir );
-		} else {
-			PakInfo* info = NULL;
-			Result	 result = read_pak_info( f, headerType, &info );
-			if( !list && result == ERR_OK ) {
-				if( destdir ) {
-					result = check_destdir( destdir );
-					if( result == ERR_IO ) {
-						perror( destdir );
-						return ERR_IO;
-					} else if( result == ERR_COMMAND_LINE ) {
-						fprintf_s( stderr, "Not a valid directory: %." S_MAX_PATH "s\n", destdir );
-						return ERR_COMMAND_LINE;
-					}
-				}
-				result = extract( f, file, info, 0, destdir );
-			}
-			free_PakInfo( info );
-			fclose( f );
-			return result;
 		}
-	} else {
-		fprintf_s( stderr, "Unrecognized file format\n" );
-		return ERR_FILE_FORMAT;
 	}
+	result = read_pak_info( f, headerType, &info );
+	if( !list && result == ERR_OK ) {
+		if( destdir ) {
+			result = check_destdir( destdir );
+			if( result != ERR_OK ) {
+				fclose( f );
+				free_PakInfo( info );
+				if( result == ERR_IO ) {
+					perror( destdir );
+				} else {   // result == ERR_COMMAND_LINE
+					fprintf_s( stderr, "Not a valid directory: %." S_MAX_PATH "s\n", destdir );
+				}
+				return result;
+			}
+		}
+		result = extract( f, file, info, destdir );
+	}
+	fclose( f );
+	free_PakInfo( info );
+	return result;
 }
 
 int main( int argc, char* argv[] )

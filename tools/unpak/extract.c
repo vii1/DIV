@@ -12,9 +12,19 @@
 
 #define CHUNK ( 128 * 1024 )
 
-unsigned char in[CHUNK];
-unsigned char out[CHUNK];
+unsigned char buffer_in[CHUNK];
+unsigned char buffer_out[CHUNK];
 
+// Builds the path in which a file will be written.
+// Depending on the conditions:
+// - destdir is specified?
+// - createDirs is specified?
+// - is the extension EXE, DLL or PAK?
+// the following patterns can be generated:
+// - filename
+// - extension\filename
+// - destdir\filename
+// - destdir\extension\filename
 char* get_destfile( const char* destdir, char* file )
 {
 	size_t destdir_len = destdir ? strnlen_s( destdir, _MAX_PATH ) : 0;
@@ -26,7 +36,7 @@ char* get_destfile( const char* destdir, char* file )
 		if( *ext == '.' ) ++ext;
 		if( *ext != 0 && strnicmp( ext, "exe", 4 ) && strnicmp( ext, "dll", 4 ) && strnicmp( ext, "pak", 4 ) ) {
 			size_t ext_len = strnlen_s( ext, file_len );
-			size_t len = 0;
+			size_t len;
 			Result result;
 			if( destdir ) {
 				path_len = destdir_len + ext_len + file_len + 2;
@@ -36,13 +46,12 @@ char* get_destfile( const char* destdir, char* file )
 			path = (char*)malloc( path_len + 1 );
 			if( path == NULL ) return NULL;
 			if( destdir ) {
-				if( memcpy_s( path, path_len, destdir, destdir_len ) ) goto _error;
-				path[destdir_len] = SEP;
-				len = destdir_len + 1;
+				snprintf_s( path, path_len + 1, "%s%c%s", destdir, SEP, ext );
+				len = destdir_len + ext_len + 1;
+			} else {
+				strncpy_s( path, path_len + 1, ext, ext_len );
+				len = ext_len;
 			}
-			if( memcpy_s( path + len, path_len - len, ext, ext_len ) ) goto _error;
-			len += ext_len;
-			path[len] = 0;
 			result = check_destdir( path );
 			if( result == ERR_IO ) {
 				perror( path );
@@ -52,8 +61,7 @@ char* get_destfile( const char* destdir, char* file )
 				goto _error;
 			}
 			path[len] = SEP;
-			if( memcpy_s( path + len + 1, path_len - len - 1, file, file_len ) ) goto _error;
-			path[path_len] = 0;
+			strncpy_s( path + len + 1, path_len + 1, file, file_len );
 			return path;
 		}
 	}
@@ -61,33 +69,33 @@ char* get_destfile( const char* destdir, char* file )
 	path_len = destdir_len + file_len + 1;
 	path = (char*)malloc( path_len + 1 );
 	if( path == NULL ) return NULL;
-	if( memcpy_s( path, path_len, destdir, destdir_len ) ) goto _error;
-	path[destdir_len] = SEP;
-	if( memcpy_s( path + destdir_len + 1, path_len - destdir_len - 1, file, file_len ) ) goto _error;
-	path[path_len] = 0;
+	snprintf_s( path, path_len + 1, "%s%c%s", destdir, SEP, file );
 	return path;
 _error:
 	free( path );
 	return NULL;
 }
 
-// Reads a chunk from a stream and writes it to a file
+// Reads a number of bytes from a stream and writes them to a file
 // Returns ERR_OK on success, ERR_IO on error
-Result fcopy( FILE* from, size_t size, const char* destfile )
+Result fcopy( FILE* from, size_t size, const char* destfile, bool append )
 {
-	byte   buffer[CHUNK];
 	size_t i, n = size % CHUNK;
 	int	   hto, hfrom = fileno( from );	  // Bypass stream buffering - CHECK!
 	if( hfrom == -1 || fflush( from ) ) return ERR_IO;
-	hto = open( destfile, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0666 );
+	if( append ) {
+		hto = open( destfile, _O_WRONLY | _O_BINARY | _O_APPEND );
+	} else {
+		hto = open( destfile, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0666 );
+	}
 	if( hto == -1 ) return ERR_IO;
 	for( i = 0; i < size / CHUNK; ++i ) {
-		if( read( hfrom, buffer, CHUNK ) != CHUNK ) goto _error;
-		if( write( hto, buffer, CHUNK ) != CHUNK ) goto _error;
+		if( read( hfrom, buffer_in, CHUNK ) != CHUNK ) goto _error;
+		if( write( hto, buffer_in, CHUNK ) != CHUNK ) goto _error;
 	}
 	if( n ) {
-		if( read( hfrom, buffer, n ) != n ) goto _error;
-		if( write( hto, buffer, n ) != n ) goto _error;
+		if( read( hfrom, buffer_in, n ) != n ) goto _error;
+		if( write( hto, buffer_in, n ) != n ) goto _error;
 	}
 	close( hto );
 	return ERR_OK;
@@ -101,6 +109,7 @@ _error : {
 }
 }
 
+// Converts a ZLib result code to one of my result codes
 Result zresult( int ret )
 {
 	switch( ret ) {
@@ -114,12 +123,14 @@ Result zresult( int ret )
 	}
 }
 
+// Simplest error handling
 #define err( x )     \
 	{                \
 		result = x;  \
 		goto _error; \
 	}
 
+// https://www.zlib.net/zlib_how.html
 /* Decompress from file source to file dest until stream ends or EOF.
    inf() returns Z_OK on success, Z_MEM_ERROR if memory could not be
    allocated for processing, Z_DATA_ERROR if the deflate data is
@@ -150,17 +161,17 @@ Result zfcopy( FILE* from, size_t size, const char* destfile )
 	deinit_inflate = true;
 	/* decompress until deflate stream ends or end of file */
 	while( bytes_read < size && ret != Z_STREAM_END ) {
-		int n = read( hfrom, in, min( size - bytes_read, CHUNK ) );
+		int n = read( hfrom, buffer_in, min( size - bytes_read, CHUNK ) );
 		if( n < 0 ) err( ERR_IO );
 		if( n == 0 ) err( ERR_FILE_FORMAT );
 		bytes_read += n;
 		strm.avail_in = (uint)n;
-		strm.next_in = in;
+		strm.next_in = buffer_in;
 		/* run inflate() on input until output buffer not full */
 		do {
 			unsigned have;
 			strm.avail_out = CHUNK;
-			strm.next_out = out;
+			strm.next_out = buffer_out;
 			ret = inflate( &strm, Z_NO_FLUSH );
 			assert( ret != Z_STREAM_ERROR ); /* state not clobbered */
 			switch( ret ) {
@@ -169,7 +180,7 @@ Result zfcopy( FILE* from, size_t size, const char* destfile )
 				case Z_MEM_ERROR: err( zresult( ret ) );
 			}
 			have = CHUNK - strm.avail_out;
-			n = write( hto, out, have );
+			n = write( hto, buffer_out, have );
 			if( n < 0 || n != (int)have ) err( ERR_IO );
 		} while( strm.avail_out == 0 );
 		/* done when inflate() says it's done */
@@ -189,10 +200,38 @@ _error : {
 }
 }
 
-Result extract( FILE* f, char* filename, const PakInfo* info, uint firstFile, const char* destdir )
+Result open_volume( FILE* f, char* filename, uint volume, bool* pFinalVol, int* pVolOffset, size_t* pFileSize )
 {
+	// TODO: Ask for next disk?
+	FILE*  newf = NULL;
+	byte   notFinalVol;
+	Result result = ERR_OTHER;
+	set_volume_extension( filename, volume );
+	log( "Opening file: %s\n", filename );
+	if( freopen_s( &newf, filename, "rb", f ) != 0 || newf == NULL ) err( ERR_IO );
+	if( detect_header( f ) != HEADER_INSTALL ) err( ERR_FILE_FORMAT );
+	if( fread( &notFinalVol, 1, 1, f ) != 1 ) err( ERR_IO );
+	*pFinalVol = !notFinalVol;
+	log( "File is final volume: %s\n", !notFinalVol ? "YES" : "NO" );
+	*pVolOffset += *pFileSize - 8;
+	fseek( f, 0, SEEK_END );
+	*pFileSize = ftell( f );
+	return ERR_OK;
+_error:
+	if( result == ERR_IO ) {
+		perror( filename );
+	} else {   // result == ERR_FILE_FORMAT
+		fprintf_s( stderr, "ERROR: %." S_MAX_PATH "s: Unrecognized file format\n", filename );
+	}
+	return result;
+}
+
+// Extracts the files from a pak
+Result extract( FILE* f, char* filename, const PakInfo* info, const char* destdir )
+{
+	uint   vol = 1;
 	int	   volOffset = info->type == HEADER_INSTALL ? -8 : 0;
-	uint   i = firstFile;
+	uint   i = 0;
 	size_t filesize;
 	bool   finalVol = info->type == HEADER_GAME || info->install.isFinalVolume;
 	Result result = ERR_OTHER;
@@ -217,8 +256,8 @@ Result extract( FILE* f, char* filename, const PakInfo* info, uint firstFile, co
 					err( ERR_FILE_FORMAT );
 				}
 			}
-			// TODO: next volume - freopen ?
-			fprintf_s( stderr, "TODO: next volume\n" );
+			result = open_volume( f, filename, ++vol, &finalVol, &volOffset, &filesize );
+			if( result != ERR_OK ) err( result );
 		}
 		fseek( f, fi->offset - volOffset, SEEK_SET );
 
@@ -240,8 +279,8 @@ Result extract( FILE* f, char* filename, const PakInfo* info, uint firstFile, co
 		}
 		if( fi->offset - volOffset + fi->zSize > filesize ) {
 			// File is incomplete in this volume
+			size_t missing = fi->offset - volOffset + fi->zSize - filesize;
 			if( finalVol ) {
-				size_t missing = fi->offset - volOffset + fi->zSize - filesize;
 				free( destfile );
 				if( keepGoing ) {
 					fprintf_s( stderr, "WARNING: %." S_MAX_FILE "s: file is incomplete (%u bytes missing), skipping\n",
@@ -256,11 +295,33 @@ Result extract( FILE* f, char* filename, const PakInfo* info, uint firstFile, co
 				}
 			}
 			// TODO: Extract partial file and continue in next volume
-			fprintf_s( stderr, "TODO: Extract partial file and continue in next volume\n" );
+			// fprintf_s( stderr, "TODO: Extract partial file and continue in next volume\n" );
+			if( fi->uSize == fi->zSize ) {
+				// File is partial and uncompressed
+				result = fcopy( f, fi->uSize - missing, destfile, false );
+				if( result != ERR_OK ) {
+					// TODO
+					err( result );
+				}
+				result = open_volume( f, filename, ++vol, &finalVol, &volOffset, &filesize );
+				if( result != ERR_OK ) {
+					if( remove( destfile ) ) perror( "Error deleting partial file" );
+					err( result );
+				}
+				fseek( f, 8, SEEK_SET );
+				result = fcopy( f, missing, destfile, true );
+				if( result != ERR_OK ) {
+					// TODO
+					err( result );
+				}
+			} else {
+				// File is partial and compressed
+				result = zfcopy( f, fi->uSize, destfile );
+			}
 		} else {
 			if( fi->uSize == fi->zSize ) {
 				// File is whole and uncompressed
-				result = fcopy( f, fi->uSize, destfile );
+				result = fcopy( f, fi->uSize, destfile, false );
 			} else {
 				// File is whole and compressed
 				result = zfcopy( f, fi->uSize, destfile );

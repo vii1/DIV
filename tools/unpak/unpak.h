@@ -84,10 +84,12 @@ char* strlwr_s( char* str, size_t maxsize );
 void  log( const char* fmt, ... );
 char* extension( char* path );
 Result check_destdir( char* destdir );
+void set_volume_extension( char* filename, uint volume );
+HeaderType detect_header( FILE* f );
 
 void free_PakInfo( PakInfo* p );
 Result read_pak_info( FILE* f, HeaderType type, PakInfo** pInfo );
 
-Result extract( FILE* f, char* filename, const PakInfo* info, uint firstFile, const char* destdir );
+Result extract( FILE* f, char* filename, const PakInfo* info, const char* destdir );
 
 #endif	 // __UNPAK_H__
