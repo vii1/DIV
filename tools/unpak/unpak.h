@@ -76,6 +76,7 @@ typedef struct {
 extern int	verbose;
 extern bool list;
 extern bool keepGoing;
+extern bool keepBroken;
 extern bool createDirs;
 extern bool noLower;
 extern uint errors;

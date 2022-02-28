@@ -31,6 +31,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 int	 verbose = 0;
 bool list = false;
 bool keepGoing = false;
+bool keepBroken = false;
 bool createDirs = false;
 bool noLower = false;
 uint errors = 0;
@@ -100,6 +101,7 @@ void help()
 			"   -d      Create subdirectories when extracting\n"
 			"   -u      Don't convert filenames to lower case\n"
 			"   -k      Keep going even if file errors are found\n"
+			"   -b      Don't delete partially extracted or corrupted files\n"
 			"   -v      Be verbose\n"
 			"   -h      Show this help\n"
 			"\n" );
@@ -145,6 +147,7 @@ void set_volume_extension( char* filename, uint volume )
 
 // Switches extension to .001, then process that file
 // PRE: ext is the result of using extension() on file
+// TODO: check for path too long
 Result process_first_volume( char* file, char* ext, char* destdir )
 {
 	char   first[_MAX_PATH];
@@ -258,6 +261,7 @@ int main( int argc, char* argv[] )
 					case 'd': createDirs = true; break;
 					case 'u': noLower = true; break;
 					case 'k': keepGoing = true; break;
+					case 'b': keepBroken = true; break;
 					case 'v': verbose = 1; break;
 					case 'h':
 					case '?': hlp = true; break;
