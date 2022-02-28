@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <float.h>
+#include <fnmatch.h>
 
 #include "unpak.h"
 
@@ -22,16 +23,17 @@ void free_PakInfo( PakInfo* p )
 		goto _error; \
 	}
 
-Result read_pak_info( FILE* f, HeaderType type, PakInfo** pInfo )
+Result read_pak_info( FILE* f, HeaderType type, PakInfo** pInfo, const char** patterns, uint numPatterns )
 {
 	Result	  result = ERR_OTHER;
 	PakInfo*  info = (PakInfo*)malloc( sizeof( PakInfo ) );
-	uint	  i, totalZSize = 0, totalUSize = 0;
+	uint	  i, totalZSize = 0, totalUSize = 0, excluded = 0;
 	FileInfo* fi;
 	float	  ratio;
 
 	assert( f );
 	assert( pInfo );
+	assert( numPatterns == 0 || patterns );
 
 	if( !info ) err( ERR_MEMORY );
 	info->type = type;
@@ -86,6 +88,23 @@ Result read_pak_info( FILE* f, HeaderType type, PakInfo** pInfo )
 				err( ERR_FILE_FORMAT );
 			}
 		}
+		// Filter by pattern, if any
+		if( numPatterns > 0 ) {
+			bool match = false;
+			uint j;
+			for( j = 0; j < numPatterns; ++j ) {
+				if( fnmatch( patterns[j], fi->name, FNM_PATHNAME | FNM_NOESCAPE | FNM_IGNORECASE ) == 0 ) {
+					match = true;
+					break;
+				}
+			}
+			if( !match ) {
+				++excluded;
+				--fi;
+				fseek( f, 12, SEEK_CUR );
+				continue;
+			}
+		}
 		if( !noLower ) {
 			strlwr_s( fi->name, MAX_FILE );
 		}
@@ -108,12 +127,13 @@ Result read_pak_info( FILE* f, HeaderType type, PakInfo** pInfo )
 				++ndigits;
 				n /= 10;
 			}
-			log( "%*u: %-16." S_MAX_FILE "s offset: %-10u uSize: %-10u zSize: %-10u ratio: %3.1f%%\n",
-			  ndigits, i, fi->name, fi->offset, fi->uSize, fi->zSize, ratio );
+			log( "%*u: %-16." S_MAX_FILE "s offset: %-10u uSize: %-10u zSize: %-10u ratio: %3.1f%%\n", ndigits, i,
+			  fi->name, fi->offset, fi->uSize, fi->zSize, ratio );
 		} else if( list ) {
 			printf_s( " %10u %10u %5.1f%% %-." S_MAX_FILE "s\n", fi->uSize, fi->zSize, ratio, fi->name );
 		}
 	}
+	info->numFiles -= excluded;
 	// Print totals
 	if( totalUSize == 0 ) {
 		ratio = _INFF;
@@ -121,12 +141,20 @@ Result read_pak_info( FILE* f, HeaderType type, PakInfo** pInfo )
 		ratio = ( (float)totalZSize / totalUSize ) * 100.f;
 	}
 	if( verbose ) {
-		printf_s( "TOTAL: uSize: %-10u zSize: %-10u ratio: %.1f%%\n", totalUSize, totalZSize, ratio );
+		log( "TOTAL: uSize: %-10u zSize: %-10u ratio: %.1f%%\n", totalUSize, totalZSize, ratio );
+		if( excluded > 0 ) {
+			log( "%u file(s) excluded\n", excluded );
+		}
 	}
 	if( list && !verbose ) {
 		printf_s( "----------- ---------- ------ ----------------\n"
-				  " %10u %10u %5.1f%% %u file(s) total\n",
+				  " %10u %10u %5.1f%% %u file(s) total",
 		  totalUSize, totalZSize, ratio, info->numFiles );
+		if( excluded > 0 ) {
+			printf_s( " (%u excluded)\n", excluded );
+		} else {
+			printf_s( "\n" );
+		}
 	}
 	*pInfo = info;
 	return ERR_OK;

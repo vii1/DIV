@@ -14,7 +14,6 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 // TODO: option to verify checksums in game paks
-// TODO: extract individual files. use wildcards? see fnmatch()
 
 #define __STDC_WANT_LIB_EXT1__ 1
 
@@ -36,7 +35,7 @@ bool createDirs = false;
 bool noLower = false;
 uint errors = 0;
 
-Result process_file( char* file, char* destdir );
+Result process_file( char* file, char* destdir, const char** patterns, uint numPatterns );
 
 // A more secure strlwr()
 char* strlwr_s( char* str, size_t maxsize )
@@ -94,11 +93,12 @@ void banner()
 
 void help()
 {
-	printf( "USAGE: unpak [options] FILE [DESTDIR]\n" );
-	printf( "Unpacks DIV install paks and game paks.\n" );
+	printf( "USAGE: unpak [options] FILE [PATTERN...]\n" );
+	printf( "Unpacks DIV install paks and game paks. Use PATTERNs to extract/list only matching files.\n" );
 	printf( "Options:\n"
 			"   -l      List file info and contents\n"
-			"   -d      Create subdirectories when extracting\n"
+			"   -d DIR  Extract files into specified directory\n"
+			"   -s      Create subdirectories when extracting\n"
 			"   -u      Don't convert filenames to lower case\n"
 			"   -k      Keep going even if file errors are found\n"
 			"   -b      Don't delete partially extracted or corrupted files\n"
@@ -148,13 +148,13 @@ void set_volume_extension( char* filename, uint volume )
 // Switches extension to .001, then process that file
 // PRE: ext is the result of using extension() on file
 // TODO: check for path too long
-Result process_first_volume( char* file, char* ext, char* destdir )
+Result process_first_volume( char* file, char* ext, char* destdir, const char** patterns, uint numPatterns )
 {
 	char   first[_MAX_PATH];
 	size_t len = min( ext - file, _MAX_PATH - 5 );
 	memcpy_s( first, _MAX_PATH, file, len );
 	memcpy_s( first + len, 5, ".001", 5 );
-	return process_file( first, destdir );
+	return process_file( first, destdir, patterns, numPatterns );
 }
 
 // Checks destdir exists and is a directory
@@ -188,7 +188,7 @@ Result check_destdir( char* destdir )
 }
 
 // Does the thing
-Result process_file( char* file, char* destdir )
+Result process_file( char* file, char* destdir, const char** patterns, uint numPatterns )
 {
 	FILE*	   f = NULL;
 	HeaderType headerType;
@@ -211,10 +211,10 @@ Result process_file( char* file, char* destdir )
 		char* ext = extension( file );
 		if( strcmp( ext, ".001" ) ) {
 			fclose( f );
-			return process_first_volume( file, ext, destdir );
+			return process_first_volume( file, ext, destdir, patterns, numPatterns );
 		}
 	}
-	result = read_pak_info( f, headerType, &info );
+	result = read_pak_info( f, headerType, &info, patterns, numPatterns );
 	if( !list && result == ERR_OK ) {
 		if( destdir ) {
 			result = check_destdir( destdir );
@@ -238,10 +238,13 @@ Result process_file( char* file, char* destdir )
 
 int main( int argc, char* argv[] )
 {
-	bool  hlp = false, noMoreOptions = false;
-	char *file = NULL, *destdir = NULL;
-	int	  i;
-	char* p;
+	bool		 noMoreOptions = false, readDestDir = false;
+	char *		 file = NULL, *destdir = NULL;
+	const char** patterns = NULL;
+	uint		 numPatterns = 0;
+	int			 i;
+	char*		 p;
+	Result		 result;
 
 	banner();
 	if( argc < 2 ) {
@@ -258,31 +261,40 @@ int main( int argc, char* argv[] )
 			for( p = argv[i] + 1; *p; ++p ) {
 				switch( *p ) {
 					case 'l': list = true; break;
-					case 'd': createDirs = true; break;
+					case 'd':
+						if( destdir ) {
+							help();
+							return ERR_COMMAND_LINE;
+						}
+						readDestDir = true;
+						break;
+					case 's': createDirs = true; break;
 					case 'u': noLower = true; break;
 					case 'k': keepGoing = true; break;
 					case 'b': keepBroken = true; break;
 					case 'v': verbose = 1; break;
 					case 'h':
-					case '?': hlp = true; break;
+					case '?': help(); return ERR_OK;
 					default: help(); return ERR_COMMAND_LINE;
 				}
 			}
 		} else {
-			if( !file ) {
-				file = argv[i];
-			} else if( !destdir ) {
+			if( readDestDir ) {
+				readDestDir = false;
 				destdir = argv[i];
+			} else if( !file ) {
+				file = argv[i];
 			} else {
-				help();
-				return ERR_COMMAND_LINE;
+				if( !patterns ) {
+					patterns = (const char**)malloc( sizeof( char* ) * ( argc - i ) );
+					if( !patterns ) {
+						perror( "Fatal" );
+						return ERR_MEMORY;
+					}
+				}
+				patterns[numPatterns++] = argv[i];
 			}
 		}
-	}
-
-	if( hlp ) {
-		help();
-		return ERR_OK;
 	}
 
 	if( !file || ( list && destdir ) ) {
@@ -290,5 +302,7 @@ int main( int argc, char* argv[] )
 		return ERR_COMMAND_LINE;
 	}
 
-	return process_file( file, destdir );
+	result = process_file( file, destdir, patterns, numPatterns );
+	if( patterns ) free( patterns );
+	return result;
 }

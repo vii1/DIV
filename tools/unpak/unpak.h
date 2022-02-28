@@ -81,15 +81,15 @@ extern bool createDirs;
 extern bool noLower;
 extern uint errors;
 
-char* strlwr_s( char* str, size_t maxsize );
-void  log( const char* fmt, ... );
-char* extension( char* path );
-Result check_destdir( char* destdir );
-void set_volume_extension( char* filename, uint volume );
+char*	   strlwr_s( char* str, size_t maxsize );
+void	   log( const char* fmt, ... );
+char*	   extension( char* path );
+Result	   check_destdir( char* destdir );
+void	   set_volume_extension( char* filename, uint volume );
 HeaderType detect_header( FILE* f );
 
-void free_PakInfo( PakInfo* p );
-Result read_pak_info( FILE* f, HeaderType type, PakInfo** pInfo );
+void   free_PakInfo( PakInfo* p );
+Result read_pak_info( FILE* f, HeaderType type, PakInfo** pInfo, const char** patterns, uint numPatterns );
 
 Result extract( FILE* f, char* filename, const PakInfo* info, const char* destdir );
 
