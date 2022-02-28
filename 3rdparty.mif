@@ -23,9 +23,9 @@
 !include $(ROOT)$(SEP)3rdparty$(SEP)zlib.mif
 !endif
 
-# !ifndef INC_NOVARS
-# INCLUDE += -I$(ROOT)$(SEP)3rdparty
-# !endif
+!ifndef INC_NOVARS
+INCLUDE += -I$(ROOT)$(SEP)3rdparty
+!endif
 
 !ifndef INC_NOTARGETS
 lib3p_dir: .SYMBOLIC
