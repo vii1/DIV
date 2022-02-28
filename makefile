@@ -46,7 +46,8 @@ DOSBOX = dosbox-x$(EXE_SUFFIX)
 
 ROOT=$+$(%cwd)$-
 MAKE=$+$(MAKE) -h$-
-# OUTDIR_BASE = $(ROOT)$(SEP)build.dos
+OUTDIR_BASE = $(ROOT)$(SEP)build.dos
+OUTDIR_BASE_SYS = $(ROOT)$(SEP)build.$(SYS)
 
 MAKE_OPTIONS = CONFIG=$(CONFIG) ASM=$(ASM) ROOT=$(ROOT) #OUTDIR_BASE=$(OUTDIR_BASE)
 
@@ -62,8 +63,9 @@ SRC_DIV32RUN= src$(SEP)div32run
 
 .BEFORE
 	@echo Host OS: $(%OS)
-	# @echo Building on : $(OUTDIR_BASE)
-	# @if not exist $(OUTDIR_BASE) mkdir $(OUTDIR_BASE)
+	@echo Building on: $(OUTDIR_BASE)
+	@echo Building host system tools on: $(OUTDIR_BASE_SYS)
+	@if not exist $(OUTDIR_BASE) mkdir $(OUTDIR_BASE)
 
 all: d.exe d.386 session.div session.386 div32run.ins div32run.386 dlls install.ovl .SYMBOLIC
 	@%null
