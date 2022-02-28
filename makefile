@@ -46,9 +46,9 @@ DOSBOX = dosbox-x$(EXE_SUFFIX)
 
 ROOT=$+$(%cwd)$-
 MAKE=$+$(MAKE) -h$-
-OUTDIR_BASE = $(ROOT)$(SEP)build.dos
+# OUTDIR_BASE = $(ROOT)$(SEP)build.dos
 
-MAKE_OPTIONS = CONFIG=$(CONFIG) ASM=$(ASM) ROOT=$(ROOT) OUTDIR_BASE=$(OUTDIR_BASE)
+MAKE_OPTIONS = CONFIG=$(CONFIG) ASM=$(ASM) ROOT=$(ROOT) #OUTDIR_BASE=$(OUTDIR_BASE)
 
 !ifeq ASM TASM
 MAKE_OPTIONS += TASM_EXE=$(TASM_EXE)
@@ -62,8 +62,8 @@ SRC_DIV32RUN= src$(SEP)div32run
 
 .BEFORE
 	@echo Host OS: $(%OS)
-	@echo Building on : $(OUTDIR_BASE)
-	@if not exist $(OUTDIR_BASE) mkdir $(OUTDIR_BASE)
+	# @echo Building on : $(OUTDIR_BASE)
+	# @if not exist $(OUTDIR_BASE) mkdir $(OUTDIR_BASE)
 
 all: d.exe d.386 session.div session.386 div32run.ins div32run.386 dlls install.ovl .SYMBOLIC
 	@%null
@@ -108,7 +108,25 @@ install.ovl: .SYMBOLIC
 	*$(MAKE) $(MAKE_OPTIONS) install.ovl
 	cd ..$(SEP)..
 
-clean: clean_lib3p .SYMBOLIC
+bin2h: .SYMBOLIC
+	cd tools$(SEP)bin2h
+	*$(MAKE) $(MAKE_OPTIONS)
+	cd ..$(SEP)..
+
+testdll: .SYMBOLIC
+	cd tools$(SEP)testdll
+	*$(MAKE) $(MAKE_OPTIONS)
+	cd ..$(SEP)..
+
+unpak: .SYMBOLIC
+	cd tools$(SEP)unpak
+	*$(MAKE) $(MAKE_OPTIONS)
+	cd ..$(SEP)..
+
+tools: bin2h testdll unpak .SYMBOLIC
+	@%null
+
+clean: clean_lib3p clean_tools .SYMBOLIC
 	cd $(SRC_DIV)
 	@for %i in (586 386) do *$(MAKE) $(MAKE_OPTIONS) CPU=%i clean
 	cd ..$(SEP)..
@@ -128,6 +146,15 @@ clean: clean_lib3p .SYMBOLIC
 	cd dll
 	*$(MAKE) $(MAKE_OPTIONS) clean
 	cd ..
+
+clean_tools: .SYMBOLIC
+	cd tools$(SEP)bin2h
+	*$(MAKE) $(MAKE_OPTIONS) clean
+	cd ..$(SEP)testdll
+	*$(MAKE) $(MAKE_OPTIONS) clean
+	cd ..$(SEP)unpak
+	*$(MAKE) $(MAKE_OPTIONS) clean
+	cd ..$(SEP)..
 
 DIRS_RAIZ = genspr help install setup system
 DIRS_GENSPR = enano enano_a hombre hombre_a mujer mujer_a
