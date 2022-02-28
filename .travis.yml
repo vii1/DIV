@@ -23,6 +23,8 @@ before_install:
   - source .travis/install_watcom.sh
 script:
   - wmake
+  - wmake tools
+  - wmake test_dll
 cache:
   directories:
     - ~/watcom
