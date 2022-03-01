@@ -23,7 +23,9 @@ typedef struct {
 void try_remove( const char* file )
 {
 	int errno_save = errno;
-	if( !keepBroken && remove( file ) ) {
+	if(keepBroken) {
+		fprintf_s(stderr, "WARNING: Keeping partially extracted file %s\n", file);
+	} else if( remove( file ) ) {
 		fprintf_s( stderr, "%s: ", file );
 		perror( "Error deleting partial file" );
 	}
@@ -120,7 +122,7 @@ Result fcopy( FILE* from, size_t size, const char* destfile, bool append )
 _error : {
 	int temp_errno = errno;
 	close( hto );
-	try_remove( destfile );
+	// try_remove( destfile );
 	errno = temp_errno;
 	return ERR_IO;
 }
@@ -219,7 +221,7 @@ Result zfcopy( FILE* from, size_t size, const char* destfile, ZfcopyStatus* stat
 _error : {
 	int temp_errno = errno;
 	close( hto );
-	try_remove( destfile );
+	// try_remove( destfile );
 	errno = temp_errno;
 	return result;
 }
