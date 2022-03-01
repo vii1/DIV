@@ -1,6 +1,31 @@
-system/*.def eol=crlf
-system/lenguaje.* eol=crlf
-system/LENGUAJE.* eol=crlf
+system/*.def text eol=crlf working-tree-encoding=CP850
+system/lenguaje.* text eol=crlf working-tree-encoding=CP850
+system/LENGUAJE.* text eol=crlf working-tree-encoding=CP850
+help/help.div text eol=crlf working-tree-encoding=CP850
+help/help.idx text eol=crlf working-tree-encoding=CP850
+install/INS_TEXT.ASC binary
+*.prg text eol=crlf working-tree-encoding=CP850
+*.PRG text eol=crlf working-tree-encoding=CP850
+*.doc text eol=crlf working-tree-encoding=CP850
+*.lnk text eol=crlf working-tree-encoding=CP850
+*.LNK text eol=crlf working-tree-encoding=CP850
+*.c text eol=crlf working-tree-encoding=CP850
+*.C text eol=crlf working-tree-encoding=CP850
+*.cpp text eol=crlf working-tree-encoding=CP850
+*.CPP text eol=crlf working-tree-encoding=CP850
+*.h text eol=crlf working-tree-encoding=CP850
+*.H text eol=crlf working-tree-encoding=CP850
+*.hpp text eol=crlf working-tree-encoding=CP850
+*.HPP text eol=crlf working-tree-encoding=CP850
+*.asm text eol=crlf working-tree-encoding=CP850
+*.ASM text eol=crlf working-tree-encoding=CP850
+*.inc text eol=crlf working-tree-encoding=CP850
+*.INC text eol=crlf working-tree-encoding=CP850
+makefile text eol=crlf working-tree-encoding=CP850
+makefile.* text eol=crlf working-tree-encoding=CP850
+*.mif text eol=crlf working-tree-encoding=CP850
+*.bat text eol=crlf working-tree-encoding=CP850
+*.BAT text eol=crlf working-tree-encoding=CP850
 
 # Don't mess with binary files
 *.lib binary
@@ -9,3 +34,21 @@ system/LENGUAJE.* eol=crlf
 *.EXE binary
 *.com binary
 *.COM binary
+
+*.pif binary
+*.PIF binary
+
+*.fpg binary
+*.FPG binary
+*.fnt binary
+*.FNT binary
+*.ifs binary
+*.IFS binary
+*.map binary
+*.MAP binary
+*.pal binary
+*.PAL binary
+*.pcm binary
+*.PCM binary
+*.wld binary
+*.WLD binary
