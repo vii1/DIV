@@ -11,7 +11,8 @@
 *.err
 *.mk1
 *.tgt
-*.map
+/3rdparty/**/*.map
+/pmwlite/**/*.map
 *.lst
 *.pch
 *.sym
