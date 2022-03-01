@@ -1,31 +1,31 @@
-system/*.def text eol=crlf working-tree-encoding=CP850
-system/lenguaje.* text eol=crlf working-tree-encoding=CP850
-system/LENGUAJE.* text eol=crlf working-tree-encoding=CP850
-help/help.div text eol=crlf working-tree-encoding=CP850
-help/help.idx text eol=crlf working-tree-encoding=CP850
+system/*.def text eol=crlf
+system/lenguaje.* text eol=crlf
+system/LENGUAJE.* text eol=crlf
+help/help.div text eol=crlf
+help/help.idx text eol=crlf
 install/INS_TEXT.ASC binary
-*.prg text eol=crlf working-tree-encoding=CP850
-*.PRG text eol=crlf working-tree-encoding=CP850
-*.doc text eol=crlf working-tree-encoding=CP850
-*.lnk text eol=crlf working-tree-encoding=CP850
-*.LNK text eol=crlf working-tree-encoding=CP850
-*.c text eol=crlf working-tree-encoding=CP850
-*.C text eol=crlf working-tree-encoding=CP850
-*.cpp text eol=crlf working-tree-encoding=CP850
-*.CPP text eol=crlf working-tree-encoding=CP850
-*.h text eol=crlf working-tree-encoding=CP850
-*.H text eol=crlf working-tree-encoding=CP850
-*.hpp text eol=crlf working-tree-encoding=CP850
-*.HPP text eol=crlf working-tree-encoding=CP850
-*.asm text eol=crlf working-tree-encoding=CP850
-*.ASM text eol=crlf working-tree-encoding=CP850
-*.inc text eol=crlf working-tree-encoding=CP850
-*.INC text eol=crlf working-tree-encoding=CP850
-makefile text eol=crlf working-tree-encoding=CP850
-makefile.* text eol=crlf working-tree-encoding=CP850
-*.mif text eol=crlf working-tree-encoding=CP850
-*.bat text eol=crlf working-tree-encoding=CP850
-*.BAT text eol=crlf working-tree-encoding=CP850
+*.prg text eol=crlf
+*.PRG text eol=crlf
+*.doc text eol=crlf
+*.lnk text eol=crlf
+*.LNK text eol=crlf
+*.c text eol=crlf
+*.C text eol=crlf
+*.cpp text eol=crlf
+*.CPP text eol=crlf
+*.h text eol=crlf
+*.H text eol=crlf
+*.hpp text eol=crlf
+*.HPP text eol=crlf
+*.asm text eol=crlf
+*.ASM text eol=crlf
+*.inc text eol=crlf
+*.INC text eol=crlf
+makefile text eol=crlf
+makefile.* text eol=crlf
+*.mif text eol=crlf
+*.bat text eol=crlf
+*.BAT text eol=crlf
 
 # Don't mess with binary files
 *.lib binary
