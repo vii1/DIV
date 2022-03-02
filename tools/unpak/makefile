@@ -2,10 +2,10 @@
 
 ROOT			= ..$(SEP)..
 CONFIG			= release
-OUTDIR_BASE		= $(ROOT)$(SEP)build.$(SYS)
+OUTDIR_BASE		= $(ROOT)$(SEP)build.$(TARGET_SYS)
 OUTDIR			= $(OUTDIR_BASE)$(SEP)unpak$(SEP)$(CONFIG)
 
-OPTIONS			= -bt -q -zp4
+OPTIONS			= -bt=$(WATCOM_BT) -q -zp4
 
 EXE				= unpak$(EXE_SUFFIX)
 
@@ -35,6 +35,7 @@ $(EXE): $(OUTDIR)/$(EXE) .SYMBOLIC
 
 $(OUTDIR)/$(EXE): $(OBJS)
 	*wlink &
+		$(WLINK_TARGET_SYS) &
 		option quiet &
 		name $^@ &
 !ifeqi CONFIG debug

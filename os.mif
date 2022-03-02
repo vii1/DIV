@@ -1,6 +1,10 @@
 ############################################
 # COSAS DEPENDENDIENTES DEL SITEMA OPERATIVO
 ############################################
+
+# SYS = sistema host
+# TARGET_SYS = sistema target
+
 !ifndef OS_MIF
 OS_MIF=1
 
@@ -23,6 +27,26 @@ SYS=win
 !endif
 #!endif
 
+!ifndef TARGET_SYS
+TARGET_SYS=$(SYS)
+!endif
+
+WATCOM_BT_LIN = linux
+WATCOM_BT_WIN = nt
+WATCOM_BT_DOS = dos
+WATCOM_BT = $(WATCOM_BT_$(TARGET_SYS))
+
+WLINK_TARGET_SYS_LIN = system linux option noextension
+WLINK_TARGET_SYS_WIN = system nt
+WLINK_TARGET_SYS_DOS = system dos4g
+WLINK_TARGET_SYS = $(WLINK_TARGET_SYS_$(TARGET_SYS))
+
+EXE_SUFFIX_LIN=
+EXE_SUFFIX_WIN=.exe
+EXE_SUFFIX_DOS=.exe
+EXE_SUFFIX = $(EXE_SUFFIX_$(TARGET_SYS))
+EXE_SUFFIX_HOST = $(EXE_SUFFIX_$(SYS))
+
 # Se definen varias variables que dependen del SO donde se compila
 # COPY -> El comando que se usa para copiar cosas con ``wmake install``
 # DELETE -> El comando que se usa para borrar cuando se hace ``wmake clean``
@@ -33,7 +57,6 @@ SYS=win
 COPY = cp
 DELETE = rm
 SEP = /
-EXE_SUFFIX =
 
 !else #!__UNIX__
 
@@ -41,7 +64,6 @@ COPY = copy /Y
 # (/Y sirve para sobreescribir archivos sin pedir confirmaci¢n).
 DELETE = del
 SEP = \
-EXE_SUFFIX = .exe
 
 !ifdef %USERPROFILE
 %HOME=$(%USERPROFILE)
