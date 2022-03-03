@@ -18,13 +18,13 @@ CLEAN_LIB3P_DEPS += clean_judas
 
 $(JUDAS_LIB): lib3p_dir .EXISTSONLY
 	cd $(JUDAS_DIR)
-	*$(MAKE) ASM=$(ASM) TASM_EXE=$(TASM_EXE) $^.
+	$(MAKE) ASM=$(ASM) TASM_EXE=$(TASM_EXE) $^.
 	$(COPY) $^. $^:
 	cd $+$(%cwd)$-
 
 clean_judas: .SYMBOLIC
 	cd $(JUDAS_DIR)
-	*$(MAKE) clean
+	$(MAKE) clean
 	cd $+$(%cwd)$-
 
 !endif #INC_NOTARGETS

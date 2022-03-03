@@ -21,24 +21,24 @@ CLEAN_LIB3P_DEPS += clean_svga clean_pmode
 
 $(SVGA_LIB): lib3p_dir .EXISTSONLY
 	cd $(SVGA_DIR)
-	*$(MAKE) -f makefile.wat $^. SCITECH=$(SCITECH)
+	$(MAKE) -f makefile.wat $^. SCITECH=$(SCITECH)
 	$(COPY) $^. $^:
 	cd $+$(%cwd)$-
 
 $(PMODE_LIB): lib3p_dir .EXISTSONLY
 	cd $(PMODE_DIR)
-	*$(MAKE) -f makefile.wat $^. SCITECH=$(SCITECH)
+	$(MAKE) -f makefile.wat $^. SCITECH=$(SCITECH)
 	$(COPY) $^. $^:
 	cd $+$(%cwd)$-
 
 clean_svga: .SYMBOLIC
 	cd $(SVGA_DIR)
-	*$(MAKE) -f makefile.wat clean
+	$(MAKE) -f makefile.wat clean
 	cd $+$(%cwd)$-
 
 clean_pmode: .SYMBOLIC
 	cd $(PMODE_DIR)
-	*$(MAKE) -f makefile.wat clean
+	$(MAKE) -f makefile.wat clean
 	cd $+$(%cwd)$-
 
 !endif #INC_NOTARGETS

@@ -30,7 +30,7 @@ $(H): bin2h $(EXE)
 
 bin2h: .SYMBOLIC
 	cd ..$(SEP)..$(SEP)tools$(SEP)bin2h
-	*$(MAKE)
+	$(MAKE)
 	cd ..$(SEP)..$(SEP)src$(SEP)div_stub
 	
 $(EXE): $(OUTDIR)$(SEP)exec.obj

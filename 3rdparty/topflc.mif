@@ -18,13 +18,13 @@ CLEAN_LIB3P_DEPS += clean_tflc
 
 $(TFLC_LIB): lib3p_dir .EXISTSONLY
 	cd $(TFLC_DIR)
-	*$(MAKE) -f makefile.w32 $^.
+	$(MAKE) -f makefile.w32 $^.
 	$(COPY) $^. $^:
 	cd $+$(%cwd)$-
 
 clean_tflc: .SYMBOLIC
 	cd $(TFLC_DIR)
-	*$(MAKE) -f makefile.w32 clean
+	$(MAKE) -f makefile.w32 clean
 	cd $+$(%cwd)$-
 
 !endif #INC_NOTARGETS

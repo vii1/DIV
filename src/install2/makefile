@@ -73,7 +73,7 @@ $(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) $(PMW_DEPS)
 
 pmwlite: .SYMBOLIC
 	cd $(ROOT)$(SEP)pmwlite$(SEP)src$(SEP)pmwlite
-	*$(MAKE)
+	$(MAKE)
 	cd $+$(%cwd)$+
 
 .asm: .;..

@@ -72,57 +72,57 @@ all: d.exe d.386 session.div session.386 div32run.ins div32run.386 dlls install.
 
 d.exe: .SYMBOLIC
 	cd $(SRC_DIV)
-	*$(MAKE) $(MAKE_OPTIONS) CPU=586 d.exe
+	$(MAKE) $(MAKE_OPTIONS) CPU=586 d.exe
 	cd ..$(SEP)..
 
 d.386: .SYMBOLIC
 	cd $(SRC_DIV)
-	*$(MAKE) $(MAKE_OPTIONS) CPU=386 d.386
+	$(MAKE) $(MAKE_OPTIONS) CPU=386 d.386
 	cd ..$(SEP)..
 
 session.div: .SYMBOLIC
 	cd $(SRC_DIV32RUN)
-	*$(MAKE) $(MAKE_OPTIONS) CPU=586 SESSION=1 session.div
+	$(MAKE) $(MAKE_OPTIONS) CPU=586 SESSION=1 session.div
 	cd ..$(SEP)..
 
 session.386: .SYMBOLIC
 	cd $(SRC_DIV32RUN)
-	*$(MAKE) $(MAKE_OPTIONS) CPU=386 SESSION=1 session.386
+	$(MAKE) $(MAKE_OPTIONS) CPU=386 SESSION=1 session.386
 	cd ..$(SEP)..
 
 div32run.ins: .SYMBOLIC
 	cd $(SRC_DIV32RUN)
-	*$(MAKE) $(MAKE_OPTIONS) CPU=586 SESSION=0 div32run.ins
+	$(MAKE) $(MAKE_OPTIONS) CPU=586 SESSION=0 div32run.ins
 	cd ..$(SEP)..
 
 div32run.386: .SYMBOLIC
 	cd $(SRC_DIV32RUN)
-	*$(MAKE) $(MAKE_OPTIONS) CPU=386 SESSION=0 div32run.386
+	$(MAKE) $(MAKE_OPTIONS) CPU=386 SESSION=0 div32run.386
 	cd ..$(SEP)..
 
 dlls: .SYMBOLIC
 	cd dll
-	*$(MAKE) $(MAKE_OPTIONS)
+	$(MAKE) $(MAKE_OPTIONS)
 	cd ..
 
 install.ovl: .SYMBOLIC
 	cd src$(SEP)install
-	*$(MAKE) $(MAKE_OPTIONS) install.ovl
+	$(MAKE) $(MAKE_OPTIONS) install.ovl
 	cd ..$(SEP)..
 
 bin2h: .SYMBOLIC
 	cd tools$(SEP)bin2h
-	*$(MAKE) $(MAKE_OPTIONS)
+	$(MAKE) $(MAKE_OPTIONS)
 	cd ..$(SEP)..
 
 testdll: .SYMBOLIC
 	cd tools$(SEP)testdll
-	*$(MAKE) $(MAKE_OPTIONS)
+	$(MAKE) $(MAKE_OPTIONS)
 	cd ..$(SEP)..
 
 unpak: .SYMBOLIC
 	cd tools$(SEP)unpak
-	*$(MAKE) $(MAKE_OPTIONS)
+	$(MAKE) $(MAKE_OPTIONS)
 	cd ..$(SEP)..
 
 tools: bin2h testdll unpak .SYMBOLIC
@@ -130,32 +130,32 @@ tools: bin2h testdll unpak .SYMBOLIC
 
 clean: clean_lib3p clean_tools .SYMBOLIC
 	cd $(SRC_DIV)
-	@for %i in (586 386) do *$(MAKE) $(MAKE_OPTIONS) CPU=%i clean
+	@for %i in (586 386) do $(MAKE) $(MAKE_OPTIONS) CPU=%i clean
 	cd ..$(SEP)..
 	cd $(SRC_DIV32RUN)
-	@for %i in (586 386) do *$(MAKE) $(MAKE_OPTIONS) CPU=%i SESSION=1 clean
-	@for %i in (586 386) do *$(MAKE) $(MAKE_OPTIONS) CPU=%i SESSION=0 clean
+	@for %i in (586 386) do $(MAKE) $(MAKE_OPTIONS) CPU=%i SESSION=1 clean
+	@for %i in (586 386) do $(MAKE) $(MAKE_OPTIONS) CPU=%i SESSION=0 clean
 	cd ..$(SEP)..
 	cd src$(SEP)install
-	*$(MAKE) $(MAKE_OPTIONS) clean
+	$(MAKE) $(MAKE_OPTIONS) clean
 	cd ..$(SEP)..
 	cd tools$(SEP)bin2h
-	*$(MAKE) $(MAKE_OPTIONS) clean
+	$(MAKE) $(MAKE_OPTIONS) clean
 	cd ..$(SEP)..
 	cd tools$(SEP)testdll
-	*$(MAKE) $(MAKE_OPTIONS) clean
+	$(MAKE) $(MAKE_OPTIONS) clean
 	cd ..$(SEP)..
 	cd dll
-	*$(MAKE) $(MAKE_OPTIONS) clean
+	$(MAKE) $(MAKE_OPTIONS) clean
 	cd ..
 
 clean_tools: .SYMBOLIC
 	cd tools$(SEP)bin2h
-	*$(MAKE) $(MAKE_OPTIONS) clean
+	$(MAKE) $(MAKE_OPTIONS) clean
 	cd ..$(SEP)testdll
-	*$(MAKE) $(MAKE_OPTIONS) clean
+	$(MAKE) $(MAKE_OPTIONS) clean
 	cd ..$(SEP)unpak
-	*$(MAKE) $(MAKE_OPTIONS) clean
+	$(MAKE) $(MAKE_OPTIONS) clean
 	cd ..$(SEP)..
 
 DIRS_RAIZ = genspr help install setup system
@@ -204,17 +204,17 @@ install: update .SYMBOLIC
 
 test_dll: .SYMBOLIC
 	cd dll
-	*$(MAKE) $(MAKE_OPTIONS) test
+	$(MAKE) $(MAKE_OPTIONS) test
 	cd ..
 
 test_div32run_386: .SYMBOLIC
 	cd src$(SEP)div32run
-	*$(MAKE) $(MAKE_OPTIONS) CPU=386 DOSBOX=$(DOSBOX) test
+	$(MAKE) $(MAKE_OPTIONS) CPU=386 DOSBOX=$(DOSBOX) test
 	cd ..$(SEP)..
 
 test_div32run_586: .SYMBOLIC
 	cd src$(SEP)div32run
-	*$(MAKE) $(MAKE_OPTIONS) CPU=586 DOSBOX=$(DOSBOX) test
+	$(MAKE) $(MAKE_OPTIONS) CPU=586 DOSBOX=$(DOSBOX) test
 	cd ..$(SEP)..
 
 test: test_dll test_div32run_386 test_div32run_586 .SYMBOLIC

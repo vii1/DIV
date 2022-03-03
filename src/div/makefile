@@ -145,7 +145,7 @@ $(OUTDIR)$(SEP)$(EXE): $(OBJS) $(LIBS) wstub
 wstub: .SYMBOLIC
 !ifdef STUB
 	cd ..$(SEP)wstub
-	*$(MAKE) ROOT=$(ROOT) CONFIG=$(CONFIG) ASM=$(ASM) TASM_EXE=$(TASM_EXE)
+	$(MAKE) ROOT=$(ROOT) CONFIG=$(CONFIG) ASM=$(ASM) TASM_EXE=$(TASM_EXE)
 	cd ..$(SEP)div
 !else
 	@%null
@@ -160,7 +160,7 @@ clean: .SYMBOLIC
 	@if exist $(OUTDIR)$(SEP)visor$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)visor$(SEP)*.obj
 !endif
  	cd ..$(SEP)wstub
- 	*$(MAKE) CONFIG=$(CONFIG) ROOT=$(ROOT) clean
+ 	$(MAKE) CONFIG=$(CONFIG) ROOT=$(ROOT) clean
  	cd ..$(SEP)div
 
 INC_NOVARS=1

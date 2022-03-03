@@ -44,7 +44,7 @@ test: all testdll .SYMBOLIC
 
 testdll: .SYMBOLIC
 	cd $(ROOT)$(SEP)tools$(SEP)testdll
-	*$(MAKE) CONFIG=$(CONFIG)
+	$(MAKE) CONFIG=$(CONFIG)
 	cd ..$(SEP)..$(SEP)dll
 
 clean: .SYMBOLIC

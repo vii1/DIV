@@ -18,13 +18,13 @@ CLEAN_LIB3P_DEPS += clean_jpeg
 
 $(JPEG_LIB): lib3p_dir .EXISTSONLY
 	cd $(JPEG_DIR)
-	*$(MAKE) $^.
+	$(MAKE) $^.
 	$(COPY) $^. $^:
 	cd $+$(%cwd)$-
 
 clean_jpeg: .SYMBOLIC
 	cd $(JPEG_DIR)
-	*$(MAKE) clean
+	$(MAKE) clean
 	cd $+$(%cwd)$-
 
 !endif #INC_NOTARGETS
