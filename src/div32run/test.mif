@@ -28,9 +28,14 @@ $(TEST_EXE): test$(SEP)testdata.h $(TEST_OBJS) $(TEST_LIBS)
 !endif
 		file { $(TEST_OBJS) }
 
-test: .SYMBOLIC
-	$(MAKE) test_i test_f CONFIG=$(CONFIG) CPU=386
-	$(MAKE) test_f CONFIG=$(CONFIG) CPU=586
+test: test_586 test_386 .SYMBOLIC
+	@%null
+
+test_586: .SYMBOLIC
+	$(MAKE) test_f CONFIG=$(CONFIG) DOSBOX=$(DOSBOX) CPU=586
+
+test_386: .SYMBOLIC
+	$(MAKE) test_i test_f CONFIG=$(CONFIG) DOSBOX=$(DOSBOX) CPU=386
 
 test_f test_i: $(TEST_EXE) .SYMBOLIC
 	@if exist $(TEST_LOG) $(DELETE) $(TEST_LOG)

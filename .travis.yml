@@ -10,6 +10,7 @@ jobs:
         EDPATH: $WATCOM/eddat
         WIPFC: $WATCOM/wipfc
         LIB: $WATCOM/lib286:$WATCOM/lib286/dos:$WATCOM/lib386:$WATCOM/lib386/dos
+        DOSBOX: $HOME/dosbox-x/dosbox-x.exe
     - os: linux
       env:
         WATCOM: $HOME/watcom
@@ -18,13 +19,16 @@ jobs:
         EDPATH: $WATCOM/eddat
         WIPFC: $WATCOM/wipfc
         LIB: $WATCOM/lib286:$WATCOM/lib286/dos:$WATCOM/lib386:$WATCOM/lib386/dos
+        DOSBOX: $HOME/dosbox-x/bin/dosbox-x
 
 before_install:
-  - source .travis/install_watcom.sh
+  - .travis/install_watcom.sh
+  - .travis/install_dosbox.sh
 script:
   - wmake
   - wmake tools
-  - wmake test_dll
+  - wmake test DOSBOX=$DOSBOX
 cache:
   directories:
     - ~/watcom
+    - ~/dosbox-x

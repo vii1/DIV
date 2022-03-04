@@ -209,12 +209,12 @@ test_dll: .SYMBOLIC
 
 test_div32run_386: .SYMBOLIC
 	cd src$(SEP)div32run
-	$(MAKE) $(MAKE_OPTIONS) CPU=386 DOSBOX=$(DOSBOX) test
+	$(MAKE) $(MAKE_OPTIONS) test_386 CONFIG=$(CONFIG) DOSBOX=$(DOSBOX)
 	cd ..$(SEP)..
 
 test_div32run_586: .SYMBOLIC
 	cd src$(SEP)div32run
-	$(MAKE) $(MAKE_OPTIONS) CPU=586 DOSBOX=$(DOSBOX) test
+	$(MAKE) $(MAKE_OPTIONS) test_586 CONFIG=$(CONFIG) DOSBOX=$(DOSBOX)
 	cd ..$(SEP)..
 
 test: test_dll test_div32run_386 test_div32run_586 .SYMBOLIC
