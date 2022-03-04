@@ -10,7 +10,7 @@ jobs:
         EDPATH: $WATCOM/eddat
         WIPFC: $WATCOM/wipfc
         LIB: $WATCOM/lib286:$WATCOM/lib286/dos:$WATCOM/lib386:$WATCOM/lib386/dos
-        DOSBOX: $HOME/dosbox-x/dosbox-x.exe
+        DOSBOX: $HOME/scoop/shims/dosbox-x
     - os: linux
       env:
         WATCOM: $HOME/watcom

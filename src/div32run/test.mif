@@ -42,7 +42,7 @@ test_f test_i: $(TEST_EXE) .SYMBOLIC
 !ifeq SYS dos
 	$(TEST_EXE)
 !else
-	$(START) $(DOSBOX) -fastlaunch -silent -conf <<$(TEST_CONF)
+	$(DOSBOX) -fastlaunch -silent -conf <<$(TEST_CONF)
 [cpu]
 core=full
 !ifeq CPU 586
