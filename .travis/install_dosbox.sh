@@ -30,8 +30,9 @@ if [ ! -f $DOSBOX ]; then
             # mv dosbox_tmp/mingw-build/mingw-sdl2 ./dosbox-x
             # rm -fR dosbox_tmp
 			powershell -Command Set-ExecutionPolicy RemoteSigned -scope CurrentUser
-			powershell -Command iwr -useb get.scoop.sh \| iex
-			scoop update && scoop install dosbox-x
+			powershell -Command iwr -useb get.scoop.sh \| iex || true
+			scoop update
+			scoop install dosbox-x
             ;;
     esac
 else
