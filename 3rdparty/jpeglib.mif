@@ -7,7 +7,9 @@
 
 !ifndef INC_NOVARS
 
-JPEG_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)libjpeg.lib
+!ifdef CPU
+JPEG_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)$(CPU)$(SEP)libjpeg.lib
+!endif
 JPEG_DIR = $(ROOT)$(SEP)3rdparty$(SEP)jpeglib
 INCLUDE += -I$(JPEG_DIR)
 CLEAN_LIB3P_DEPS += clean_jpeg
@@ -16,11 +18,13 @@ CLEAN_LIB3P_DEPS += clean_jpeg
 
 !ifndef INC_NOTARGETS
 
+!ifdef CPU
 $(JPEG_LIB): lib3p_dir .EXISTSONLY
 	cd $(JPEG_DIR)
-	$(MAKE) $^.
+	$(MAKE) $^. CPU=$(CPU)
 	$(COPY) $^. $^:
 	cd $+$(%cwd)$-
+!endif
 
 clean_jpeg: .SYMBOLIC
 	cd $(JPEG_DIR)

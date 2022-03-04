@@ -7,7 +7,9 @@
 
 !ifndef INC_NOVARS
 
-JUDAS_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)judas.lib
+!ifdef CPU
+JUDAS_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)$(CPU)$(SEP)judas.lib
+!endif
 JUDAS_DIR = $(ROOT)$(SEP)3rdparty$(SEP)judas
 #INCLUDE += -I$(JUDAS_DIR)
 CLEAN_LIB3P_DEPS += clean_judas
@@ -16,11 +18,13 @@ CLEAN_LIB3P_DEPS += clean_judas
 
 !ifndef INC_NOTARGETS
 
+!ifdef CPU
 $(JUDAS_LIB): lib3p_dir .EXISTSONLY
 	cd $(JUDAS_DIR)
-	$(MAKE) ASM=$(ASM) TASM_EXE=$(TASM_EXE) $^.
+	$(MAKE) $^. ASM=$(ASM) TASM_EXE=$(TASM_EXE) CPU=$(CPU)
 	$(COPY) $^. $^:
 	cd $+$(%cwd)$-
+!endif
 
 clean_judas: .SYMBOLIC
 	cd $(JUDAS_DIR)

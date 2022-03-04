@@ -16,7 +16,11 @@ OBJS =      adler32.obj  compress.obj crc32.obj   deflate.obj    &
 
 CC       = wcc386
 LINKER   = wcl386
-CFLAGS   = -zq -mf -3r -fp3 -s -bt=dos -oilrtfm -fr=nul -wx
+!ifeq CPU 586
+CFLAGS   = -zq -mf -5r -fp5 -s -bt=dos -oilrtfm -fr=nul -wx
+!else
+CFLAGS   = -zq -mf -3r -fpc -s -bt=dos -oilrtfm -fr=nul -wx
+!endif
 ZLIB_LIB = zlib_f.lib
 
 .C.OBJ:

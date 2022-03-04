@@ -10,6 +10,12 @@ INCLUDE		= /I$(SCITECH)\INCLUDE
 C_FLAGS		= -bt=dos -zq-w2-s-fh -fhq -DDOS4GW -D_SVGAKIT $(INCLUDE)
 TASM_FLAGS	= /t /mx /m /D__FLAT__ /q -DDOS4GW $(INCLUDE)
 
+!ifeq CPU 586
+C_FLAGS += -5 -fp5
+!else
+C_FLAGS += -3 -fpc
+!endif
+
 SOURCES = vesavbe.c svgasdk.c _svgasdk.asm _linsdk.asm font8x16.asm cpu.asm &
 		  vgapal.c vbeaf.c _vbeaf.asm
 

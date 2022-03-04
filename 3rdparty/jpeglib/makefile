@@ -17,7 +17,12 @@ CC= wcl386
 # You may need to adjust these cc options:
 #CFLAGS= -4r -ort -wx -zq -bt=$(SYSTEM)
 #CFLAGS= -wx -mf -zp4 -bt=$(SYSTEM) -zq -oneatr -d0 -5r -fp5
-CFLAGS= -3r -ort -wx -zq -bt=$(SYSTEM)
+CFLAGS= -ort -wx -zq -bt=$(SYSTEM)
+!ifeq CPU 586
+CFLAGS += -5r -fp5
+!else
+CFLAGS += -3r -fpc
+!endif
 
 # Caution: avoid -ol or -ox; these generate bad code with 10.0 or 10.0a.
 # Generally, we recommend defining any configuration symbols in jconfig.h,

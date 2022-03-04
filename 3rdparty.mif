@@ -30,6 +30,8 @@ INCLUDE += -I$(ROOT)$(SEP)3rdparty
 !ifndef INC_NOTARGETS
 lib3p_dir: .SYMBOLIC
 	@if not exist $(ROOT)$(SEP)3rdparty$(SEP)lib mkdir $(ROOT)$(SEP)3rdparty$(SEP)lib
+	@if not exist $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)386 mkdir $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)386
+	@if not exist $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)586 mkdir $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)586
 
 clean_lib3p: $(CLEAN_LIB3P_DEPS) .SYMBOLIC
 	@%null

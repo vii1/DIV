@@ -10,7 +10,8 @@ MAKE			= $+ $(MAKE) -h $-
 ASM				= WASM
 TASM_EXE		= tasm32.exe
 
-OPTIONS			= -bt=dos -wx -mf -3r -q
+CPU				= 386
+OPTIONS			= -bt=dos -wx -mf -3r -fpc -q
 WASM_OPTIONS	= -bt=dos -q -3r
 TASM_OPTIONS	= /w2 /z /ml /t /m2 /jMASM
 

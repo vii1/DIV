@@ -8,8 +8,10 @@
 !ifndef INC_NOVARS
 
 SCITECH = $(ROOT)$(SEP)3rdparty$(SEP)scitech
-SVGA_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)svga.lib
-PMODE_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)pmode.lib
+!ifdef CPU
+SVGA_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)$(CPU)$(SEP)svga.lib
+PMODE_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)$(CPU)$(SEP)pmode.lib
+!endif
 SVGA_DIR = $(SCITECH)$(SEP)src$(SEP)svgakit
 PMODE_DIR = $(SCITECH)$(SEP)src$(SEP)pmode
 INCLUDE += -I$(SCITECH)$(SEP)include
@@ -19,17 +21,19 @@ CLEAN_LIB3P_DEPS += clean_svga clean_pmode
 
 !ifndef INC_NOTARGETS
 
+!ifdef CPU
 $(SVGA_LIB): lib3p_dir .EXISTSONLY
 	cd $(SVGA_DIR)
-	$(MAKE) -f makefile.wat $^. SCITECH=$(SCITECH)
+	$(MAKE) $^. -f makefile.wat SCITECH=$(SCITECH) CPU=$(CPU)
 	$(COPY) $^. $^:
 	cd $+$(%cwd)$-
 
 $(PMODE_LIB): lib3p_dir .EXISTSONLY
 	cd $(PMODE_DIR)
-	$(MAKE) -f makefile.wat $^. SCITECH=$(SCITECH)
+	$(MAKE) $^. -f makefile.wat SCITECH=$(SCITECH) CPU=$(CPU)
 	$(COPY) $^. $^:
 	cd $+$(%cwd)$-
+!endif
 
 clean_svga: .SYMBOLIC
 	cd $(SVGA_DIR)

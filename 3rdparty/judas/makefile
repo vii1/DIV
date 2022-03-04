@@ -7,12 +7,20 @@ ASM=TASM
 TASM_EXE=tasm32.exe
 
 #CFLAGS1= -oneatx -w3 -zp4 -fpc -3r
-CFLAGS1= -oneatx -w3 -zp4 -fp5 -5r -q -bt=dos
 #CFLAGS1= /d2 /wx /zp4 /fp5 /mf /bt=dos /5r
+!ifeq CPU 586
+CFLAGS1= -oneatx -w3 -zp4 -fp5 -5r -q -bt=dos
+!else
+CFLAGS1= -oneatx -w3 -zp4 -fpc -3r -q -bt=dos
+!endif
 
 #CFLAGS2= -oneatx -zu -w3 -zp4 -fpc -3r
-CFLAGS2= -oneatx -zu -w3 -zp4 -fp5 -5r -q -bt=dos
 #CFLAGS2= /d2 /zu /wx /zp4 /fp5 /mf /bt=dos /5r
+!ifeq CPU 586
+CFLAGS2= -oneatx -zu -w3 -zp4 -fp5 -5r -q -bt=dos
+!else
+CFLAGS2= -oneatx -zu -w3 -zp4 -fpc -3r -q -bt=dos
+!endif
 
 judas.lib: judas.obj judassmp.obj judasraw.obj judaswav.obj judastbl.obj judasxm.obj judasmod.obj judass3m.obj judasio.obj judasasm.obj judasdma.obj judasmem.obj
         wlib -n @judas.cmd

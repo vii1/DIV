@@ -7,8 +7,12 @@ TEST_LOG = $(OUTDIR)$(SEP)$^&.log
 TEST_CONF = $(OUTDIR)$(SEP)$^&.cnf
 TEST_FPU_test_f = true
 TEST_FPU_test_i = false
+TEST_LIBS = $(JPEG_LIB) $(JUDAS_LIB) $(SVGA_LIB) $(PMODE_LIB) $(TFLC_LIB) $(ZLIB_LIB)
 
-$(TEST_EXE): test$(SEP)testdata.h $(TEST_OBJS)
+test.exe: $(TEST_EXE) .SYMBOLIC
+	@%null
+
+$(TEST_EXE): test$(SEP)testdata.h $(TEST_OBJS) $(TEST_LIBS)
 	*wlink &
 		option quiet, eliminate, undefsok &
 # 28 = Warning: undefined reference
@@ -19,8 +23,10 @@ $(TEST_EXE): test$(SEP)testdata.h $(TEST_OBJS)
 #		option stack=64k &
 #		option map=$(OUTDIR)$(SEP)$^& &
 		path $(OUTDIR) &
+!ifdef TEST_LIBS
+		libfile { $(TEST_LIBS) } &
+!endif
 		file { $(TEST_OBJS) }
-#		libfile { $(LIBS) }
 
 test: .SYMBOLIC
 	$(MAKE) test_i test_f CONFIG=$(CONFIG) CPU=386
@@ -62,3 +68,4 @@ test_clean2: .SYMBOLIC
 	@if exist $(TEST_EXE) $(DELETE) $(TEST_EXE)
 	@if exist $(OUTDIR)$(SEP)test_f.* $(DELETE) $(OUTDIR)$(SEP)test_f.*
 	@if exist $(OUTDIR)$(SEP)test_i.* $(DELETE) $(OUTDIR)$(SEP)test_i.*
+	@for %i in ($(TEST_OBJS)) do @if exist $(OUTDIR)$(SEP)%i $(DELETE) $(OUTDIR)$(SEP)%i

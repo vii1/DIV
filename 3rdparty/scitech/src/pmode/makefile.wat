@@ -10,6 +10,12 @@ INCLUDE		= /I$(SCITECH)\INCLUDE
 C_FLAGS		= -bt=dos -zq-w2-s-fh -fhq -DDOS4GW -D_SVGAKIT $(INCLUDE)
 TASM_FLAGS	= /t /mx /m /D__FLAT__ /q -DDOS4GW $(INCLUDE)
 
+!ifeq CPU 586
+C_FLAGS += -5 -fp5
+!else
+C_FLAGS += -3 -fpc
+!endif
+
 SOURCES = pmlite.c pmpro.c vflat.c _pmlite.asm _pmpro.asm _vflat.asm
 
 OBJS = $(SOURCES:.c=.obj)
@@ -31,7 +37,7 @@ pmode.lib: $(OBJS)
 !ifeqi ASM TASM
 	$(TASM_EXE) $(TASM_FLAGS) $<
 !else
-	@echo ERROR: Es necesario Turbo Assembler para compilar las librerï¿½as de SciTech
+	@echo ERROR: Es necesario Turbo Assembler para compilar las librer¡as de SciTech
 	@%abort
 !endif
 

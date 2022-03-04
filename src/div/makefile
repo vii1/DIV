@@ -25,14 +25,14 @@ OPTIONS			+= -d2 -D_DEBUG
 WASM_OPTIONS	+= -d1
 TASM_OPTIONS	+= /zi
 !else
-OPTIONS			+= -oneatr -d0
+OPTIONS			+= -oneatx -d0
 TASM_OPTIONS	+= /zn
 !endif
 
 !ifeq CPU 586	# Pentium
 
 OPTIONS 		+= -5r -fp5
-WASM_OPTIONS	+= -5r -fp5
+WASM_OPTIONS	+= -5r -fp5 -mf
 EXE				= d.exe
 !ifndef STUB
 OP_STUB			= option nostub
@@ -43,7 +43,7 @@ OP_STUB			= option stub=$(STUB)
 !else			# 386
 
 OPTIONS			+= -3r -fpc
-WASM_OPTIONS	+= -3r -fpc
+WASM_OPTIONS	+= -3r -fpc -mf
 EXE				= d.386
 OP_STUB			= option nostub
 

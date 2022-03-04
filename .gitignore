@@ -40,7 +40,7 @@
 
 # las librerías 3rd party también, para no tener que recompilarlas ya que
 # algunas requieren TASM
-!/3rdparty/lib/*.[Ll][Ii][Bb]
+!/3rdparty/lib/**/*.[Ll][Ii][Bb]
 
 # incluimos DOS4GW con la instalación
 !/system/dos4gw.exe
