@@ -17,6 +17,7 @@ if [ ! -f $DOSBOX ]; then
                 --enable-sdl2 --prefix=$HOME/dosbox-x || exit 1
             make -j`nproc` || exit 1
             make install || exit 1
+            cd ..
             ;;
         windows)
             wget https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v0.83.23/dosbox-x-vsbuild-win64-20220228210811.zip -O dosbox-x.zip
