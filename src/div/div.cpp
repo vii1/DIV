@@ -288,20 +288,8 @@ int main(int argc, char * argv[]) {
   unsigned n;
 
 #ifdef _DEBUG
-  if(0) {
-    argc = 2;
+  if(strstr(argv[0],"RSIHELP.EXP")) {
     argv[0] = "C:\\DIV\\D.EXE";
-    argv[1] = "INIT";
-  }
-  if(0) {
-    argc = 2;
-    argv[0] = "C:\\DIV\\D.EXE";
-    argv[1] = "TEST";
-  }
-  if(0) {
-    argc = 2;
-    argv[0] = "C:\\DIV\\D.EXE";
-    argv[1] = "NEXT";
   }
 #endif
 
