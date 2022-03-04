@@ -22,8 +22,8 @@ jobs:
         DOSBOX: $HOME/dosbox-x/bin/dosbox-x
 
 before_install:
-  - .travis/install_watcom.sh
-  - .travis/install_dosbox.sh
+  - source .travis/install_watcom.sh
+  - source .travis/install_dosbox.sh
 script:
   - wmake
   - wmake tools
