@@ -56,6 +56,9 @@ EXE_SUFFIX_HOST = $(EXE_SUFFIX_$(SYS))
 
 COPY = cp
 DELETE = rm
+CAT = cat
+GREP = grep
+NUL = /dev/null
 SEP = /
 
 !else #!__UNIX__
@@ -63,6 +66,9 @@ SEP = /
 COPY = copy /Y
 # (/Y sirve para sobreescribir archivos sin pedir confirmaci¢n).
 DELETE = del
+CAT = type
+GREP = find
+NUL = NUL
 SEP = \
 
 !ifdef %USERPROFILE

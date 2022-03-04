@@ -29,6 +29,7 @@ if [ ! -f $DOSBOX ]; then
             # unzip dosbox-x.zip -d dosbox_tmp
             # mv dosbox_tmp/mingw-build/mingw-sdl2 ./dosbox-x
             # rm -fR dosbox_tmp
+			powershell -Command Set-ExecutionPolicy RemoteSigned -scope CurrentUser
 			powershell -Command iwr -useb get.scoop.sh \| iex
 			scoop update && scoop install dosbox-x
             ;;

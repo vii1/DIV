@@ -41,7 +41,7 @@ test_f test_i: $(TEST_EXE) .SYMBOLIC
 	@if exist $(TEST_LOG) $(DELETE) $(TEST_LOG)
 !ifeq SYS dos
 	$(TEST_EXE)
-!else
+!else # SYS != dos
 	$(DOSBOX) -fastlaunch -silent -conf <<$(TEST_CONF)
 [cpu]
 core=full
@@ -56,14 +56,10 @@ mount c $(OUTDIR)
 c:
 test$(CPU).exe > $^&.log
 << keep
-	type $(TEST_CONF)
-	type $(TEST_LOG)
-!ifdef __UNIX__
-	@grep "Failed: 0" $(TEST_LOG) > /dev/null
-!else
-	@find "Failed: 0" $(TEST_LOG) > NUL
-!endif
-!endif
+	$(CAT) $(TEST_CONF)
+	$(CAT) $(TEST_LOG)
+	@$(GREP) "Failed: 0" $(TEST_LOG) > $(NULL)
+!endif # SYS != dos
 
 test_clean: .SYMBOLIC
 	$(MAKE) test_clean2 CONFIG=$(CONFIG) CPU=386
