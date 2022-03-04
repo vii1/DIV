@@ -96,8 +96,6 @@ LIBS = $(JUDAS_LIB) $(JPEG_LIB) $(ZLIB_LIB) $(SVGA_LIB) $(PMODE_LIB) $(TFLC_LIB)
 INCLUDE += -I..
 OPTIONS += $(INCLUDE)
 
-TEST_OBJS = test.obj testmath.obj f.obj
-
 .BEFORE
 	@if not exist $(OUTDIR_BASE) mkdir $(OUTDIR_BASE)
 !ifeq SESSION 1
@@ -139,7 +137,7 @@ pmwlite: .SYMBOLIC
 	cd $+$(%cwd)$+
 
 .asm: .;..;..$(SEP)vpe
-.c: .;..;..$(SEP)netlib;test
+.c: .;..;..$(SEP)netlib
 .cpp: .;..$(SEP)vpe;..$(SEP)netlib
 
 .obj: $(OUTDIR)
@@ -169,7 +167,7 @@ pmwlite: .SYMBOLIC
 		$(TASM_EXE) $(TASM_OPTIONS) $<,$(OUTDIR)$(SEP)$^@
 !endif
 
-clean: .SYMBOLIC
+clean: test_clean .SYMBOLIC
 	@if exist $(OUTDIR)$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)*.err
 	@if exist $(OUTDIR)$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)*.obj
 	@if exist $(OUTDIR)$(SEP)$(EXE) $(DELETE) $(OUTDIR)$(SEP)$(EXE)
@@ -180,38 +178,7 @@ clean: .SYMBOLIC
 	@if exist $(OUTDIR)$(SEP)netlib$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)netlib$(SEP)*.err
 	@if exist $(OUTDIR)$(SEP)netlib$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)netlib$(SEP)*.obj
 
-$(OUTDIR)$(SEP)test.exe: test$(SEP)testdata.h $(TEST_OBJS)
-	*wlink &
-		option quiet, eliminate, undefsok &
-# 28 = Warning: undefined reference
-		disable 28 &
-		system dos4g &
-		name $^@ &
-		debug all &
-#		option stack=64k &
-#		option map=$(OUTDIR)$(SEP)$^& &
-		path $(OUTDIR) &
-		file { $(TEST_OBJS) }
-#		libfile { $(LIBS) }
-
-test: $(OUTDIR)$(SEP)test.exe .SYMBOLIC
-	@if exist $(OUTDIR)$(SEP)test.log $(DELETE) $(OUTDIR)$(SEP)test.log
-!ifeq SYS dos
-	$(OUTDIR)$(SEP)test.exe
-!else
-	$(DOSBOX) -fastlaunch -silent -conf <<
-[autoexec]
-mount c $(OUTDIR)
-c:
-test.exe > test.log
-<<
-	@type $(OUTDIR)$(SEP)test.log
-!ifdef __UNIX__
-	@grep "Failed: 0" $(OUTDIR)$(SEP)test.log > /dev/null
-!else
-	@find "Failed: 0" $(OUTDIR)$(SEP)test.log > NUL
-!endif
-!endif
+!include test.mif
 
 INC_NOVARS=1
 !include $(ROOT)$(SEP)3rdparty.mif
