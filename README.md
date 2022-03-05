@@ -1,5 +1,4 @@
 # ![DIV GAMES STUDIO 2.0](https://github.com/vii1/DIV/blob/master/docs/img/divtitle.png)
-Reconstrucción y posible fork de DIV Games Studio 2.0
 
 [![Build Status](https://app.travis-ci.com/vii1/DIV.svg?branch=master)](https://app.travis-ci.com/vii1/DIV)
 
@@ -12,15 +11,16 @@ Repositorio original: https://github.com/DIVGAMES/DIV-Games-Studio
 [Descripción de archivos y carpetas](#descripción-de-archivos-y-carpetas)  
 
 ## ¿Qué es esto?
-Este proyecto pretende recuperar el código fuente del DIV Games Studio 2.0 original para MS-DOS, quizá aplicarle algún parche y mejora, y limpiarlo y ordenarlo un poco para que sea más fácil su estudio y aprender de él.
+Este proyecto pretende retomar el desarrollo de DIV Games Studio 2.0, tomando como punto de partida la versión comercial original para MS-DOS, y de paso también reordenar, limpiar, comentar y [documentar](https://github.com/vii1/DIV/wiki) el código para que todo el mundo pueda estudiarlo y aprender cómo funciona DIV por dentro.
 
-El primer objetivo ([versión 2.01](https://github.com/vii1/DIV/milestone/1)) es conseguir reproducir lo más fielmente posible el DIV 2 en su versión 2.01 tal como salió a la venta en 1999. Si conoces proyectos como [Chocolate Doom](https://www.chocolate-doom.org) o [Chocolate Wolfenstein 3D](https://github.com/fabiensanglard/Chocolate-Wolfenstein-3D), este proyecto es similar (quizá debería haberlo llamado "Chocolate DIV", pero bueno).
+DIV 2 funciona correctamente en el emulador [DOSBox](https://www.dosbox.com/)/[DOSBox-X](https://dosbox-x.com/) y probablemente aún mejor en una máquina DOS real siempre que tenga al menos un procesador 486 (recomendado Pentium), 16 MB de RAM, ratón y tarjeta gráfica SVGA. Este proyecto se centra en MS-DOS y posiblemente otros sistemas retro como [AMIGA](https://es.wikipedia.org/wiki/Commodore_Amiga). Si quieres DIV2 portado a plataformas modernas, te recomiendamos [la versión de MikeDX](https://github.com/DIVGAMES/DIV-Games-Studio), que no sólo funciona nativamente en Windows/Mac/Linux sino que te permite compilar tus juegos para consolas, móviles e incluso HTML5.
 
-Lo siguiente sería arreglar bugs conocidos ([versión 2.02](https://github.com/vii1/DIV/milestone/2)) y reordenar, limpiar, comentar y documentar el código para que todo el mundo pueda estudiarlo y aprender cómo funcionaba DIV2 por dentro.
+### Hoja de ruta
+* [Versión 2.01](https://github.com/vii1/DIV/milestone/1): El primer objetivo es conseguir reproducir lo más fielmente posible el DIV 2 en su versión 2.01 tal como salió a la venta en 1999.
 
-Y luego… ya veremos ¯\\\_(ツ)\_/¯
+* [Versión 2.02](https://github.com/vii1/DIV/milestone/2): Arreglaremos bugs conocidos (algunos desde hace décadas) y posiblemente puliremos algunos detalles menores que ayuden a DIV a ser más usable para los humanos del siglo XXI.
 
-DIV 2 funciona correctamente en el emulador [DOSBOX](https://www.dosbox.com/) y probablemente aún mejor en una máquina DOS real siempre que tenga al menos un procesador 486 (recomendado Pentium), 16 MB de RAM, ratón y tarjeta gráfica SVGA. De momento no tengo intención de portarlo a otras plataformas más allá de DOS, pero si un día me pongo a ello, seguramente mi primera elección sería [AMIGA](https://es.wikipedia.org/wiki/Commodore_Amiga). Si quieres DIV2 portado a plataformas modernas, te recomiendo [la versión de MikeDX](https://github.com/DIVGAMES/DIV-Games-Studio), que no sólo funciona nativamente en Windows/Mac/Linux sino que te permite compilar tus juegos para consolas, móviles e incluso HTML5.
+* Después: introduciremos [mejoras](https://github.com/vii1/DIV/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement) y seguiremos puliendo, reorganizando y documentando el código.
 
 ## ¿Qué es DIV Games Studio?
 En 1998, el estudio español Hammer Technologies publicó DIV Games Studio, un programa muy completo para desarrollar videojuegos. Integraba casi todas las herramientas necesarias: editor gráfico, editor de código, compilador, depurador, etc. Disponía de un entorno gráfico muy amigable y su propio lenguaje de programación, el lenguaje DIV. En 1999 salió la versión 2, que incluía muchas mejoras, tanto en las herramientas como en el lenguaje. La empresa británica FastTrak licenció DIV para su distribución en varios países de Europa y Latinoamérica.
@@ -37,7 +37,7 @@ En 2015, MikeDX, antiguo miembro de FastTrak, anunció que había retomado el c�
 
 ### Requisitos previos
 * Sistema operativo **Linux**, **MS-DOS** o **Windows** (cualquier versión, nueva o antigua).
-* [OpenWatcom 1.9](http://www.openwatcom.org/) instalado y funcionando. Posiblemente también funcione Watcom 10 o superior, pero no lo hemos probado. OJO: necesitas instalar los compiladores para *DOS 16 bits* y *DOS 32 bits*. Actualmente hay incompatibilidades en el código con OpenWatcom 2.
+* [OpenWatcom 1.9](http://www.openwatcom.org/) instalado y funcionando. Posiblemente también funcione Watcom 10 o superior, pero no lo hemos probado. OJO: necesitas instalar los compiladores para *DOS 16 bits*, *DOS 32 bits* y también para la plataforma desde la que estés compilando (ya que algunas herramientas, como PMWLITE, se compilan y ejecutan durante el proceso de compilación de DIV). Actualmente hay incompatibilidades en el código con OpenWatcom 2.
 * Si usas Linux, Windows NT o cualquier versión moderna de Windows, para ejecutar DIV necesitarás un emulador de DOS como [DOSBox](https://dosbox.com) o [DOSBox-X](https://dosbox-x.com/).
 * **OPCIONAL**: Instala **Turbo Assembler**. Sólo es necesario si quieres recompilar las librerías de terceros (se encuentran ya compiladas en este repositorio). Consulta [la wiki](https://github.com/vii1/DIV/wiki/Acerca-de-Turbo-Assembler) para más información.
 
@@ -69,7 +69,7 @@ Aún existen algunos bugs y diferencias respecto a la versión comercial de DIV 
   * **zlib**: Librería de compresión [zlib](https://zlib.net).
 * **dll**: El SDK y los ejemplos.
 * **formats**: Descripción de los formatos de archivo propios de DIV, en formato [Kaitai Struct](http://kaitai.io/). Más información en la [wiki](https://github.com/vii1/DIV/wiki/Formatos-de-archivo).
-* **pmwlite**: Extensor de 32 bits para DOS alternativo a DOS/4GW, que se usaba para la DIV32RUN.DLL y el instalador.
+* **pmwlite**: Extensor de 32 bits para DOS alternativo a DOS/4GW, que se usa para la DIV32RUN.DLL y el instalador.
 * **src**: Carpeta principal de código fuente. Aquí hay algunos archivos compartidos entre módulos.
   * **div**: Código fuente del IDE (D.EXE). Algunos archivos destacables:
     * **div.cpp**: fichero principal del Sistema Operativo DIV™.
@@ -87,8 +87,8 @@ Aún existen algunos bugs y diferencias respecto a la versión comercial de DIV 
     * **s.cpp**: gráficos, sprites, scroll, modo-7...
     * **v.cpp**: funciones de vídeo de bajo nivel
     * **d.cpp**: el debugger de DIV2, incluyendo toda la GUI (!)
-  * **div_stub**: El programa que hacía de "cabecera" para los EXE de DIV2. A éste se le concatenaba el bytecode del programa compilado y algunos datos para el intérprete. Lo único que hacía el EXE en sí era ejecutar DIV32RUN.DLL, pasándose a sí mismo como parámetro.
+  * **div_stub**: El programa que hace de "cabecera" para los EXE de DIV2. A éste se le concatena el bytecode del programa compilado y algunos datos para el intérprete. Lo único que hace el EXE en sí es ejecutar DIV32RUN.DLL, pasándose a sí mismo como parámetro.
   * **netlib**: Rutinas de red (originalmente era una DLL)
   * **vpe**: Librería de Modo-8 (una versión modificada de [Virtual Presence Engine](http://www.ii.uib.no/~alexey/vpe/index.html))
   * **install**: El programa de instalación que DIV incluye cuando usas la opción _Crear instalación_.
-* **tools**: Código fuente de algunas herramientas accesorias que sólo se usan en ciertas fases de la compilación, en tests, o para depurar.
+* **tools**: Código fuente de algunas [herramientas](https://github.com/vii1/DIV/wiki/Herramientas) accesorias que sólo se usan en ciertas fases de la compilación, en tests, o para depurar.
