@@ -1041,11 +1041,11 @@ void entorno(void) {
 
     if (m<max_windows && beta_status==4) { // Si hay un PRG ...
       n=0;
-      if (shift_status&8) switch(scan_code) {
+      if (shift_status & SS_ALT) switch(scan_code) {
         case 33: n=1; break; // alt+f
         case 49: n=2; break; // alt+n
         case 19: n=3; break; // alt+r
-      } else if (shift_status&4) switch(scan_code) {
+      } else if (shift_status & SS_CTRL) switch(scan_code) {
         case 33: n=1; break; // ctrl+f
         case 38: n=2; break; // ctrl+l
         case 19: n=3; break; // ctrl+r
