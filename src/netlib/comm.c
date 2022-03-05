@@ -1,4 +1,4 @@
-// #define DEBUG                              /* comment me to eliminate main() */
+// #define COMM_DEBUG                              /* comment me to eliminate main() */
 
 /*     Last modification by Rick Wagner, May 21, 1993.
  *
@@ -350,7 +350,7 @@ void comm_delay( int msecs)
 
 /****************************************************************************/
 
-#ifdef _DEBUG
+#ifdef COMM_DEBUG
 
 #include <string.h>
 

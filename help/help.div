@@ -17513,7 +17513,7 @@ ejemplo).
 
 No se puede poner esta sentencia m s que dentro de los siguientes bucles:
 
-{#1022,LOOP} ... {#1091,END}ú
+{#1024,LOOP} ... {#1091,END}ú
 Un CONTINUE dentro de este bucle saltar  al LOOP.
 
 {#1043,FROM} .. {#1096,TO} .. {#1095,STEP} .. ... {#1091,END}ú
@@ -17524,7 +17524,7 @@ del bucle.
 {#1023,REPEAT} ... {#1097,UNTIL} {#1053,(}..{#1053,)}ú
 Un CONTINUE dentro de este bucle saltar  al UNTIL.
 
-{#1024,WHILE} {#1053,(} .. {#1053,)} ... {#1091,END}ú
+{#1022,WHILE} {#1053,(} .. {#1053,)} ... {#1091,END}ú
 Un CONTINUE dentro de este bucle saltar  al WHILE.
 
 {#1025,FOR} {#1053,(} .. {#1068,;} .. {#1068,;} .. {#1053,)} ... {#1091,END}ú

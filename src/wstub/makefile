@@ -1,32 +1,42 @@
-!include $(ROOT)$(SEP)os.mif
+!include ../../os.mif
 
-CONFIG = release
-OUTDIR = $(CONFIG)
-CC = wcc
-ASM = wasm
-EXE = wstub.exe
+ROOT			= ..$(SEP)..
+CONFIG			= release
+OUTDIR_BASE		= $(ROOT)$(SEP)build.dos
+OUTDIR			= $(OUTDIR_BASE)$(SEP)wstub$(SEP)$(CONFIG)
 
-OPTIONS = -wx -ms
-WASM_OPTIONS = -wx -ms
-!ifeq CONFIG debug
-OPTIONS += -d2
-WASM_OPTIONS += -d1
+ASM				= WASM
+TASM_EXE		= tasm32.exe
+
+EXE				= wstub.exe
+
+OPTIONS			= -bt=dos -wx -ms -q
+WASM_OPTIONS	= -wx -ms -q
+TASM_OPTIONS	= -ml -t
+
+!ifeqi CONFIG debug
+OPTIONS			+= -d2
+WASM_OPTIONS	+= -d1
+TASM_OPTIONS	+= /zi
 !else
-OPTIONS += -oneatx -d0
+OPTIONS			+= -oneatx -d0
 !endif
 
 OBJS = wstub.obj cpuid.obj
 
 .BEFORE
+	@if not exist $(OUTDIR_BASE) mkdir $(OUTDIR_BASE)
+	@if not exist $(OUTDIR_BASE)$(SEP)wstub mkdir $(OUTDIR_BASE)$(SEP)wstub
 	@if not exist $(OUTDIR) mkdir $(OUTDIR)
 
 WSTUB_EXE = $(OUTDIR)$(SEP)$(EXE)
 
 $(WSTUB_EXE): $(OBJS)
 	*wlink &
+		option quiet &
 		system dos &
 		name $^@ &
-!ifeq CONFIG debug
+!ifeqi CONFIG debug
 		debug all &
 		option symfile=$^* &
 !endif
@@ -37,10 +47,14 @@ $(WSTUB_EXE): $(OBJS)
 .obj: $(OUTDIR)
 
 wstub.obj: wstub.c
-	*$(CC) $(OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
+	*wcc $(OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
 
 cpuid.obj: ../cpuid.asm
-	*$(ASM) -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
+!ifeqi ASM WASM
+	*wasm -zcm=tasm $(WASM_OPTIONS) -fo=$(OUTDIR)$(SEP)$^. -fr=$(OUTDIR)$(SEP)$^& $<
+!else
+	$(TASM_EXE) $(TASM_OPTIONS) $<,$(OUTDIR)$(SEP)$^.
+!endif
 
 clean: .SYMBOLIC
 	@if exist $(OUTDIR)$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)*.err

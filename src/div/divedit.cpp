@@ -356,7 +356,7 @@ void editor() {
 
   if (bloque_edit==1) // Bloque edit en una lกnea
 
-  if ((shift_status&3) && !(shift_status&12)) switch(scan_code) {
+  if ((shift_status & SS_SHIFT) && !(shift_status & (SS_CTRL|SS_ALT))) switch(scan_code) {
 
     case 0: break;
     case 77:
@@ -390,7 +390,7 @@ void editor() {
       f_fin(); break;
     default: f_desmarcar(); break;
 
-  } else if ((shift_status&4) && !(shift_status&11)) {
+  } else if ((shift_status & SS_CTRL) && !(shift_status&(SS_SHIFT|SS_ALT))) {
 
     switch(scan_code) {
       case 0: break;
@@ -410,7 +410,7 @@ void editor() {
       scan_code=0;
     }
 
-  } else if (!(shift_status&15) && ascii==0) switch(scan_code) {
+  } else if (!(shift_status&(SS_SHIFT|SS_CTRL|SS_ALT)) && ascii==0) switch(scan_code) {
 
     case 0: break;
     case 83: f_cortar_bloque(2);                // suprimir
@@ -419,7 +419,7 @@ void editor() {
       break;
     default: f_desmarcar(); break;
 
-  } else if ((shift_status&3) && (shift_status&4)) switch(scan_code) {
+  } else if ((shift_status&SS_SHIFT) && (shift_status&SS_CTRL)) switch(scan_code) {
 
     case 116: // ctrl+shift+right
       if (kcol2==v.prg->columna-1) {
@@ -474,7 +474,7 @@ void editor() {
 
   if (bloque_edit==2) // Bloque edit de varias lกneas.
 
-  if ((shift_status&3) && !(shift_status&12)) switch(scan_code) {
+  if ((shift_status&SS_SHIFT) && !(shift_status&(SS_CTRL|SS_ALT))) switch(scan_code) {
     case 0: break;
     case 80:                                    // shift+down
       if (kfin<v.prg->lptr) {
@@ -547,7 +547,7 @@ void editor() {
       tipo_papelera=1; scan_code=0; break;
     default: f_desmarcar(); break;
 
-  } else if ((shift_status&4) && !(shift_status&11)) {
+  } else if ((shift_status&SS_CTRL) && !(shift_status&(SS_ALT|SS_SHIFT))) {
 
     switch(scan_code) {
       case 0: break;
@@ -567,7 +567,7 @@ void editor() {
       tipo_papelera=1; scan_code=0;
     }
 
-  } else if (!(shift_status&15) && ascii==0) switch(scan_code) {
+  } else if (!(shift_status&(SS_SHIFT|SS_CTRL|SS_ALT)) && ascii==0) switch(scan_code) {
 
     case 0: break;
     case 83: f_cortar_bloque(2);                // suprimir
@@ -576,7 +576,7 @@ void editor() {
       break;
     default: f_desmarcar(); break;
 
-  } else if ((shift_status&3) && (shift_status&4)) switch(scan_code) {
+  } else if ((shift_status&SS_SHIFT) && (shift_status&SS_CTRL)) switch(scan_code) {
 
     case 116: // ctrl+shift+right
       if (kfin<v.prg->lptr) {
@@ -610,7 +610,7 @@ void editor() {
 
   if (bloque_edit==0) // Solo si no hay un bloque de tipo edit
 
-  if ((shift_status&3) && !(shift_status&12)) switch(scan_code) {
+  if ((shift_status&SS_SHIFT) && !(shift_status&(SS_CTRL|SS_ALT))) switch(scan_code) {
     case 77:                                    // shift+right
       f_desmarcar();
       bloque_edit=1;
@@ -696,7 +696,7 @@ void editor() {
       if (kcol1>kcol2) f_desmarcar();
       f_fin(); break;
 
-  } else if ((shift_status&3) && (shift_status&4)) switch(scan_code) {
+  } else if ((shift_status&SS_SHIFT) && (shift_status&SS_CTRL)) switch(scan_code) {
 
     case 116: // ctrl+shift+right
       f_desmarcar();
@@ -731,7 +731,7 @@ void editor() {
       } else if (kcol1>kcol2) f_desmarcar();
       break;
 
-  } else if (!(shift_status&15) && ascii==0) switch(scan_code) {
+  } else if (!(shift_status&(SS_SHIFT|SS_CTRL|SS_ALT)) && ascii==0) switch(scan_code) {
 
     case 77: f_right(); break;                  // cursor right
     case 75: f_left(); break;                   // cursor left
@@ -744,12 +744,12 @@ void editor() {
     case 82: f_insert(); break;                 // insertar
     case 83: f_suprimir(); break;               // suprimir
 
-  } else if (!(shift_status&15)) switch(scan_code) {
+  } else if (!(shift_status&(SS_SHIFT|SS_CTRL|SS_ALT))) switch(scan_code) {
 
     case 14: f_backspace(); break;              // backspace
     case 15: f_tabulador(); break;              // tabulador
 
-  } else if ((shift_status&4) && !(shift_status&11)) switch(scan_code) {
+  } else if ((shift_status&SS_CTRL) && !(shift_status&(SS_SHIFT|SS_ALT))) switch(scan_code) {
 
     case 14: case 21: f_delete(); break;        // ctrl+backspace,ctrl+y
     case 116:case 77: f_word_right(); break;    // ctrl+right
@@ -763,7 +763,7 @@ void editor() {
     case 47: f_pegar_bloque();                  // ctrl+v
              f_desmarcar(); break;
 
-  } else if ((shift_status&8) && !(shift_status&7)) switch(scan_code) {
+  } else if ((shift_status&SS_ALT) && !(shift_status&(SS_SHIFT|SS_CTRL))) switch(scan_code) {
 
     case 30: f_marcar(); break;                 // alt+a
     case 22: f_desmarcar(); break;              // alt+u
@@ -778,7 +778,7 @@ void editor() {
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-  if (!(shift_status&4) && ascii) {
+  if (!(shift_status&SS_CTRL) && ascii) {
     if (ascii==cr) f_enter(); else if (ascii!=0x1b) {
       if (modo_cursor) f_sobreescribir(); else f_insertar();
     }

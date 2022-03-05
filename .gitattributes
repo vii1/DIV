@@ -1,6 +1,31 @@
-system/*.def eol=crlf
-system/lenguaje.* eol=crlf
-system/LENGUAJE.* eol=crlf
+system/*.def text eol=crlf
+system/lenguaje.* text eol=crlf
+system/LENGUAJE.* text eol=crlf
+help/help.div text eol=crlf
+help/help.idx text eol=crlf
+install/INS_TEXT.ASC binary
+*.prg text eol=crlf
+*.PRG text eol=crlf
+*.doc text eol=crlf
+*.lnk text eol=crlf
+*.LNK text eol=crlf
+*.c text eol=crlf
+*.C text eol=crlf
+*.cpp text eol=crlf
+*.CPP text eol=crlf
+*.h text eol=crlf
+*.H text eol=crlf
+*.hpp text eol=crlf
+*.HPP text eol=crlf
+*.asm text eol=crlf
+*.ASM text eol=crlf
+*.inc text eol=crlf
+*.INC text eol=crlf
+makefile text eol=crlf
+makefile.* text eol=crlf
+*.mif text eol=crlf
+*.bat text eol=crlf
+*.BAT text eol=crlf
 
 # Don't mess with binary files
 *.lib binary
@@ -9,3 +34,21 @@ system/LENGUAJE.* eol=crlf
 *.EXE binary
 *.com binary
 *.COM binary
+
+*.pif binary
+*.PIF binary
+
+*.fpg binary
+*.FPG binary
+*.fnt binary
+*.FNT binary
+*.ifs binary
+*.IFS binary
+*.map binary
+*.MAP binary
+*.pal binary
+*.PAL binary
+*.pcm binary
+*.PCM binary
+*.wld binary
+*.WLD binary

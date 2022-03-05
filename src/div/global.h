@@ -747,7 +747,29 @@ GLOBAL_DATA struct ttipo tipo[24]; // Paths 0-(current working directory),
 
 GLOBAL_DATA char unidades[26+1];
 
-GLOBAL_DATA char shift_status,ascii,scan_code;
+GLOBAL_DATA word shift_status;
+GLOBAL_DATA char ascii,scan_code;
+
+// shift_status
+enum {
+	SS_RIGHT_SHIFT = 0x0001,
+	SS_LEFT_SHIFT = 0x0002,
+	SS_SHIFT = 0x0003,
+	SS_CTRL = 0x0004,
+	SS_ALT = 0x0008,
+	SS_SCROLL_LOCK_ON = 0x0010,
+	SS_NUM_LOCK_ON = 0x0020,
+	SS_CAPS_LOCK_ON = 0x0040,
+	SS_INSERT_ON = 0x0080,
+	SS_LEFT_CTRL = 0x0100,
+	SS_LEFT_ALT = 0x0200,
+	SS_RIGHT_CTRL = 0x0400,
+	SS_RIGHT_ALT = 0x0800,
+	SS_SCROLL_LOCK = 0x1000,
+	SS_NUM_LOCK = 0x2000,
+	SS_CAPS_LOCK = 0x4000,
+	SS_SYSREQ = 0x8000,
+};
 
 GLOBAL_DATA char full[_MAX_PATH+1];
 GLOBAL_DATA char mascara[512]; // Mascara con la que se realiza el dir

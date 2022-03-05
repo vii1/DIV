@@ -1,5 +1,9 @@
 CC = wcl386
-CC_FLAGS = -otx -bt=dos -w10 -3 -fpi -za -l=dos4g
+!ifeq CPU 586
+CC_FLAGS = -otx -bt=dos -w10 -5 -fp5 -za -l=dos4g
+!else
+CC_FLAGS = -otx -bt=dos -w10 -3 -fpc -za -l=dos4g
+!endif
 CC_OPTS = $(CC_FLAGS)
 TF_LIB = tflc_w32.lib
 

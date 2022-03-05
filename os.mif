@@ -1,20 +1,51 @@
 ############################################
 # COSAS DEPENDENDIENTES DEL SITEMA OPERATIVO
 ############################################
-!ifndef %OS
+
+# SYS = sistema host
+# TARGET_SYS = sistema target
+
+!ifndef OS_MIF
+OS_MIF=1
+
+#!ifndef %OS
 !ifdef __UNIX__
 %OS=UNIX
+SYS=unx
 !endif
 !ifdef __LINUX__
 %OS=LINUX
+SYS=lin
 !endif
 !ifdef __MSDOS__
 %OS=DOS
+SYS=dos
 !endif
 !ifdef __NT__
 %OS=WINDOWS
+SYS=win
 !endif
+#!endif
+
+!ifndef TARGET_SYS
+TARGET_SYS=$(SYS)
 !endif
+
+WATCOM_BT_LIN = linux
+WATCOM_BT_WIN = nt
+WATCOM_BT_DOS = dos
+WATCOM_BT = $(WATCOM_BT_$(TARGET_SYS))
+
+WLINK_TARGET_SYS_LIN = system linux option noextension
+WLINK_TARGET_SYS_WIN = system nt
+WLINK_TARGET_SYS_DOS = system dos4g
+WLINK_TARGET_SYS = $(WLINK_TARGET_SYS_$(TARGET_SYS))
+
+EXE_SUFFIX_LIN=
+EXE_SUFFIX_WIN=.exe
+EXE_SUFFIX_DOS=.exe
+EXE_SUFFIX = $(EXE_SUFFIX_$(TARGET_SYS))
+EXE_SUFFIX_HOST = $(EXE_SUFFIX_$(SYS))
 
 # Se definen varias variables que dependen del SO donde se compila
 # COPY -> El comando que se usa para copiar cosas con ``wmake install``
@@ -27,12 +58,25 @@ COPY = cp
 DELETE = rm
 SEP = /
 
-!else
+!else #!__UNIX__
 
 COPY = copy /Y
-# (/Y sirve para sobreescribir archivos sin pedir confirmaciÂ¢n).
+# (/Y sirve para sobreescribir archivos sin pedir confirmaci¢n).
 DELETE = del
 SEP = \
 
+!ifdef %USERPROFILE
+%HOME=$(%USERPROFILE)
+!else
+%HOME=$(SEP)
 !endif
 
+!endif # __UNIX__
+
+!ifdef __NT__
+START = start "" /wait
+!else
+START =
+!endif
+
+!endif # OS_MIF

@@ -24,7 +24,7 @@ extern char cpu_type;
 
 void set_mode( void );
 
-// TODO: sacar esto a un asm
+// TODO: sacar esto a un asm o buscar una alternativa en C
 // clang-format off
 #pragma aux set_mode= \
     "push ax"         \
@@ -92,9 +92,6 @@ int exec_game()
 	}
 	args[2] = "SYSTEM\\EXEC.EXE";
 	args[3] = NULL;
-	flushall();
-	_heapmin();
-	_heapshrink();
 	retval = spawn_process( args );
 	set_mode();
 	_dos_setdrive( drive, &total );

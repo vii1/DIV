@@ -1,32 +1,34 @@
 !ifndef ROOT
 !error Se requiere la macro ROOT
 !endif
-
 !ifndef SEP
 !error Se requiere la macro SEP
 !endif
 
 !ifndef INC_NOVARS
 
-ZLIB_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)zlib_f.lib
+!ifdef CPU
+ZLIB_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)$(CPU)$(SEP)zlib_f.lib
+!endif
 ZLIB_DIR = $(ROOT)$(SEP)3rdparty$(SEP)zlib
 INCLUDE += -I$(ZLIB_DIR)
+CLEAN_LIB3P_DEPS += clean_zlib
 
 !endif #INC_NOVARS
 
 !ifndef INC_NOTARGETS
 
+!ifdef CPU
 $(ZLIB_LIB): lib3p_dir .EXISTSONLY
-	@%make savedir
 	cd $(ZLIB_DIR)
-	! $(MAKE) -f watcom$(SEP)watcom_f.mak $^.
+	$(MAKE) $^. -f watcom$(SEP)watcom_f.mak CPU=$(CPU)
 	$(COPY) $^. $^:
-	@%make loaddir
+	cd $+$(%cwd)$-
+!endif
 
 clean_zlib: .SYMBOLIC
-	@%make savedir
 	cd $(ZLIB_DIR)
-	! $(MAKE) -f watcom$(SEP)watcom_f.mak clean
-	@%make loaddir
+	$(MAKE) -f watcom$(SEP)watcom_f.mak clean
+	cd $+$(%cwd)$-
 
 !endif #INC_NOTARGETS

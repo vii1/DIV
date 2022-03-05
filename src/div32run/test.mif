@@ -1,0 +1,71 @@
+TEST_OBJS = test.obj testmath.obj f.obj
+
+.c: test
+
+TEST_EXE = $(OUTDIR)$(SEP)test$(CPU).exe
+TEST_LOG = $(OUTDIR)$(SEP)$^&.log
+TEST_CONF = $(OUTDIR)$(SEP)$^&.cnf
+TEST_FPU_test_f = true
+TEST_FPU_test_i = false
+TEST_LIBS = $(JPEG_LIB) $(JUDAS_LIB) $(SVGA_LIB) $(PMODE_LIB) $(TFLC_LIB) $(ZLIB_LIB)
+
+test.exe: $(TEST_EXE) .SYMBOLIC
+	@%null
+
+$(TEST_EXE): test$(SEP)testdata.h $(TEST_OBJS) $(TEST_LIBS)
+	*wlink &
+		option quiet, eliminate, undefsok &
+# 28 = Warning: undefined reference
+		disable 28 &
+		system dos4g &
+		name $^@ &
+		debug all &
+#		option stack=64k &
+#		option map=$(OUTDIR)$(SEP)$^& &
+		path $(OUTDIR) &
+!ifdef TEST_LIBS
+		libfile { $(TEST_LIBS) } &
+!endif
+		file { $(TEST_OBJS) }
+
+test: .SYMBOLIC
+	$(MAKE) test_i test_f CONFIG=$(CONFIG) CPU=386
+	$(MAKE) test_f CONFIG=$(CONFIG) CPU=586
+
+test_f test_i: $(TEST_EXE) .SYMBOLIC
+	@if exist $(TEST_LOG) $(DELETE) $(TEST_LOG)
+!ifeq SYS dos
+	$(TEST_EXE)
+!else
+	$(DOSBOX) -fastlaunch -silent -conf <<$(TEST_CONF)
+[cpu]
+core=full
+!ifeq CPU 586
+cputype=pentium
+!else
+cputype=386
+!endif
+fpu=$(TEST_FPU_$^&)
+[autoexec]
+mount c $(OUTDIR)
+c:
+test$(CPU).exe > $^&.log
+<< keep
+	type $(TEST_CONF)
+	type $(TEST_LOG)
+!ifdef __UNIX__
+	@grep "Failed: 0" $(TEST_LOG) > /dev/null
+!else
+	@find "Failed: 0" $(TEST_LOG) > NUL
+!endif
+!endif
+
+test_clean: .SYMBOLIC
+	$(MAKE) test_clean2 CONFIG=$(CONFIG) CPU=386
+	$(MAKE) test_clean2 CONFIG=$(CONFIG) CPU=586
+
+test_clean2: .SYMBOLIC
+	@if exist $(TEST_EXE) $(DELETE) $(TEST_EXE)
+	@if exist $(OUTDIR)$(SEP)test_f.* $(DELETE) $(OUTDIR)$(SEP)test_f.*
+	@if exist $(OUTDIR)$(SEP)test_i.* $(DELETE) $(OUTDIR)$(SEP)test_i.*
+	@for %i in ($(TEST_OBJS)) do @if exist $(OUTDIR)$(SEP)%i $(DELETE) $(OUTDIR)$(SEP)%i

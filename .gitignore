@@ -4,12 +4,15 @@
 *.lib
 *.386
 *.586
+*.ovl
+*.dll
 
 # ficheros intermedios de Watcom
 *.err
 *.mk1
 *.tgt
-*.map
+/3rdparty/**/*.map
+/pmwlite/**/*.map
 *.lst
 *.pch
 *.sym
@@ -18,6 +21,9 @@
 *.bak
 *.bac
 
+# logs de Vagrant
+/*.log
+
 # ficheros temporales de programas externos
 /3rdparty/scitech/doc/*/*.[Gg][Ii][Dd]
 
@@ -25,10 +31,7 @@
 /bin
 /_trash
 /_basura
-/build.dos/debug.*
-/build.dos/release.*
-/wstub/debug
-/wstub/release
+/build.*
 /.vscode
 /.vagrant
 
@@ -37,7 +40,7 @@
 
 # las librerías 3rd party también, para no tener que recompilarlas ya que
 # algunas requieren TASM
-!/3rdparty/lib/*.[Ll][Ii][Bb]
+!/3rdparty/lib/**/*.[Ll][Ii][Bb]
 
 # incluimos DOS4GW con la instalación
 !/system/dos4gw.exe

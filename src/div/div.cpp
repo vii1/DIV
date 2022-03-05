@@ -287,6 +287,14 @@ int main(int argc, char * argv[]) {
   FILE *f;
   unsigned n;
 
+#ifdef _DEBUG
+  if(strstr(argv[0],"RSIHELP.EXP")) {
+    argv[0] = "C:\\DIV\\D.EXE";
+  }
+#endif
+
+  if (argc<1) return 0;
+
   if (strstr(argv[0],".386")==NULL) cpu_type=5; else cpu_type=3;
 
 //GetFree4kBlocks();
@@ -302,13 +310,11 @@ int main(int argc, char * argv[]) {
   Interpretando=1;
   safe=34; // Texto de la esquina inferior derecha
 
-  if(!strcmp(argv[1],"INIT")) Interpretando=0;
+  if(argc >= 2 && !strcmp(argv[1],"INIT")) Interpretando=0;
   else beta_status=4;
-  if(!strcmp(argv[1],"TEST")) test_video=1;
+  if(argc >= 2 && !strcmp(argv[1],"TEST")) test_video=1;
 
   getcwd(tipo[0].path,PATH_MAX+1);
-
-  if (argc<1) exit(0);
 
   _fullpath(full,argv[0],_MAX_PATH+1);
   strupr(full);
@@ -1035,11 +1041,11 @@ void entorno(void) {
 
     if (m<max_windows && beta_status==4) { // Si hay un PRG ...
       n=0;
-      if (shift_status&8) switch(scan_code) {
+      if (shift_status & SS_ALT) switch(scan_code) {
         case 33: n=1; break; // alt+f
         case 49: n=2; break; // alt+n
         case 19: n=3; break; // alt+r
-      } else if (shift_status&4) switch(scan_code) {
+      } else if (shift_status & SS_CTRL) switch(scan_code) {
         case 33: n=1; break; // ctrl+f
         case 38: n=2; break; // ctrl+l
         case 19: n=3; break; // ctrl+r
@@ -3604,7 +3610,7 @@ void activar(void) { // Maximiza: se activa *** OJO *** se llama en varias
 //  Carga y grabaciขn de setup.bin
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-extern int modo_anterior;
+extern unsigned int modo_anterior;
 
 ////////////////////////////////////////////////////////////////////////////
 // Salva el fichero de configuracion                                      //
@@ -3619,10 +3625,10 @@ FILE *file;
         Setupfile.Vid_modeBig   =VS_BIG;
 
         if (modo_de_retorno==3) {
-          Setupfile.Vid_modeBig=(modo_anterior&0x8000000)>>31;
-          modo_anterior-=(modo_anterior&0x80000000);
-          Setupfile.Vid_modeAncho=modo_anterior/10000;
-          Setupfile.Vid_modeAlto =modo_anterior%10000;
+          Setupfile.Vid_modeBig=(int)((modo_anterior&0x8000000)>>31);
+          modo_anterior&=~0x80000000;
+          Setupfile.Vid_modeAncho=(int)(modo_anterior/10000);
+          Setupfile.Vid_modeAlto =(int)(modo_anterior%10000);
         }
 
         // Sistema de Undo

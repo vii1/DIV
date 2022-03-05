@@ -1,32 +1,34 @@
 !ifndef ROOT
 !error Se requiere la macro ROOT
 !endif
-
 !ifndef SEP
 !error Se requiere la macro SEP
 !endif
 
 !ifndef INC_NOVARS
 
-JPEG_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)libjpeg.lib
+!ifdef CPU
+JPEG_LIB = $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)$(CPU)$(SEP)libjpeg.lib
+!endif
 JPEG_DIR = $(ROOT)$(SEP)3rdparty$(SEP)jpeglib
 INCLUDE += -I$(JPEG_DIR)
+CLEAN_LIB3P_DEPS += clean_jpeg
 
 !endif #INC_NOVARS
 
 !ifndef INC_NOTARGETS
 
+!ifdef CPU
 $(JPEG_LIB): lib3p_dir .EXISTSONLY
-	@%make savedir
 	cd $(JPEG_DIR)
-	$(MAKE) $^.
+	$(MAKE) $^. CPU=$(CPU)
 	$(COPY) $^. $^:
-	@%make loaddir
+	cd $+$(%cwd)$-
+!endif
 
 clean_jpeg: .SYMBOLIC
-	@%make savedir
 	cd $(JPEG_DIR)
 	$(MAKE) clean
-	@%make loaddir
+	cd $+$(%cwd)$-
 
 !endif #INC_NOTARGETS

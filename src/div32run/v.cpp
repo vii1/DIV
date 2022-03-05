@@ -148,7 +148,7 @@ void svmode(void) {
 
   if(!dc) {
     // Inicializamos SVGA
-    dc = SV_init(1);
+    dc = SV_init(0);
   }
   LinealMode=0;
   modovesa=0;

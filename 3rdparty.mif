@@ -3,42 +3,25 @@
 !ifndef ROOT
 !error Se requiere la macro ROOT
 !endif
-
-!ifdef __UNIX__
-
-!ifndef COPY
-COPY = cp
-!endif
-!ifndef DELETE
-DELETE = rm
-!endif
 !ifndef SEP
-SEP = /
+!error Se requiere la macro SEP
 !endif
 
-!else
-
-!ifndef COPY
-COPY = copy /y
-!endif
-!ifndef DELETE
-DELETE = del
-!endif
-!ifndef SEP
-SEP = '\\'
-!endif
-
-!endif #__UNIX
-
-!ifndef TOUCH
-TOUCH = wtouch -c
-!endif
-
+!ifndef NO_JPEG
 !include $(ROOT)$(SEP)3rdparty$(SEP)jpeglib.mif
+!endif
+!ifndef NO_JUDAS
 !include $(ROOT)$(SEP)3rdparty$(SEP)judas.mif
+!endif
+!ifndef NO_SCITECH
 !include $(ROOT)$(SEP)3rdparty$(SEP)scitech.mif
+!endif
+!ifndef NO_TOPFLC
 !include $(ROOT)$(SEP)3rdparty$(SEP)topflc.mif
+!endif
+!ifndef NO_ZLIB
 !include $(ROOT)$(SEP)3rdparty$(SEP)zlib.mif
+!endif
 
 !ifndef INC_NOVARS
 INCLUDE += -I$(ROOT)$(SEP)3rdparty
@@ -47,8 +30,10 @@ INCLUDE += -I$(ROOT)$(SEP)3rdparty
 !ifndef INC_NOTARGETS
 lib3p_dir: .SYMBOLIC
 	@if not exist $(ROOT)$(SEP)3rdparty$(SEP)lib mkdir $(ROOT)$(SEP)3rdparty$(SEP)lib
+	@if not exist $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)386 mkdir $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)386
+	@if not exist $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)586 mkdir $(ROOT)$(SEP)3rdparty$(SEP)lib$(SEP)586
 
-clean_lib3p: clean_judas clean_jpeg clean_tflc clean_zlib clean_svga clean_pmode .SYMBOLIC
+clean_lib3p: $(CLEAN_LIB3P_DEPS) .SYMBOLIC
 	@%null
 
 !endif
