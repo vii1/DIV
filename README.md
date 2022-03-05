@@ -1,4 +1,4 @@
-# ![DIV GAMES STUDIO 2.0](https://github.com/vii1/DIV/blob/master/docs/img/divtitle.png)
+<h1 align="center"><img src="https://github.com/VisualStudioEX3/Home/blob/master/pictures/div_games_studio/div2_logo.png" alt="DIV Games Studio 2" width="512" title="Logo de @VisualStudioEX3 usado bajo licencia CC-BY-4.0"/></h1>
 
 [![Build Status](https://app.travis-ci.com/vii1/DIV.svg?branch=master)](https://app.travis-ci.com/vii1/DIV)
 
