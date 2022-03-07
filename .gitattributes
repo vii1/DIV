@@ -1,7 +1,7 @@
 system/*.def text eol=crlf
 system/lenguaje.* text eol=crlf
 system/LENGUAJE.* text eol=crlf
-help/help.div text eol=crlf
+#help/help.div text eol=crlf
 help/help.idx text eol=crlf
 install/INS_TEXT.ASC binary
 *.prg text eol=crlf
