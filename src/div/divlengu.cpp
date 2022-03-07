@@ -30,8 +30,11 @@ void inicializa_textos(byte * fichero) {
       fclose(f);
       fin_textos=textos+n;
       analiza_textos();
+      return;
     } else fclose(f);
   }
+  printf("Error: couldn't read file %s\n", fichero);
+  exit(1);
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

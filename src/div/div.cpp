@@ -3900,7 +3900,7 @@ void check_mouse(void) {
     int386 (0x33, &inregs, &outregs);
     if (outregs.w.ax!=0xffff) {
       printf(texto[376]);
-      exit(0);
+      exit(1);
     }
   }
 }
