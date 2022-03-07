@@ -1,6 +1,6 @@
 
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-        DIV 2.01 Versi¢n en Castellano
+        DIV 2.01-1 Versi¢n en Castellano
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 # Fichero ASCII con todos los textos de DIV listos para ser traducidos, todos
@@ -12,7 +12,7 @@
 
 # Copyright
 
-001     " DIV Sistema Operativo - versi¢n 2.01 - (c) 1998,99 Hammer Technologies       \n"
+001     " DIV Sistema Operativo - versi¢n 2.01-1 - (c) 1998,99 Hammer Technologies     \n"
 
 # Informaci¢n
 
@@ -56,16 +56,16 @@
 
 # Copyright sobreimpreso en el tapiz de fondo
 
-033     "DIV 2.01 (Modo a prueba de fallos)"
-034     "DIV 2.01"
+033     "DIV 2.01-1 (Modo a prueba de fallos)"
+034     "DIV 2.01-1"
 
-#034     "DIV 2.01 Beta"
+#034     "DIV 2.01-1 Beta"
 
 # Copyright ventana de cabecera
 
 035     "Informaci¢n"
 
-#035     "DIV 2.01 Beta (No distribuible)"
+#035     "DIV 2.01-1 Beta (No distribuible)"
 
 036     "Versi¢n completa registrada."
 037     "Versi¢n de demostraci¢n."
@@ -455,7 +455,7 @@
 396 "Ejecuci¢n n£mero"
 
 398 "4ureyesonly"
-399 "Beta 2.01 para evaluaci¢n de ..."
+399 "Beta 2.01-1 para evaluaci¢n de ..."
 
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
         DIV PROFESIONAL - NUEVOS TEXTOS
@@ -565,7 +565,7 @@
 483 "DIV Games Studio (c) 1998,99 Hammer Technologies."
 
 484 "(c) 98,99 Hammer Technologies."
-485 "DIV Games Studio - v2.01"
+485 "DIV Games Studio - v2.01-1"
 486 "Daniel Navarro Medrano."
 
 487 "MAP\\TAPICES\\DIV2.MAP"
