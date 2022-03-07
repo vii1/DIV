@@ -33,4 +33,6 @@ extern int proc2;
 int test_func1( const char* name, void ( *pfunc )( void ), int arg1, int expected );
 int test_func2( const char* name, void ( *pfunc )( void ), int arg1, int arg2, int expected );
 
+int assert_equal( const char* name, int expected, int result );
+
 #endif /* __TEST_H__ */

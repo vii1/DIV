@@ -1,4 +1,4 @@
-TEST_OBJS = test.obj testmath.obj f.obj
+TEST_OBJS = test.obj testmath.obj f.obj s.obj
 
 .c: test
 

@@ -72,6 +72,20 @@ int test_func2( const char* name, void ( *pfunc )( void ), int arg1, int arg2, i
 	}
 }
 
+int assert_equal( const char* name, int expected, int result )
+{
+	if( abs( expected - result ) > epsilon ) {
+		if( epsilon ) {
+			printf( "ERROR! [%d] %s -> Expected %d ñ%d, got %d\n", calls, name, expected, epsilon, result );
+		} else {
+			printf( "ERROR! [%d] %s -> Expected %d, got %d\n", calls, name, expected, result );
+		}
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 int main( int argc, char* argv[] )
 {
 	mem = testmem;
