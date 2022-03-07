@@ -31,10 +31,10 @@ OBJS = main.obj divc.obj divdll.obj pe_load.obj divlengu.obj
 	@if not exist $(OUTDIR_BASE)$(SEP)divc mkdir $(OUTDIR_BASE)$(SEP)divc
 	@if not exist $(OUTDIR) mkdir $(OUTDIR)
 
-$(EXE): $(OUTDIR)/$(EXE) .SYMBOLIC
+$(EXE): $(OUTDIR)$(SEP)$(EXE) .SYMBOLIC
 	@%null
 
-$(OUTDIR)/$(EXE): $(OBJS)
+$(OUTDIR)$(SEP)$(EXE): $(OBJS)
 	*wlink &
 		$(WLINK_TARGET_SYS) &
 		option quiet &
@@ -61,6 +61,13 @@ clean: .SYMBOLIC
 	@if exist $(OUTDIR)$(SEP)*.err $(DELETE) $(OUTDIR)$(SEP)*.err
 	@if exist $(OUTDIR)$(SEP)*.obj $(DELETE) $(OUTDIR)$(SEP)*.obj
 	@if exist $(OUTDIR)$(SEP)$(EXE) $(DELETE) $(OUTDIR)$(SEP)$(EXE)
+
+install: $(OUTDIR)$(SEP)$(EXE) .SYMBOLIC
+!ifndef INSTALL_DIR
+	@echo Debe indicar INSTALL_DIR
+	@%abort
+!endif
+	$(COPY) $(OUTDIR)$(SEP)$(EXE) $(INSTALL_DIR)
 
 INC_NOVARS=1
 !include $(ROOT)$(SEP)3rdparty.mif

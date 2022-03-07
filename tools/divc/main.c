@@ -1,7 +1,12 @@
+#define __STDC_WANT_LIB_EXT1__ 1
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdarg.h>
+#include <libgen.h>
+#include <direct.h>
 
 // #define DEFINIR_AQUI
 // #include "global.h"
@@ -97,6 +102,9 @@ typedef struct {
 	int hacer_strfix;
 	int optimizar;
 } t_compiler_options;
+
+char* original_cwd;
+int	  verbose = 0;
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 //      Compilaci줻
@@ -289,6 +297,17 @@ void init_compiler_options( t_compiler_options* opts )
 	opts->optimizar = 1;
 }
 
+// Printf only in verbose mode
+void log( const char* fmt, ... )
+{
+	va_list args;
+	if( !verbose ) return;
+
+	va_start( args, fmt );
+	vprintf_s( fmt, args );
+	va_end( args );
+}
+
 void banner()
 {
 	printf( "DIV Compiler  Copyright (C) 1998,99 Hammer Technologies\n"
@@ -308,59 +327,59 @@ void help()
 	printf( "USAGE: divc [options] FILE\n" );
 	printf( "Compiles a DIV program.\n" );
 	printf( "\nGeneral options:\n"
-			"   -l         Generate EML listing\n"
-			"   -d[d]      Generate debug data [and start debugger at program entry]\n"
-			"   -v         Be verbose\n"
-			"   -h         Show this help\n"
+			"   -l          Generate EML listing\n"
+			"   -d[d]       Generate debug data [and start debugger at program entry]\n"
+			"   -v          Be verbose\n"
+			"   -h, --help  Show this help\n"
 			"\nCompiler options:\n"
-			"   --max_process=N        Set maximum number of processes\n"
-			"   --extended_conditions  Allow assignments in conditions\n"
-			"   --simple_conditions    Allow '=' for comparison in conditions\n"
-			"   --case_sensitive       Make keywords and identifiers case sensitive\n"
-			"   --ignore_errors        Ignore runtime errors\n"
-			"   --free_syntax          Allow simplified syntax\n"
-			"   --no_strfix            Don't generate code to auto-fix strings\n"
-			"   --no_optimization      Don't optimize generated code\n"
-			"   --no_range_check       Disable runtime range checks\n"
-			"   --no_id_check          Disable runtime id checks\n"
-			"   --no_null_check        Disable runtime null checks\n"
-			"   --no_check             no_range_check + no_id_check + no_null_check\n"
+			"   --max-process=N        Set maximum number of processes\n"
+			"   --extended-conditions  Allow assignments in conditions\n"
+			"   --simple-conditions    Allow '=' for comparison in conditions\n"
+			"   --case-sensitive       Make keywords and identifiers case sensitive\n"
+			"   --ignore-errors        Ignore runtime errors\n"
+			"   --free-syntax          Allow simplified syntax\n"
+			"   --no-strfix            Don't generate code to auto-fix strings\n"
+			"   --no-optimization      Don't optimize generated code\n"
+			"   --no-range-check       Disable runtime range checks\n"
+			"   --no-id-check          Disable runtime id checks\n"
+			"   --no-null-check        Disable runtime null checks\n"
+			"   --no-check             no-range-check + no-id-check + no-null-check\n"
 			"NOTE: these options don't override the COMPILER_OPTIONS statement.\n" );
 }
 
 bool parseOption( t_compiler_options* opts, const char* str )
 {
-	if( !strncmp( str, "max_process", 11 ) ) {
+	if( !strncmp( str, "max-process", 11 ) ) {
 		if( str[11] != '=' ) {
-			fprintf( stderr, "Error: Compiler option max_process requires a value\n" );
+			fprintf( stderr, "Error: Compiler option max-process requires a value\n" );
 			return false;
 		}
 		opts->max_process = atoi( str + 12 );
 		if( opts->max_process <= 0 ) {
-			fprintf( stderr, "Error: invalid value for max_process\n" );
+			fprintf( stderr, "Error: invalid value for max-process\n" );
 			return false;
 		}
-	} else if( !strcmp( str, "extended_conditions" ) ) {
+	} else if( !strcmp( str, "extended-conditions" ) ) {
 		opts->extended_conditions = 1;
-	} else if( !strcmp( str, "simple_conditions" ) ) {
+	} else if( !strcmp( str, "simple-conditions" ) ) {
 		opts->simple_conditions = 1;
-	} else if( !strcmp( str, "case_sensitive" ) ) {
+	} else if( !strcmp( str, "case-sensitive" ) ) {
 		opts->case_sensitive = 1;
-	} else if( !strcmp( str, "ignore_errors" ) ) {
+	} else if( !strcmp( str, "ignore-errors" ) ) {
 		opts->ignore_errors = 1;
-	} else if( !strcmp( str, "free_syntax" ) ) {
+	} else if( !strcmp( str, "free-syntax" ) ) {
 		opts->free_sintax = 1;
-	} else if( !strncmp( str, "no_", 3 ) ) {
+	} else if( !strncmp( str, "no-", 3 ) ) {
 		str += 3;
 		if( !strcmp( str, "strfix" ) ) {
 			opts->hacer_strfix = 0;
 		} else if( !strcmp( str, "optimization" ) ) {
 			opts->optimizar = 0;
-		} else if( !strcmp( str, "range_check" ) ) {
+		} else if( !strcmp( str, "range-check" ) ) {
 			opts->comprueba_rango = 0;
-		} else if( !strcmp( str, "id_check" ) ) {
+		} else if( !strcmp( str, "id-check" ) ) {
 			opts->comprueba_id = 0;
-		} else if( !strcmp( str, "null_check" ) ) {
+		} else if( !strcmp( str, "null-check" ) ) {
 			opts->comprueba_null = 0;
 		} else if( !strcmp( str, "check" ) ) {
 			opts->comprueba_rango = 0;
@@ -372,10 +391,28 @@ bool parseOption( t_compiler_options* opts, const char* str )
 			return false;
 		}
 	} else {
-		fprintf( stderr, "Error: Unrecognized compiler option: %s\n", str );
+		if( strcmp( str, "help" ) ) {
+			fprintf( stderr, "Error: Unrecognized compiler option: %s\n", str );
+		}
 		return false;
 	}
 	return true;
+}
+
+void restore_cwd()
+{
+	chdir( original_cwd );
+	free( original_cwd );
+}
+
+void chdir_to_exe_dir( char* exe )
+{
+	char* dir;
+	char* path = _fullpath( NULL, exe, 0 );
+	if( !path ) return;
+	dir = dirname( path );
+	chdir( dir );
+	free( path );
 }
 
 int main( int argc, char* argv[] )
@@ -383,20 +420,13 @@ int main( int argc, char* argv[] )
 	int	  i;
 	bool  noMoreOptions = false, listings = false, debug = false, startDebugger = false;
 	bool  readOption = false;
-	int	  verbose = 0;
-	char *p, *file = NULL;
+	char* p;
+	char  file[_MAX_PATH];
 
 	t_compiler_options compiler_options;
 
 	banner();
-	inicializa_textos( "system\\lenguaje.div" );   // OJO emitir un error si lenguaje.div no existe
-	make_helpidx();
-	inicializa_compilador();   // *** Compilador *** espacios de lower a 00
-
-	if( argc < 2 ) {
-		help();
-		return -1;
-	}
+	file[0] = 0;
 
 	for( i = 1; i < argc; ++i ) {
 		if( argv[i][0] == '-' && !noMoreOptions ) {
@@ -442,8 +472,8 @@ int main( int argc, char* argv[] )
 					help();
 					return -1;
 				}
-			} else if( !file ) {
-				file = argv[i];
+			} else if( !file[0] ) {
+				_fullpath( file, argv[i], sizeof( file ) );
 			} else {
 				fprintf( stderr, "Error: Too many arguments\n" );
 				help();
@@ -452,13 +482,22 @@ int main( int argc, char* argv[] )
 		}
 	}
 
-	if( !file ) {
+	if( !file[0] ) {
 		fprintf( stderr, "Error: Missing argument: FILE\n" );
 		help();
 		return -1;
 	}
 
-	printf( "TODO: compilar %s\n", file );
+	original_cwd = getcwd( NULL, 0 );
+	if( original_cwd ) {
+		atexit( restore_cwd );
+	}
+	chdir_to_exe_dir( argv[0] );
+
+	inicializa_textos( "system\\lenguaje.div" );   // OJO emitir un error si lenguaje.div no existe
+	atexit( finaliza_textos );
+	make_helpidx();
+	inicializa_compilador();   // *** Compilador *** espacios de lower a 00
 
 	return 0;
 }
