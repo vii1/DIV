@@ -6,7 +6,7 @@ OUTDIR_BASE		= $(ROOT)$(SEP)build.$(SYS)
 OUTDIR			= $(OUTDIR_BASE)$(SEP)testdll$(SEP)$(CONFIG)
 SRCDIR			= $(ROOT)$(SEP)src
 
-OPTIONS			= -bt -q -zp4 -I$(SRCDIR) -DPEDEBUG
+OPTIONS			= -bt=$(WATCOM_BT) -q -zp4 -I$(SRCDIR) -DPEDEBUG
 
 EXE				= testdll$(EXE_SUFFIX)
 
@@ -28,6 +28,7 @@ $(EXE): $(OUTDIR)/$(EXE) .SYMBOLIC
 
 $(OUTDIR)/$(EXE): $(OBJS)
 	*wlink &
+		$(WLINK_TARGET_SYS) &
 		option quiet &
 		name $^@ &
 !ifeqi CONFIG debug
