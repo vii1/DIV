@@ -94,7 +94,8 @@ void InitView(void)
   CurLevel=&Levels[0];
   CurLevel->MinDist=F_MIN_DIST;
   CurLevel->ClipCount=0;
-  CurLevel->Start=po->pRegion;
+  //CurLevel->Start=po->pRegion;
+  CurLevel->Start=FindRegion(po->pp->x,po->pp->y,po->H,0);
   CurLevel->From=NULL;
 // Init clip buffer for the first level
   line=CurLevel->Clip;
