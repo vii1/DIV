@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 
   // Vamos a esta parte.
   fseek(ifile, vpe_offset, SEEK_SET);
-  fread(&vpe_buffer, vpe_size, 1, ifile);
+  fread(vpe_buffer, vpe_size, 1, ifile);
 
   // Corregimos la cabecera del archivo.
   vpe_buffer[0] = 'Z';
@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
   vpe_buffer[2] = '6';
 
   // Volcamos todo el código que hemos obtenido de VPE.
-  fwrite(&vpe_buffer, vpe_size, 1, ofile);
+  fwrite(vpe_buffer, vpe_size, 1, ofile);
 
   // Asignamos la dirección de memoria del vpe_map a la dirección de memoria del vpe_buffer;
   fclose(ifile);
