@@ -6,7 +6,7 @@ OUTDIR_BASE		= $(ROOT)$(SEP)build.$(TARGET_SYS)
 OUTDIR			= $(OUTDIR_BASE)$(SEP)divc$(SEP)$(CONFIG)
 CPU				= 386
 
-OPTIONS			= -bt=$(WATCOM_BT) -q -zp4
+OPTIONS			= -bt=$(WATCOM_BT) -q -zp4 -za99
 
 EXE				= divc$(EXE_SUFFIX)
 

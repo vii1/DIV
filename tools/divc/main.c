@@ -131,6 +131,9 @@ void comp_exit( void );
 
 int ejecutar_programa;	 // 0-Compile, 1-Run, 2-Install
 
+extern byte file_in[_MAX_PATH + 1];
+extern byte file_out[_MAX_PATH + 1];
+
 void goto_error( void );
 
 // wwrite falso
@@ -407,28 +410,26 @@ void restore_cwd()
 
 void chdir_to_exe_dir( char* exe )
 {
-	char* dir;
 	char* path = _fullpath( NULL, exe, 0 );
 	if( !path ) return;
-	dir = dirname( path );
+	char* dir = dirname( path );
 	chdir( dir );
 	free( path );
 }
 
 int main( int argc, char* argv[] )
 {
-	int	  i;
 	bool  noMoreOptions = false, listings = false, debug = false, startDebugger = false;
 	bool  readOption = false;
 	char* p;
-	char  file[_MAX_PATH];
+	// char  file[_MAX_PATH];
 
 	t_compiler_options compiler_options;
 
 	banner();
-	file[0] = 0;
+	file_in[0] = 0;
 
-	for( i = 1; i < argc; ++i ) {
+	for( int i = 1; i < argc; ++i ) {
 		if( argv[i][0] == '-' && !noMoreOptions ) {
 			if( argv[i][1] == '-' ) {
 				if( argv[i][2] == 0 ) {
@@ -472,8 +473,8 @@ int main( int argc, char* argv[] )
 					help();
 					return -1;
 				}
-			} else if( !file[0] ) {
-				_fullpath( file, argv[i], sizeof( file ) );
+			} else if( !file_in[0] ) {
+				_fullpath( file_in, argv[i], sizeof( file_in ) );
 			} else {
 				fprintf( stderr, "Error: Too many arguments\n" );
 				help();
@@ -482,7 +483,7 @@ int main( int argc, char* argv[] )
 		}
 	}
 
-	if( !file[0] ) {
+	if( !file_in[0] ) {
 		fprintf( stderr, "Error: Missing argument: FILE\n" );
 		help();
 		return -1;
@@ -498,6 +499,24 @@ int main( int argc, char* argv[] )
 	atexit( finaliza_textos );
 	make_helpidx();
 	inicializa_compilador();   // *** Compilador *** espacios de lower a 00
+
+	FILE* f = fopen(file_in, "r");
+	if(!f) {
+		fprintf(stderr, "Error: Can't open file %s\n", file_in);
+		return -1;
+	}
+	fseek(f, 0, SEEK_END);
+	source_len = ftell(f);
+	fseek(f, 0, SEEK_SET);
+	source_ptr = malloc(source_len + 2);
+	if(!source_ptr) {
+		fprintf(stderr, "Error: Can't allocate memory for source\n");
+		fclose(f);
+		return -1;
+	}
+	fread(source_ptr, 1, source_len, f);
+	fclose(f);
+	comp();
 
 	return 0;
 }
