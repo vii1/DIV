@@ -78,6 +78,7 @@ const _no_optimization=8
 const _no_range_check=9
 const _no_id_check=10
 const _no_null_check=11
+const _no_safe_exit=12
 
 const seek_set=0
 const seek_cur=1
