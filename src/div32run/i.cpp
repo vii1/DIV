@@ -51,6 +51,7 @@ int dll_loaded=0;
 
 int trace_program=0;
 int ignore_errors=0;
+int safe_exit=1;
 
 int old_dump_type;
 int old_restore_type;
@@ -481,7 +482,11 @@ extern int alt_x;
 void interprete (void)
 {
   inicializacion();
-  while (procesos && !(kbdFLAGS[_ESC] && kbdFLAGS[_L_CTRL]) && !alt_x) {
+  while (procesos) {
+    if (safe_exit && ((kbdFLAGS[_ESC] && kbdFLAGS[_L_CTRL]) || alt_x))
+    {
+      break;
+    }
     error_vpe=0;
     frame_start();
     #ifdef DEBUG
@@ -1349,6 +1354,7 @@ void main(int argc,char * argv[]) {
         free(ptr);
 
         if ((mem[0]&128)==128) { trace_program=1; mem[0]-=128; }
+        if ((mem[0]&256)==256) { safe_exit=0; mem[0]-=256; }
         if ((mem[0]&512)==512) { ignore_errors=1; mem[0]-=512; }
         demo=0;
         if ((mem[0]&1024)==1024) {

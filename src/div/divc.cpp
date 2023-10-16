@@ -678,6 +678,7 @@ int comprueba_id;
 int comprueba_null;
 int hacer_strfix;
 int optimizar;
+int safe_exit;
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
@@ -1066,6 +1067,12 @@ void compilar(void) {
   #ifdef SHARE
   mem[0]+=1024;
   #endif
+
+  // A๑adimos el flag que permite al int้rprete
+  // ignorarr alt_x y ctrl_esc
+  if (!safe_exit) {
+    mem[0]+=256;
+  }
 
   if (program_type==1) if ((f=fopen("install\\setup.ovl","wb"))!=NULL) {
     fwrite(div_stub,1,602,f);
@@ -3155,6 +3162,7 @@ void sintactico (void) {
   comprueba_null=1;
   hacer_strfix=1;
   optimizar=1;
+  safe_exit=1;
 
   if (pieza==p_compiler_options) {
     lexico();
@@ -3217,6 +3225,10 @@ void sintactico (void) {
           case 11: // _no_null_check
             lexico();
             comprueba_null=0;
+            break;
+          case 12: // _no_safe_exit
+            lexico();
+            safe_exit=0;
             break;
           default:
             c_error(0,138);
