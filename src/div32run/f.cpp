@@ -596,7 +596,17 @@ void new_map(void) {
 
   if (ancho<1 || alto<1 || ancho>32768 || alto>32768) { e(153); return; }
   if (color<0 || color>255) { e(154); return; }
-  if (cx<0 || cy<0 || cx>=ancho || cy>=alto) { e(155); return; }
+  if (cx>=ancho || cy>=alto) { e(155); return; }
+
+  // Si alguna de las coordenadas del punto de control son negativas, calculamos
+  // el punto medio automáticamente.
+  if (cx<0) {
+    cx = ancho >> 1; 
+  } 
+
+  if (cy<0) {
+    cy = alto >> 1;
+  }
 
   if ((ptr=(byte *)malloc(1330+64+4+ancho*alto))!=NULL) {
     ptr+=1330; // fix load_map/unload_map
